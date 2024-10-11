@@ -213,6 +213,42 @@ export class FirestoreService {
     }
   }
 
+  async SendRequest(name: any, data: any): Promise<void> {
+    const projectDocRef = doc(this.firestore, `attendance_request/${name}`);
+    try {
+      await setDoc(projectDocRef, { ...data }, { merge: true });
+      console.log(`Document with ID ${name} successfully written!`);
+    } catch (error) {
+      console.error('Error writing document: ', error);
+    }
+  }
+
+  // async SendRequest(name: any, data: any): Promise<void> {
+  //   const docRef = doc(this.firestore, "attendance_request", name);
+  //   try {
+  //     const docSnapshot: DocumentSnapshot = await getDoc(docRef);
+  //     let existingData = docSnapshot.exists() ? docSnapshot.data() : {};
+
+  //     if (!Array.isArray(existingData['data'])) {
+  //       existingData['data'] = [];
+  //     }
+
+  //     existingData['data'].push(data);
+  //     console.error('Adding document:', existingData);
+
+  //     await setDoc(docRef, existingData);
+  //   } catch (error) {
+  //     console.error('Error adding document: ', error);
+  //   }
+
+  // }
+
+  getRequest(): Observable<any[]> {
+    const usersCollection = collection(this.firestore, 'attendance_request');
+    return collectionData(usersCollection, { idField: 'id' });
+  }
+
+
   async getAttendanceRecord(name: string): Promise<any> {
     const docRef = doc(this.firestore, 'attendancePortal', name);
 

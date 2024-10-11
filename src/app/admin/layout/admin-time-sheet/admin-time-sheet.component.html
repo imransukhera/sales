@@ -244,7 +244,7 @@
 </div>
 
 
-<p-dialog [modal]="true" [(visible)]="visible" [style]="{ width: '75rem' }" class="p-3">
+<p-dialog [modal]="true" [(visible)]="visible" [style]="{ width: '85rem' }" class="p-3">
     <div class="flex justify-between p-3 items-center">
         <span class="font-bold text-lg">Approvel Request</span>
         <button type="button" 
@@ -257,9 +257,11 @@
 
     <table class="table table-bordered w-full" >
         <ng-container >
-            <tr class="items-center" >
+            <tr class="items-center" *ngFor="let data of requestdata" >
                 <td> <div class="m-2 bg-red-600	 text-white p-2 text-xs rounded-md" style="width: fit-content;">Missing Attendance</div> </td>
-                <td><span class="px-2">Sehrish Ghaffar - 19 seeking appeoval for attendance of 02 Oct 2024, Check-out Time: 7:00 AM</span></td>
+                <td>
+                    <span class="px-2 text-sm" >{{data.id}} - 19 seeking appeoval for attendance of {{data.date}}, Check-in Time: {{data.check_in}}, Check-out Time:{{data.check_out}}</span>
+                </td>
                 <td>
                     <div class="flex gap-2 mx-2">
                         <button class="bg-emerald-500 text-white px-7 py-2 rounded-full">Accept</button>

@@ -61,7 +61,7 @@ export class AdminTimeSheetComponent {
   userdata: any[] = [];
   responsiveOptions: any[] | undefined;
   visible = false;
-
+requestdata: any;
 
   constructor(private firestoreService: FirestoreService, private firestore: Firestore, private toaster: ToastrService) {
 
@@ -78,6 +78,7 @@ export class AdminTimeSheetComponent {
     this.lastMonthDate();
     this.getAllUserProfilesdata();
     this.carousel();
+    this.getrequest();
   }
 
   lastMonthDate() {
@@ -353,6 +354,15 @@ export class AdminTimeSheetComponent {
     });
 
     console.log("Sorted Filtered Data:", this.days, "Selected Date Range:", this.dateRange);
+  }
+
+  getrequest() {
+    this.firestoreService.getRequest().subscribe((req) => {
+      console.log("request", req)
+      this.requestdata = req;
+      console.log("request store", this.requestdata)
+
+    })
   }
 
   cancelFrom() {

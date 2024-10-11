@@ -61,7 +61,7 @@ export class CheckingDetailComponent implements OnInit {
       name: 'Both'
     }
   ]
-requestselected: any;
+  requestselected: any;
 
   constructor(
     private http: HttpClient,
@@ -88,12 +88,13 @@ requestselected: any;
 
     // this.getLocation();
     this.createForm();
+    this.getrequest();
   }
 
-  onchange(type: any){
+  onchange(type: any) {
     console.log('request type', type)
     this.requestselected = type;
-    
+
   }
 
   createForm() {
@@ -102,29 +103,43 @@ requestselected: any;
       date: [undefined, [Validators.required]],
       check_in: [undefined],
       check_out: [undefined],
+      location: [undefined],
       description: [undefined]
     });
   }
 
   getCurrentLocationAndAddressd(): void {
+    const officeLatitude = 31.4185261;
+    const officeLongitude = 74.2666856;
+    const radius = 1600;
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position: GeolocationPosition) => {
           const latitude = position.coords.latitude;
           const longitude = position.coords.longitude;
-          console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+
+          const distance = this.getDistanceFromLatLonInMeters(
+            latitude,
+            longitude,
+            officeLatitude,
+            officeLongitude
+          );
+          if (distance <= radius) {
+            this.currentAddress = '106 3rd Avenue Northwest NFC Society Lahore';
+          }
 
           // Call the method to get the address from latitude and longitude
-          this.getLocation(latitude, longitude)
-            .then(locationName => {
-              this.locationName = this.locationName;
-              console.log("Current Location Address:", locationName);
-              // You can set this address to a variable if needed
-              this.currentAddress = locationName;
-            })
-            .catch(error => {
-              console.error("Error getting address:", error);
-            });
+          // this.getLocation(latitude, longitude)
+          //   .then(locationName => {
+          //     this.locationName = this.locationName;
+          //     console.log("Current Location Address:", locationName);
+          //     // You can set this address to a variable if needed
+          //     this.currentAddress = locationName;
+          //   })
+          //   .catch(error => {
+          //     console.error("Error getting address:", error);
+          //   });
         },
         (error: GeolocationPositionError) => {
           console.error("Error getting location:", error.message);
@@ -140,10 +155,28 @@ requestselected: any;
   }
 
 
+  getDistanceFromLatLonInMeters(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const R = 6371000; // Radius of the earth in meters
+    const dLat = this.deg2rad(lat2 - lat1); // deg2rad below
+    const dLon = this.deg2rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; // Distance in meters
+    return distance;
+  }
+
+  deg2rad(deg: number): number {
+    return deg * (Math.PI / 180);
+  }
+
+
   getLocation(latitude: number, longitude: number): Promise<string> {
     return new Promise((resolve, reject) => {
       const geocoder = new google.maps.Geocoder();
-      const latlng = new google.maps.LatLng(latitude, longitude);
+      const latlng = new google.maps.LatLng(31.4185261, 74.2666856);
 
       geocoder.geocode({ location: latlng }, (results: any, status: any) => {
         if (status === google.maps.GeocoderStatus.OK) {
@@ -193,7 +226,6 @@ requestselected: any;
     const time = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
     const date = currentDate.toDateString();
 
-    this.checkingstatus = true;
     const data = {
       checkInTime: time,
       name: this.profileData.name,
@@ -206,16 +238,23 @@ requestselected: any;
     console.log("checkin time data", data);
 
     // return
-    this.firestoreService.checkin(this.profileData.username, date, data)
-      .then(() => {
-        this.toaster.showSuccess('Successfully Check-In');
-        this.loading = false;
-        this.fetchTimelogData(this.profileData.username);
-      })
-      .catch(error => {
-        this.loading = false;
-        console.error('Error adding data: ', error);
-      });
+    if (this.currentAddress) {
+      this.firestoreService.checkin(this.profileData.username, date, data)
+        .then(() => {
+          this.toaster.showSuccess('Successfully Check-In');
+          this.loading = false;
+          this.checkingstatus = true;
+          this.fetchTimelogData(this.profileData.username);
+        })
+        .catch(error => {
+          this.loading = false;
+          console.error('Error adding data: ', error);
+        });
+    } else {
+      this.loading = false;
+      this.toaster.showError('You are not in office so use moblie App for Checkin');
+    }
+
   }
 
   checkout() {
@@ -227,7 +266,7 @@ requestselected: any;
 
     const date = currentDate.toDateString();
     const choutTime = this.days.find(product => product.date == date);
-    
+
 
     if (choutTime?.checkOutTime) {
       this.toaster.showError('you are already checkout');
@@ -241,11 +280,12 @@ requestselected: any;
       location: choutTime?.location,
       date: date,
     }
-console.log("checkout time check:", data)
+    console.log("checkout time check:", data)
 
     this.firestoreService.checkOut(this.profileData.username, date, data)
       .then(() => {
         this.toaster.showSuccess('Successfully Checkout');
+        this.checkingstatus = false;
         this.loading = false;
         this.fetchTimelogData(this.profileData.username);
       })
@@ -262,8 +302,7 @@ console.log("checkout time check:", data)
     this.firestoreService.getAttendanceRecord(name)
       .then((data) => {
         const transformedData = this.transformTimelogData(data);
-        const transformedDatainsort = transformedData.sort((a,b)=> new Date(b.date).getTime() - new Date(a.date).getTime())
-        console.log("transformeddata", transformedDatainsort)
+        const transformedDatainsort = transformedData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
         this.days = transformedDatainsort;
         const choutTime = this.days.find(product => product.date == this.todayDate);
         if (choutTime) {
@@ -301,7 +340,6 @@ console.log("checkout time check:", data)
       });
     });
 
-    console.log("Check in detail:", result);
     return result;
   }
 
@@ -313,28 +351,53 @@ console.log("checkout time check:", data)
     }
     // let value = this.profileForm.value['check_in'].toTimeString()?.split(' ')[0];
     let value = this.profileForm.value;
-    if(value.check_in){
-      const data = {
-        checkInTime: value.check_in.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
+    const choutTime = this.days.find(product => product.date == this.profileForm.value.date);
+    let data: any;
+    if (value.check_in) {
+      data = {
+        requeststatus: false,
+        attendance_type: this.profileForm.value.name,
+        check_in: value.check_in.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
         name: this.profileData.name,
-        checkOutTime: value.check_out,
-        location: this.currentAddress,
-        date: value.date,
+        check_out: choutTime?.check_out ? choutTime.check_out : '',
+        location: this.profileForm.value.location,
+        date: value.date.toDateString(),
+        description: this.profileForm.value.description
       }
-      console.log("this is value:", data);
-    } else{
-      const data = {
-        checkInTime: value.check_in,
+    } else {
+      data = {
+        requeststatus: false,
+        attendance_type: this.profileForm.value.name,
+        check_in: choutTime?.check_in ? choutTime.check_in : '',
         name: this.profileData.name,
-        checkOutTime: value.check_out.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
-        location: this.currentAddress,
-        date: value.date,
+        check_out: value.check_out.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
+        location: this.profileForm.value.location,
+        date: value.date.toDateString(),
+        description: this.profileForm.value.description
       }
-      console.log("this is value:", data);
 
     }
+    console.log("this is value:", this.profileData.name, data);
 
-     }
+
+    
+    this.firestoreService.SendRequest(this.profileData.name, data).then(() => {
+      this.toaster.showSuccess('Successfully Submit Request');
+      this.cancelFrom();
+      this.fetchTimelogData(this.profileData.username);
+    }).catch((error) => {
+      console.error('Error Request submit:', error);
+    });
+
+  }
+
+
+
+  getrequest() {
+    this.firestoreService.getRequest().subscribe((req) => {
+      console.log("request", req)
+    })
+  }
 
   get f(): { [key: string]: AbstractControl } {
     return this.profileForm.controls;
@@ -344,4 +407,8 @@ console.log("checkout time check:", data)
     this.visible = false;
     this.profileForm.reset();
   }
+
+
+
+
 }
