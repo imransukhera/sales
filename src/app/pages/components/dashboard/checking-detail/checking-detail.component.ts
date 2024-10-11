@@ -48,6 +48,7 @@ export class CheckingDetailComponent implements OnInit {
   todayDate: any;
   locationName: any;
   apiLoaded: any;
+  requestselected: any
   currentAddress: any;
   dateTime = new Date();
   issueName: any[] = [
@@ -61,7 +62,6 @@ export class CheckingDetailComponent implements OnInit {
       name: 'Both'
     }
   ]
-  requestselected: any;
 
   constructor(
     private http: HttpClient,
@@ -85,12 +85,10 @@ export class CheckingDetailComponent implements OnInit {
     this.todayDate = currentDate.toDateString();
     this.fetchTimelogData(this.profileData.username);
     this.getCurrentLocationAndAddressd();
-
     // this.getLocation();
     this.createForm();
     this.getrequest();
   }
-
   onchange(type: any) {
     console.log('request type', type)
     this.requestselected = type;
@@ -183,8 +181,7 @@ export class CheckingDetailComponent implements OnInit {
           if (results[0]) {
             const locationName = results[0].formatted_address;
             resolve(locationName);
-            this.currentAddress = locationName;
-            console.log('Location Name:', locationName);
+            console.log('Location Name:', results[0]);
           } else {
             reject('No results found');
           }
@@ -235,8 +232,6 @@ export class CheckingDetailComponent implements OnInit {
     }
 
     console.log("HYT:", this.currentAddress);
-    console.log("checkin time data", data);
-
     // return
     if (this.currentAddress) {
       this.firestoreService.checkin(this.profileData.username, date, data)
@@ -277,8 +272,8 @@ export class CheckingDetailComponent implements OnInit {
       checkInTime: choutTime?.checkInTime,
       name: this.profileData.name,
       checkOutTime: time,
-      location: choutTime?.location,
       date: date,
+      location: this.locationName,
     }
     console.log("checkout time check:", data)
 
@@ -287,6 +282,7 @@ export class CheckingDetailComponent implements OnInit {
         this.toaster.showSuccess('Successfully Checkout');
         this.checkingstatus = false;
         this.loading = false;
+
         this.fetchTimelogData(this.profileData.username);
       })
       .catch(error => {
