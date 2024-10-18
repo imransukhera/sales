@@ -53,15 +53,16 @@ export class CheckingDetailComponent implements OnInit {
   dateTime = new Date();
   issueName: any[] = [
     {
-      name: 'Check In'
+      name: 'Check In' , valuename: 'checkInTime'
     },
     {
-      name: 'Check Out'
+      name: 'Check Out' , valuename: 'checkOutTime'
     },
     {
-      name: 'Both'
+      name: 'Both' , valuename: 'Both'
     }
   ]
+  requestdata: any;
 
   constructor(
     private http: HttpClient,
@@ -99,10 +100,9 @@ export class CheckingDetailComponent implements OnInit {
     this.profileForm = this.fb.group({
       name: [undefined, [Validators.required]],
       date: [undefined, [Validators.required]],
-      check_in: [undefined],
-      check_out: [undefined],
+      checkInTime: [undefined],
+      checkOutTime: [undefined],
       location: [undefined],
-      description: [undefined]
     });
   }
 
@@ -347,37 +347,40 @@ export class CheckingDetailComponent implements OnInit {
     }
     // let value = this.profileForm.value['check_in'].toTimeString()?.split(' ')[0];
     let value = this.profileForm.value;
-    const choutTime = this.days.find(product => product.date == this.profileForm.value.date);
+    // const index = this.requestdata.findIndex((item: any) => item);
+    // const choutTime = this.requestdata[index][value.date.toDateString()].data[0];
+
+    // console.log("datahhh", choutTime)
     let data: any;
-    if (value.check_in) {
+    if (value.name == 'Check In') {
       data = {
-        requeststatus: false,
-        attendance_type: this.profileForm.value.name,
-        check_in: value.check_in.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
+        checkInTime: value.checkInTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
         name: this.profileData.name,
-        check_out: choutTime?.check_out ? choutTime.check_out : '',
-        location: this.profileForm.value.location,
+        checkOutTime: '',
+        location: this.profileForm.value.location ,
         date: value.date.toDateString(),
-        description: this.profileForm.value.description
       }
-    } else {
+    }  if (value.name == 'Check Out') {
       data = {
-        requeststatus: false,
-        attendance_type: this.profileForm.value.name,
-        check_in: choutTime?.check_in ? choutTime.check_in : '',
+        checkInTime: '',
         name: this.profileData.name,
-        check_out: value.check_out.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
-        location: this.profileForm.value.location,
+        checkOutTime: value.checkOutTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
+        location: this.profileForm.value.location ,
         date: value.date.toDateString(),
-        description: this.profileForm.value.description
       }
 
+    }if (value.name == 'Both'){
+      data = {
+        checkInTime: value.checkInTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
+        name: this.profileData.name,
+        checkOutTime: value.checkOutTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
+        location: this.profileForm.value.location ,
+        date: value.date.toDateString(),
+      }
     }
-    console.log("this is value:", this.profileData.name, data);
-
-
+    console.log("this is value:", this.profileData.name, value.date.toDateString(),  data);
     
-    this.firestoreService.SendRequest(this.profileData.name, data).then(() => {
+    this.firestoreService.SendRequest(this.profileData.name, value.date.toDateString(), data).then(() => {
       this.toaster.showSuccess('Successfully Submit Request');
       this.cancelFrom();
       this.fetchTimelogData(this.profileData.username);
@@ -392,6 +395,8 @@ export class CheckingDetailComponent implements OnInit {
   getrequest() {
     this.firestoreService.getRequest().subscribe((req) => {
       console.log("request", req)
+      this.requestdata = req;
+
     })
   }
 

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Firestore, doc, setDoc, getDoc, DocumentSnapshot, collection, collectionData, QuerySnapshot, getDocs } from '@angular/fire/firestore';
+import { query, updateDoc, where } from 'firebase/firestore';
 import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
@@ -184,6 +185,7 @@ export class FirestoreService {
     }
 
   }
+  
 
   async checkOut(name: string, day: string, data: any): Promise<void> {
     const docRef = doc(this.firestore, "attendancePortal", name);
@@ -213,41 +215,80 @@ export class FirestoreService {
     }
   }
 
-  async SendRequest(name: any, data: any): Promise<void> {
-    const projectDocRef = doc(this.firestore, `attendance_request/${name}`);
+  // async SendRequest(name: any, data: any): Promise<void> {
+  //   const projectDocRef = doc(this.firestore, `attendance_request/${name}`);
+  //   try {
+  //     await setDoc(projectDocRef, { ...data }, { merge: true });
+  //     console.log(`Document with ID ${name} successfully written!`);
+  //   } catch (error) {
+  //     console.error('Error writing document: ', error);
+  //   }
+  // }
+
+  async SendRequest(name: any, day: any, data: any): Promise<void> {
+    const docRef = doc(this.firestore, "attendance_request", name);
+
     try {
-      await setDoc(projectDocRef, { ...data }, { merge: true });
-      console.log(`Document with ID ${name} successfully written!`);
+      const docSnapshot: DocumentSnapshot = await getDoc(docRef);
+      let existingData = docSnapshot.exists() ? docSnapshot.data() : {};
+
+      if (!existingData[day]) {
+        existingData[day] = {};
+      }
+      if (!existingData[day]['data']) {
+        existingData[day]['data'] = [];
+      }
+      console.log("Final Data to Set:", JSON.stringify(existingData, null, 2));
+
+      const existingIndex = existingData[day]['data'].findIndex((entry: any) => entry.id === data.id);
+
+      if (existingIndex !== -1) {
+        existingData[day]['data'][existingIndex] = data;
+        console.log("update")
+      } else {
+        existingData[day]['data'].push(data);
+        console.log("push")
+      }
+
+      await setDoc(docRef, existingData, { merge: true });
     } catch (error) {
-      console.error('Error writing document: ', error);
+      console.error('Error adding document: ', error);
+    }
+
+  }
+  async daleterequest(name: string, day: string, data: any, indexToRemove?: number): Promise<void> {
+    const docRef = doc(this.firestore, "attendance_request", name);
+
+    try {
+      const docSnapshot: DocumentSnapshot = await getDoc(docRef);
+      let existingData = docSnapshot.exists() ? docSnapshot.data() : {};
+
+      if (!existingData[day]) {
+        existingData[day] = {};
+      }
+      if (!existingData[day]['data']) {
+        existingData[day]['data'] = [];
+      }
+
+      if (typeof indexToRemove === 'number') {
+        existingData[day]['data'].splice(day);
+      } else {
+        console.log("not found")
+        // existingData[day]['data'].push(data);
+      }
+
+      await setDoc(docRef, existingData, { merge: true });
+    } catch (error) {
     }
   }
 
-  // async SendRequest(name: any, data: any): Promise<void> {
-  //   const docRef = doc(this.firestore, "attendance_request", name);
-  //   try {
-  //     const docSnapshot: DocumentSnapshot = await getDoc(docRef);
-  //     let existingData = docSnapshot.exists() ? docSnapshot.data() : {};
-
-  //     if (!Array.isArray(existingData['data'])) {
-  //       existingData['data'] = [];
-  //     }
-
-  //     existingData['data'].push(data);
-  //     console.error('Adding document:', existingData);
-
-  //     await setDoc(docRef, existingData);
-  //   } catch (error) {
-  //     console.error('Error adding document: ', error);
-  //   }
-
-  // }
 
   getRequest(): Observable<any[]> {
     const usersCollection = collection(this.firestore, 'attendance_request');
     return collectionData(usersCollection, { idField: 'id' });
   }
 
+  
 
   async getAttendanceRecord(name: string): Promise<any> {
     const docRef = doc(this.firestore, 'attendancePortal', name);

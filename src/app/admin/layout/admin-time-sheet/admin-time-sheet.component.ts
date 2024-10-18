@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CalendarModule } from 'primeng/calendar';
 import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
@@ -12,6 +12,7 @@ import { ProjectSidebarComponent } from '../../../pages/components/project-sideb
 import jsPDF from 'jspdf';
 import { CarouselModule } from 'primeng/carousel';
 import { RouterLink } from '@angular/router';
+import { retry } from 'rxjs';
 
 
 interface Attendance {
@@ -38,6 +39,8 @@ interface Attendance {
     CommonModule,
     ProjectSidebarComponent,
     CarouselModule,
+    CalendarModule,
+    ReactiveFormsModule,
     RouterLink
   ],
   templateUrl: './admin-time-sheet.component.html',
@@ -61,9 +64,16 @@ export class AdminTimeSheetComponent {
   userdata: any[] = [];
   responsiveOptions: any[] | undefined;
   visible = false;
-requestdata: any;
+  requestdata: any;
+  editmode: boolean = true;
+  editmodeout: boolean = true;
+  edittime: any;
+  edittimeout: any;
+  time: Date[] | undefined;
+  profileForm!: FormGroup;
 
-  constructor(private firestoreService: FirestoreService, private firestore: Firestore, private toaster: ToastrService) {
+
+  constructor(private firestoreService: FirestoreService, private firestore: Firestore, private toaster: ToastrService, private fb: FormBuilder) {
 
   }
   ngOnInit() {
@@ -78,6 +88,7 @@ requestdata: any;
     this.lastMonthDate();
     this.getAllUserProfilesdata();
     this.carousel();
+    this.createForm();
     this.getrequest();
   }
 
@@ -89,6 +100,12 @@ requestdata: any;
 
   }
 
+  createForm() {
+    this.profileForm = this.fb.group({
+      check_in: [undefined],
+      check_out: [undefined],
+    });
+  }
   getAllUserProfiles() {
     this.firestoreService.getAllUser().subscribe(
       (data) => {
@@ -122,23 +139,32 @@ requestdata: any;
     }
   }
 
-  checkin() {
+
+
+  checkin(index: any) {
     this.loading = true;
     const currentDate = new Date();
     const time = currentDate.toTimeString().split(' ')[0];
-    const date = currentDate.toDateString();
+
+        const date = index.date
+console.log("index", index)
+       let name = this.userdata.filter((data: any) => data.name === index.name)
 
     this.checkingstatus = true;
     const data = {
-      checkInTime: time,
-      name: this.profileData.name,
-      checkOutTime: '',
-      date: date,
+      checkInTime:  this.profileForm.value.check_in.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
+      checkOutTime: index.checkInTime,
+      date: index.date,
+      name: index.name,
+      location: index.location
     }
-    this.firestoreService.checkin(this.profileData.username, date, data)
+    console.log("checkout time check:", data, "user name:", name[0].username, date, "Valuegg", name);
+
+    this.firestoreService.checkOut(name[0].username, date, data)
       .then(() => {
         this.toaster.showSuccess('Successfully Check-In');
         this.loading = false;
+        this.closeedit();
         this.fetchTimelogData(this.profileData.username);
       })
       .catch(error => {
@@ -146,37 +172,79 @@ requestdata: any;
         console.error('Error adding data: ', error);
       });
   }
-
-  checkout() {
+  checkout(index: any) {
     this.loading = true;
     const currentDate = new Date();
     const time = currentDate.toTimeString().split(' ')[0];
-    const date = currentDate.toDateString();
-    const choutTime = this.days.find(product => product.date == date);
-    if (choutTime?.checkOutTime) {
-      this.toaster.showError('you are already checkout');
-      this.loading = false;
-      return;
-    }
-    const data = {
-      checkInTime: choutTime?.checkInTime,
-      name: this.profileData.name,
-      checkOutTime: time,
-      date: date,
-    }
 
-    this.firestoreService.checkOut(this.profileData.username, date, data)
+        const date = index.date
+
+       let name = this.userdata.filter((data: any) => data.name === index.name)
+
+    this.checkingstatus = true;
+    const data = {
+      checkInTime: index.checkInTime,
+      checkOutTime: this.profileForm.value.check_out.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
+      date: index.date,
+      name: index.name,
+      location: index.location
+    }
+    console.log("checkout time check:", data, "user name:", name[0].username, date, "Valuegg", name);
+
+    this.firestoreService.checkOut(name[0].username, date, data)
       .then(() => {
-        this.toaster.showSuccess('Successfully Checkout');
+        this.toaster.showSuccess('Successfully Check-In');
         this.loading = false;
+        this.closeedit();
         this.fetchTimelogData(this.profileData.username);
       })
       .catch(error => {
         this.loading = false;
-
         console.error('Error adding data: ', error);
       });
   }
+
+  // checkout(value: any) {
+  //   console.log("This is value:", value, "Value", this.time);
+  //   this.loading = true;
+  //   // const currentDate = new Date();
+  //   // const time = currentDate.toTimeString().split(' ')[0];
+  //   // const time = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+  //   // console.log("this is location name:", this.locationName, "nd", time);
+
+  //   const date = value.date
+  //   // const choutTime = this.days.find(product => product.date == date);
+
+
+  //   // if (choutTime?.checkOutTime) {
+  //   //   this.toaster.showError('you are already checkout');
+  //   //   this.loading = false;
+  //   //   return;
+  //   // }
+  //   let name = this.userdata.filter((data: any) => data.name === value.name)
+  //   const data = {
+  //     checkInTime: value?.checkInTime,
+  //     name: value.name,
+  //     checkOutTime: '07:00 PM',
+  //     date: value.date,
+  //     location: value.location,
+  //   }
+  //   console.log("checkout time check:", data, "user name:", name[0].username, date, "Valuegg", name);
+  //   this.firestoreService.checkOut(name[0].username, date, data)
+  //     .then(() => {
+  //       this.toaster.showSuccess('Successfully Checkout');
+  //       this.checkingstatus = false;
+  //       this.loading = false;
+
+  //       this.fetchTimelogData(this.profileData.username);
+  //     })
+  //     .catch(error => {
+  //       this.loading = false;
+
+  //       console.error('Error adding data: ', error);
+  //     });
+  // }
+
 
   fetchTimelogData(name: string) {
     this.loading = true;
@@ -357,13 +425,112 @@ requestdata: any;
   }
 
   getrequest() {
+    const date = new Date().toDateString();
     this.firestoreService.getRequest().subscribe((req) => {
-      console.log("request", req)
-      this.requestdata = req;
-      console.log("request store", this.requestdata)
+      console.log("date", date)
+      console.log("all request data", req)
+      const data = req.map((item: any[])=> item)
+      console.log("date", data)
+      this.requestdata = [];
 
-    })
+      for (let key in req) {
+        if (req[key] && typeof req[key] === 'object') {
+        for(let key2 in req[key]){
+          console.log("in which", key2)
+          if (req[key][key2] && req[key][key2].data && Array.isArray(req[key][key2].data)) {
+            this.requestdata.push(...req[key][key2].data);
+          }
+        }
+      }
+             
+      }
+      console.log("Processed request data", this.requestdata);
+    });
   }
+   
+  requestaccept(index: any){
+    console.log("accept", index)
+    const date = index.date
+const name = index.name
+
+ this.checkingstatus = true;
+ const data = {
+   checkInTime: index.checkInTime,
+   checkOutTime: index.checkOutTime,
+   date: index.date,
+   name: index.name,
+   location: index.location? index.location :''
+ }
+ console.log("checkout time check:", data);
+
+ this.firestoreService.checkOut(name, date, data)
+      .then(() => {
+        this.toaster.showSuccess('Successfully Accept Request');
+        this.loading = false;
+        this.closeedit();
+        this.requestdelete(index);
+        this.fetchTimelogData(this.profileData.username);
+      })
+      .catch(error => {
+        this.loading = false;
+        console.error('Error adding data: ', error);
+      });
+
+  }
+  requestdelete(index: any){
+    console.log("accept", index)
+    const date = index.date
+const name = index.name;
+    let requestindex = this.requestdata.findIndex((data: any) => data.name === index.name)
+
+ this.checkingstatus = true;
+ const data = {
+   checkInTime: index.checkInTime,
+   checkOutTime: index.checkOutTime,
+   date: index.date,
+   name: index.name,
+   location: index.location
+ }
+
+console.log("delete",name , date , data , requestindex)
+
+this.firestoreService.daleterequest( name, date, data , requestindex ).then(() => {
+  this.toaster.showSuccess('Successfully Delete Request');
+  this.cancelFrom();
+  this.fetchTimelogData(this.profileData.username);
+}).catch((error) => {
+  console.error('Error Request Delete:', error);
+});
+  }
+
+
+  timeedit(index: any) {
+    if (this.editmode == true) {
+      this.edittime = index;
+      this.editmode = false
+      console.log("status:", this.editmode)
+    }
+  }
+  timeeditout(index: any) {
+    if (this.editmodeout == true) {
+      this.edittimeout = index;
+      this.editmodeout = false
+      console.log("status:", this.editmode)
+    }else{
+      this.toaster.showError('Any Edit Field Open , First Close It');
+    }
+  }
+
+  closeedit() {
+
+    this.edittime = null;
+    this.edittimeout = null;
+    this.editmode = true
+    this.editmodeout = true
+    console.log("status close:", this.editmode)
+
+  }
+
 
   cancelFrom() {
     this.visible = false;
