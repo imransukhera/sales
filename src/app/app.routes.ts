@@ -9,6 +9,8 @@ import { AdminTimeSheetComponent } from './admin/layout/admin-time-sheet/admin-t
 import { ProjectsComponent } from './admin/projects/projects.component';
 import { AddUsersComponent } from './admin/layout/add-users/add-users.component';
 import { AuthGuard } from './auth.guard';
+import { CheckingLayoutComponent } from './pages/components/checkingtime/checking-layout/checking-layout.component';
+import { DashboardComponent } from './pages/components/dashboard/dashboard/dashboard.component';
 
 export const routes: Routes = [
     {
@@ -29,33 +31,37 @@ export const routes: Routes = [
     {
         path: RoutesEnum.DASHBOARD,
         loadComponent: () => import('./pages/components/dashboard/dashboard-layout/dashboard-layout.component').then(m => m.DashboardLayoutComponent),
-        canActivate: [AuthGuard]
+        canActivate: [AuthGuard],
+        data: { expectedRole: 'user' } 
     },
+    
     {
         path: RoutesEnum.CHECKING_DETAIL,
         loadComponent: () => import('./pages/components/checkingtime/checking-layout/checking-layout.component').then(m => m.CheckingLayoutComponent),
-        canActivate: [AuthGuard]
+        canActivate: [AuthGuard],
+        data: { expectedRole: 'user' } 
     },
     {
         path: RoutesEnum.ADMIN,
         loadComponent: () => import('./admin/layout/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
         canActivate: [AuthGuard],
+        data: { expectedRole: 'admin' },
         children: [
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-            { path: 'dashboard', component: AdminDashboardComponent },
-            { path: 'time-sheet', component: AdminTimeSheetComponent },
-            { path: 'projects', component: ProjectsComponent },
-            { path: 'add-users', component: AddUsersComponent }
+            { path: 'dashboard', component: AdminDashboardComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' }},
+            { path: 'time-sheet', component: AdminTimeSheetComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' }},
+            { path: 'projects', component: ProjectsComponent  , canActivate: [AuthGuard], data: { expectedRole: 'admin' }},
+            { path: 'add-users', component: AddUsersComponent  , canActivate: [AuthGuard], data: { expectedRole: 'admin' }}
         ]
     },
-    {
-        path: RoutesEnum.SECURITY,
-        loadComponent: () => import('./pages/components/security-layout/security-layout.component').then(m => m.SecurityLayoutComponent)
-    },
-    {
-        path: RoutesEnum.SETTINGS,
-        loadComponent: () => import('./pages/components/settings-layout/settings-layout.component').then(m => m.SettingsLayoutComponent)
-    },
+    // {
+    //     path: RoutesEnum.SECURITY,
+    //     loadComponent: () => import('./pages/components/security-layout/security-layout.component').then(m => m.SecurityLayoutComponent)
+    // },
+    // {
+    //     path: RoutesEnum.SETTINGS,
+    //     loadComponent: () => import('./pages/components/settings-layout/settings-layout.component').then(m => m.SettingsLayoutComponent)
+    // },
     {
         path: '**',
         redirectTo: '404'

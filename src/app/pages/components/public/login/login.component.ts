@@ -6,6 +6,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { ToastrService } from '@services/toastr.service';
 import { FirestoreService } from '@services/firestore.service';
 import { user } from '@angular/fire/auth';
+import { AuthService } from '../../../../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -23,7 +24,8 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private toaster: ToastrService,
     private firestoreService: FirestoreService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private authService: AuthService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required]],
@@ -32,7 +34,14 @@ export class LoginComponent implements OnInit {
     });
   }
   ngOnInit() {
+    const currentRole = this.authService.getRole();
 
+    // If user is already logged in, redirect to their respective dashboard
+    if (currentRole === 'admin') {
+      this.router.navigate([this.routeService.admin]);
+    } else if (currentRole === 'user') {
+      this.router.navigate([this.routeService.dashboard]);
+    }
   }
 
   fetchTimelogData(name: string) {

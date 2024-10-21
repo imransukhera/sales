@@ -80,7 +80,7 @@
 
     <!-- Logout Button -->
     <footer class="border-t border-gray-700">
-        <button routerLink="/{{routeService.login}}"
+        <button routerLink="/{{routeService.login}}" (click)="logout()"
             class="flex items-center justify-between w-full p-4 mb-4 hover:bg-gray-700 focus:outline-none">
             <div class="flex items-center gap-3" >
                 <svg class="h-6 w-6 text-white" [ngClass]="{'mr-2': sidebarOpen }" fill="none" viewBox="0 0 24 24"
@@ -88,7 +88,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                 </svg>
-                <span class="flex justify-start" *ngIf="sidebarOpen">Logout</span>
+                <span class="flex justify-start" *ngIf="sidebarOpen" >Logout</span>
             </div>
         </button>
     </footer>
