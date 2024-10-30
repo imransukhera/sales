@@ -206,7 +206,37 @@ export class FirestoreService {
       if (existingIndex !== -1) {
         existingData[day]['data'][existingIndex] = data;
       } else {
+        // existingData[day]['data'].push(data);
+        console.log("no fonud existing data ")
+      }
+
+      await setDoc(docRef, existingData, { merge: true });
+    } catch (error) {
+      console.error('Error adding document: ', error);
+    }
+  }
+
+  async AcceptRequest(name: string, day: string, data: any): Promise<void> {
+    const docRef = doc(this.firestore, "attendancePortal", name);
+
+    try {
+      const docSnapshot: DocumentSnapshot = await getDoc(docRef);
+      let existingData = docSnapshot.exists() ? docSnapshot.data() : {};
+
+      if (!existingData[day]) {
+        existingData[day] = {};
+      }
+      if (!existingData[day]['data']) {
+        existingData[day]['data'] = [];
+      }
+
+      const existingIndex = existingData[day]['data'].findIndex((entry: any) => entry.id === data.id);
+
+      if (existingIndex !== -1) {
+        existingData[day]['data'][existingIndex] = data;
+      } else {
         existingData[day]['data'].push(data);
+        console.log("no fonud existing data ")
       }
 
       await setDoc(docRef, existingData, { merge: true });
@@ -263,21 +293,22 @@ export class FirestoreService {
       const docSnapshot: DocumentSnapshot = await getDoc(docRef);
       let existingData = docSnapshot.exists() ? docSnapshot.data() : {};
 
-      if (!existingData[day]) {
-        existingData[day] = {};
-      }
-      if (!existingData[day]['data']) {
-        existingData[day]['data'] = [];
-      }
+      
+      console.log("Available keys:", Object.keys(existingData));
 
-      if (typeof indexToRemove === 'number') {
-        existingData[day]['data'].splice(day);
-      } else {
-        console.log("not found")
-        // existingData[day]['data'].push(data);
-      }
+      const foundKey = Object.keys(existingData).find(key => key.includes(day));
 
-      await setDoc(docRef, existingData, { merge: true });
+      if (foundKey) {
+
+        delete existingData[foundKey];
+        await setDoc(docRef, existingData);
+        console.log(`Successfully updated document after deleting ${foundKey}`);
+    } else {
+        console.log(`Day ${day} not found in the document`);
+    }
+    
+
+      // await setDoc(docRef, existingData, { merge: true });
     } catch (error) {
     }
   }
@@ -333,5 +364,89 @@ export class FirestoreService {
     return collectionData(usersCollection, { idField: 'id' });
   }
 
+
+  
+  async submitleave(name: any, day: any, data: any): Promise<void> {
+    const docRef = doc(this.firestore, "leave_request", name);
+    try {
+      const docSnapshot: DocumentSnapshot = await getDoc(docRef);
+      let existingData = docSnapshot.exists() ? docSnapshot.data() : {};
+
+      if (!existingData[day]) {
+        existingData[day] = {};
+      }
+      if (!existingData[day]['data']) {
+        existingData[day]['data'] = [];
+      }
+
+      existingData[day]['data'].push(data);
+
+      await setDoc(docRef, existingData, { merge: true });
+    } catch (error) {
+      console.error('Error adding document: ', error);
+    }
+
+  }
+
+  async leaveupdate(name: string, day: string, data: any): Promise<void> {
+    const docRef = doc(this.firestore, "leave_request", name);
+
+    try {
+      const docSnapshot: DocumentSnapshot = await getDoc(docRef);
+      let existingData = docSnapshot.exists() ? docSnapshot.data() : {};
+
+      if (!existingData[day]) {
+        existingData[day] = {};
+      }
+      if (!existingData[day]['data']) {
+        existingData[day]['data'] = [];
+      }
+
+      const existingIndex = existingData[day]['data'].findIndex((entry: any) => entry.id === data.id);
+
+      if (existingIndex !== -1) {
+        existingData[day]['data'][existingIndex] = data;
+      } else {
+        // existingData[day]['data'].push(data);
+        console.log("no fonud existing data ")
+      }
+
+      await setDoc(docRef, existingData, { merge: true });
+    } catch (error) {
+      console.error('Error adding document: ', error);
+    }
+  }
+
+  async leavedelete(name: string, day: string, data: any, indexToRemove?: number): Promise<void> {
+    const docRef = doc(this.firestore, "leave_request", name);
+
+    try {
+      const docSnapshot: DocumentSnapshot = await getDoc(docRef);
+      let existingData = docSnapshot.exists() ? docSnapshot.data() : {};
+
+      
+      console.log("Available keys:", Object.keys(existingData));
+
+      const foundKey = Object.keys(existingData).find(key => key.includes(day));
+
+      if (foundKey) {
+
+        delete existingData[foundKey];
+        await setDoc(docRef, existingData);
+        console.log(`Successfully updated document after deleting ${foundKey}`);
+    } else {
+        console.log(`Day ${day} not found in the document`);
+    }
+    
+
+      // await setDoc(docRef, existingData, { merge: true });
+    } catch (error) {
+    }
+  }
+
+  getleave(): Observable<any[]> {
+    const usersCollection = collection(this.firestore, 'leave_request');
+    return collectionData(usersCollection, { idField: 'id' });
+  }
 
 }

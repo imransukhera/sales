@@ -13,6 +13,7 @@ import { CheckingDetailComponent } from "../checking-detail/checking-detail.comp
 import { ToastrService } from '@services/toastr.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { DashboardComponent } from "../dashboard/dashboard.component";
 
 interface TimelogEntry {
   date: any; // Use appropriate type if you know it (e.g., Date or Timestamp)
@@ -34,16 +35,17 @@ interface WeeklyData {
   selector: 'app-time-logs-sheet',
   standalone: true,
   imports: [
+    CommonModule,
     TableModule,
     DropdownModule,
     DialogModule,
     CalendarModule,
     FormsModule,
-    CommonModule,
     ProgressSpinnerModule,
     CheckingDetailComponent,
-    ProgressBarModule
-  ],
+    ProgressBarModule,
+    DashboardComponent
+],
   templateUrl: './time-logs-sheet.component.html',
   styleUrls: ['./time-logs-sheet.component.scss']
 })

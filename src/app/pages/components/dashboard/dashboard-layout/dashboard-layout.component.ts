@@ -6,6 +6,7 @@ import { CheckingDetailComponent } from "../checking-detail/checking-detail.comp
 import { CommonModule } from '@angular/common';
 import { Navigation, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { RouteService } from '@services/route.service';
+import { TimeLogsSheetComponent } from "../time-logs-sheet/time-logs-sheet.component";
 
 @Component({
   selector: 'app-dashboard-layout',
@@ -15,7 +16,9 @@ import { RouteService } from '@services/route.service';
     ProjectSidebarComponent,
     DashboardComponent,
     HeaderComponent,
-    CheckingDetailComponent
+    CheckingDetailComponent,
+    TimeLogsSheetComponent,
+    RouterOutlet
 ],
   templateUrl: './dashboard-layout.component.html',
   styleUrl: './dashboard-layout.component.scss'

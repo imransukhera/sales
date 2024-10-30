@@ -7,17 +7,20 @@ import { ToastrService } from '@services/toastr.service';
 import { FirestoreService } from '@services/firestore.service';
 import { user } from '@angular/fire/auth';
 import { AuthService } from '../../../../auth.service';
+import { PasswordModule } from 'primeng/password';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, PasswordModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
 export class LoginComponent implements OnInit {
   loading: boolean = false;
   loginForm: FormGroup;
+  passwordFieldType: string = 'password';
+
 
   constructor(
     public routeService: RouteService,
@@ -84,6 +87,9 @@ export class LoginComponent implements OnInit {
       this.loading = false;
       this.toaster.showError('Login Failed');
     }
+  }
+  togglePasswordVisibility() {
+    this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
   }
 
 }

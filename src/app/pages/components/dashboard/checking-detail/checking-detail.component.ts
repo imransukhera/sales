@@ -12,6 +12,7 @@ import { ToastrService } from '@services/toastr.service';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { catchError, map, of, tap } from 'rxjs';
+import { DashboardComponent } from "../dashboard/dashboard.component";
 declare var google: any;
 @Component({
   selector: 'app-checking-detail',
@@ -26,8 +27,9 @@ declare var google: any;
     ProjectSidebarComponent,
     ProgressBarModule,
     HttpClientModule,
-    ReactiveFormsModule
-  ],
+    ReactiveFormsModule,
+    DashboardComponent
+],
   templateUrl: './checking-detail.component.html',
   styleUrl: './checking-detail.component.scss'
 })
@@ -51,6 +53,7 @@ export class CheckingDetailComponent implements OnInit {
   requestselected: any
   currentAddress: any;
   dateTime = new Date();
+  canCheckIn: boolean = true;
   issueName: any[] = [
     {
       name: 'Check In' , valuename: 'checkInTime'
@@ -94,6 +97,14 @@ export class CheckingDetailComponent implements OnInit {
     console.log('request type', type)
     this.requestselected = type;
 
+  }
+
+  checkCheckInTime() {
+    const currentTime = new Date();
+    const cutoffTime = new Date();
+    cutoffTime.setHours(10, 30, 0); // Set cutoff time to 10:30 am
+
+    this.canCheckIn = currentTime < cutoffTime;
   }
 
   createForm() {
@@ -273,9 +284,8 @@ export class CheckingDetailComponent implements OnInit {
       name: this.profileData.name,
       checkOutTime: time,
       date: date,
-      location: this.locationName,
+      location: choutTime?.location,
     }
-    console.log("checkout time check:", data)
 
     this.firestoreService.checkOut(this.profileData.username, date, data)
       .then(() => {
@@ -345,42 +355,59 @@ export class CheckingDetailComponent implements OnInit {
       this.toaster.showError('Please fill out all asterisk fields');
       return;
     }
-    // let value = this.profileForm.value['check_in'].toTimeString()?.split(' ')[0];
-    let value = this.profileForm.value;
-    // const index = this.requestdata.findIndex((item: any) => item);
-    // const choutTime = this.requestdata[index][value.date.toDateString()].data[0];
 
-    // console.log("datahhh", choutTime)
+    let value = this.profileForm.value;
+    const date = value.date.toDateString()
+    const index = this.days.findIndex(product => product.date == value.date.toDateString());
+    const choutTime = this.days[index];
+
+   
     let data: any;
     if (value.name == 'Check In') {
+      if(!choutTime?.checkInTime){
       data = {
         checkInTime: value.checkInTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
         name: this.profileData.name,
-        checkOutTime: '',
+        checkOutTime:  choutTime?.checkOutTime ? choutTime?.checkOutTime: '' ,
         location: this.profileForm.value.location ,
         date: value.date.toDateString(),
-      }
-    }  if (value.name == 'Check Out') {
+        username: this.profileData.username,
+        status: value.name
+      }}else{
+        return this.toaster.showError('You are Already checkIn if any issue in checkIn connect HR');
+       }
+    } 
+     if (value.name == 'Check Out') {
+      if(choutTime?.checkInTime){
       data = {
-        checkInTime: '',
+        checkInTime: choutTime?.checkInTime,
         name: this.profileData.name,
         checkOutTime: value.checkOutTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
-        location: this.profileForm.value.location ,
+        location: choutTime?.location ,
         date: value.date.toDateString(),
-      }
-
-    }if (value.name == 'Both'){
-      data = {
-        checkInTime: value.checkInTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
-        name: this.profileData.name,
-        checkOutTime: value.checkOutTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
-        location: this.profileForm.value.location ,
-        date: value.date.toDateString(),
+        username: this.profileData.username,
+        status: value.name
+      }}else{
+        return this.toaster.showError('You are not CheckIn , first CheckIn then Apply CheckOut');
       }
     }
-    console.log("this is value:", this.profileData.name, value.date.toDateString(),  data);
+    if (value.name == 'Both'){
+      if(!choutTime?.checkInTime){
+      data = {
+        checkInTime: value.checkInTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
+        name: this.profileData.name,
+        checkOutTime: value.checkOutTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
+        location: this.profileForm.value.location ,
+        date: value.date.toDateString(),
+        username: this.profileData.username,
+        status: value.name
+      }
+    }else{
+      return this.toaster.showError('You are Already checkIn Apply checkout if any issue then contact to HR');    }
+    }
+    console.log("this is value:", this.profileData.username, value.date.toDateString(),  data);
     
-    this.firestoreService.SendRequest(this.profileData.name, value.date.toDateString(), data).then(() => {
+    this.firestoreService.SendRequest(this.profileData.username, value.date.toDateString(), data).then(() => {
       this.toaster.showSuccess('Successfully Submit Request');
       this.cancelFrom();
       this.fetchTimelogData(this.profileData.username);

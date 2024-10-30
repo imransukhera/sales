@@ -302,7 +302,7 @@
                     </td>
                     <td>
                         <span class="px-2 text-sm"><span class="text-red-600 font-semibold">Name:</span> {{data.name}} -  <span class="text-red-600 font-semibold">Date:</span> {{data.date}} -
-                        <span class="text-red-600 font-semibold">Check-in Time:</span> {{data.checkInTime ? data.checkInTime: '❌'}} - <span class="text-red-600 font-semibold">Check-out Time:</span> {{data.checkOutTime ? data.checkOutTime : '❌'}}</span>
+                        <span class="text-red-600 font-semibold" *ngIf="data.status == 'Check In' || data.status == 'Both'">Check-in Time:</span > <span *ngIf="data.status == 'Check In'|| data.status == 'Both'">{{data.checkInTime ? data.checkInTime: '❌'}}</span> - <span class="text-red-600 font-semibold" *ngIf="data.status == 'Check Out'|| data.status == 'Both'">Check-out Time:</span> <span *ngIf="data.status == 'Check Out'|| data.status == 'Both'">{{data.checkOutTime ? data.checkOutTime : '❌'}}</span></span>
                     </td>
                     <td>
                         <div class="flex gap-2 mx-2">

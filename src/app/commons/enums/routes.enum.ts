@@ -5,6 +5,8 @@ export enum RoutesEnum {
     DASHBOARD = 'dashboard',
     ADMIN = 'admin',
     CHECKING_DETAIL = 'checking-detail',
+    Leaves = 'leaves',
+    Task = 'task-management',
     MESSAGES = 'messages',
     SECURITY = 'security',
     SETTINGS = 'settings',

@@ -1,0 +1,71 @@
+:host ::ng-deep{
+    .p-calendar {
+        .p-inputtext:enabled:focus {
+            outline: 0 none;
+            outline-offset: 0;
+            box-shadow: 0 0 0 0 #BFDBFE;
+            border-color: #ffffff;
+        }
+
+        .p-inputtext:enabled:focus {
+            outline: 0 none;
+            outline-offset: 0;
+            box-shadow: 0 0 0 0 #BFDBFE;
+            border-color: #ffffff;
+        }
+
+        input {
+            border: 0px solid rgb(255, 255, 255);
+            padding: 6px;
+            border-radius: 6px;
+            font-size: 13px;
+            width: 100%;
+        }
+    }
+
+    .p-calendar {
+        width: 100%;
+    }
+    .p-dialog-header {
+        display: none !important;
+
+    }
+    .p-dropdown {
+        display: flex;
+        align-items: center;
+        border: 1px solid rgb(224, 224, 224);
+        padding: 6px;
+    }
+
+    input {
+        border: 1px solid rgb(224, 224, 224);
+        padding: 6px;
+        border-radius: 6px;
+        font-size: 13px;
+        width: 100%;
+    }
+
+    .p-dropdown-trigger {
+        width: 15px;
+        height: 15px;
+        margin-left: 10px;
+    }
+
+    .p-dropdown-trigger-icon {
+        height: 14px;
+        width: 14px;
+    }
+
+    .p-dropdown-item {
+        border: 1px solid #ffffff;
+        padding: 6px;
+        text-align: justify;
+    }
+
+    .p-dropdown:not(.p-disabled).p-focus {
+        box-shadow: 0 0 0 0 #BFDBFE;
+    }
+
+  
+
+}

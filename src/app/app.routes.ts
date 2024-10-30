@@ -10,14 +10,29 @@ import { ProjectsComponent } from './admin/projects/projects.component';
 import { AddUsersComponent } from './admin/layout/add-users/add-users.component';
 import { AuthGuard } from './auth.guard';
 import { CheckingLayoutComponent } from './pages/components/checkingtime/checking-layout/checking-layout.component';
-import { DashboardComponent } from './pages/components/dashboard/dashboard/dashboard.component';
+import { DashboardLayoutComponent } from './pages/components/dashboard/dashboard-layout/dashboard-layout.component';
+import { TimeLogsSheetComponent } from './pages/components/dashboard/time-logs-sheet/time-logs-sheet.component';
+import { CheckingDetailComponent } from './pages/components/dashboard/checking-detail/checking-detail.component';
+import { LeavesComponent } from './pages/components/leaves/leaves.component';
+import { TaskManagementComponent } from './pages/components/task-management/task-management.component';
+import { TaskComponent } from './pages/components/task-management/components/task/task.component';
+import { ProjectsDetailComponent } from './pages/components/task-management/components/projects-detail/projects-detail.component';
+import { LeavesLogsComponent } from './admin/leaves-logs/leaves-logs.component';
 
 export const routes: Routes = [
+    
     {
         path: RoutesEnum.LOGIN,
         loadComponent: () => import('./pages/components/public/login/login.component').then(m => m.LoginComponent),
-        // canActivate: [AuthGuard]
+        // canActivate: [AuthGuard],
+        // children: [
+        //     { path: '', redirectTo: RoutesEnum.DASHBOARD, pathMatch: 'full' },
+        //     { path: RoutesEnum.DASHBOARD, component:  DashboardLayoutComponent, canActivate: [AuthGuard], data: { expectedRole: 'user' }},
+        //     { path: RoutesEnum.CHECKING_DETAIL, component: CheckingLayoutComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},
+     
+        // ]
     },
+
     {
         path: RoutesEnum.SIGNUP,
         loadComponent: () => import('./pages/components/public/signup/signup.component').then(m => m.SignupComponent),
@@ -28,19 +43,35 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/components/public/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent),
         // canActivate: [AuthGuard]
     },
+
     {
-        path: RoutesEnum.DASHBOARD,
+        path: '',
         loadComponent: () => import('./pages/components/dashboard/dashboard-layout/dashboard-layout.component').then(m => m.DashboardLayoutComponent),
-        canActivate: [AuthGuard],
-        data: { expectedRole: 'user' } 
+        canActivate: [AuthGuard], 
+        data: { expectedRole: 'user' } ,
+        children: [
+            { path: '', redirectTo: RoutesEnum.DASHBOARD, pathMatch: 'full' },
+            { path: RoutesEnum.DASHBOARD, component: TimeLogsSheetComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},
+            { path: RoutesEnum.CHECKING_DETAIL, component: CheckingDetailComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},
+            { path: RoutesEnum.Leaves, component: LeavesComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},
+            { path: RoutesEnum.Task, component: TaskManagementComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' },
+        children:[
+            { path: '', redirectTo: 'projects', pathMatch: 'full' },
+            { path: 'projects', component: ProjectsDetailComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},   
+            { path: 'task', component: TaskComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},   
+        ]
+    },
+
+           
+        ]
     },
     
-    {
-        path: RoutesEnum.CHECKING_DETAIL,
-        loadComponent: () => import('./pages/components/checkingtime/checking-layout/checking-layout.component').then(m => m.CheckingLayoutComponent),
-        canActivate: [AuthGuard],
-        data: { expectedRole: 'user' } 
-    },
+    // {
+    //     path: RoutesEnum.CHECKING_DETAIL,
+    //     loadComponent: () => import('./pages/components/checkingtime/checking-layout/checking-layout.component').then(m => m.CheckingLayoutComponent),
+    //     canActivate: [AuthGuard],
+    //     data: { expectedRole: 'user' } 
+    // },
     {
         path: RoutesEnum.ADMIN,
         loadComponent: () => import('./admin/layout/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
@@ -51,7 +82,9 @@ export const routes: Routes = [
             { path: 'dashboard', component: AdminDashboardComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' }},
             { path: 'time-sheet', component: AdminTimeSheetComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' }},
             { path: 'projects', component: ProjectsComponent  , canActivate: [AuthGuard], data: { expectedRole: 'admin' }},
-            { path: 'add-users', component: AddUsersComponent  , canActivate: [AuthGuard], data: { expectedRole: 'admin' }}
+            { path: 'add-users', component: AddUsersComponent  , canActivate: [AuthGuard], data: { expectedRole: 'admin' }},
+            { path: 'leaves-logs', component: LeavesLogsComponent  , canActivate: [AuthGuard], data: { expectedRole: 'admin' }}
+
         ]
     },
     // {

@@ -31,6 +31,12 @@ export class RouteService {
   get checkingdetail() {
     return RoutesEnum.CHECKING_DETAIL;
   }
+  get leaves() {
+    return RoutesEnum.Leaves;
+  }
+  get Task() {
+    return RoutesEnum.Task;
+  }
 
   get security() {
     return RoutesEnum.SECURITY;

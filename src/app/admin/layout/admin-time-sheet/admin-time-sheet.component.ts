@@ -71,6 +71,7 @@ export class AdminTimeSheetComponent {
   edittimeout: any;
   time: Date[] | undefined;
   profileForm!: FormGroup;
+  requestdataid: any;
 
 
   constructor(private firestoreService: FirestoreService, private firestore: Firestore, private toaster: ToastrService, private fb: FormBuilder) {
@@ -153,7 +154,7 @@ console.log("index", index)
     this.checkingstatus = true;
     const data = {
       checkInTime:  this.profileForm.value.check_in.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
-      checkOutTime: index.checkInTime,
+      checkOutTime: index.checkOutTime,
       date: index.date,
       name: index.name,
       location: index.location
@@ -435,10 +436,11 @@ console.log("index", index)
 
       for (let key in req) {
         if (req[key] && typeof req[key] === 'object') {
+        
         for(let key2 in req[key]){
           console.log("in which", key2)
           if (req[key][key2] && req[key][key2].data && Array.isArray(req[key][key2].data)) {
-            this.requestdata.push(...req[key][key2].data);
+            this.requestdata.push(...req[key][key2].data );
           }
         }
       }
@@ -451,8 +453,8 @@ console.log("index", index)
   requestaccept(index: any){
     console.log("accept", index)
     const date = index.date
-const name = index.name
-
+const name = index.username
+console.log("username", name)
  this.checkingstatus = true;
  const data = {
    checkInTime: index.checkInTime,
@@ -461,26 +463,43 @@ const name = index.name
    name: index.name,
    location: index.location? index.location :''
  }
- console.log("checkout time check:", data);
+ console.log("checkout time check:",name, data);
 
- this.firestoreService.checkOut(name, date, data)
-      .then(() => {
-        this.toaster.showSuccess('Successfully Accept Request');
-        this.loading = false;
-        this.closeedit();
-        this.requestdelete(index);
-        this.fetchTimelogData(this.profileData.username);
-      })
-      .catch(error => {
-        this.loading = false;
-        console.error('Error adding data: ', error);
-      });
+if(index.status == 'Check In' || index.status == 'Both' ){
+  this.firestoreService.AcceptRequest(name, date, data)
+  .then(() => {
+    this.toaster.showSuccess('Successfully Accept Request');
+    this.loading = false;
+    this.closeedit();
+    this.requestdelete(index);
+    this.fetchTimelogData(this.profileData.username);
+    return
+  })
+  .catch(error => {
+    this.loading = false;
+    console.error('Error adding data: ', error);
+    return
+  });
+}else if(index.status == 'Check Out'){
+  this.firestoreService.checkOut(name, date, data)
+  .then(() => {
+    this.toaster.showSuccess('Successfully Accept Request');
+    this.loading = false;
+    this.closeedit();
+    this.requestdelete(index);
+    this.fetchTimelogData(this.profileData.username);
+  })
+  .catch(error => {
+    this.loading = false;
+    console.error('Error adding data: ', error);
+  });
+}
 
   }
   requestdelete(index: any){
     console.log("accept", index)
     const date = index.date
-const name = index.name;
+const name = index.username;
     let requestindex = this.requestdata.findIndex((data: any) => data.name === index.name)
 
  this.checkingstatus = true;
@@ -495,7 +514,7 @@ const name = index.name;
 console.log("delete",name , date , data , requestindex)
 
 this.firestoreService.daleterequest( name, date, data , requestindex ).then(() => {
-  this.toaster.showSuccess('Successfully Delete Request');
+  this.toaster.showError('Successfully Delete Request');
   this.cancelFrom();
   this.fetchTimelogData(this.profileData.username);
 }).catch((error) => {
