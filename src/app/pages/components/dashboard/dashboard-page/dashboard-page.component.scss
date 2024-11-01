@@ -1,0 +1,11 @@
+:host ::ng-deep{
+    .p-progressbar {
+        height: 0.5rem;
+    }
+    .p-progressbar-label {
+        display: none;
+    }
+    .p-progressbar .p-progressbar-value {
+        background: #12cb61;
+    }
+}

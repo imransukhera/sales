@@ -113,6 +113,13 @@
 
     <!-- Logout Button -->
     <footer class="border-t border-gray-700">
+        <button routerLink="/privacy-policy"
+        class="flex items-center justify-between w-full  mb-1     focus:outline-none">
+        <div class="flex items-center gap-3 m-auto" >
+           <i class="pi pi-shield text-2xl p-3 rounded-md  bg-white hover:bg-gray-700 text-blue-900 hover:text-white"></i>
+            <span class="flex justify-start" *ngIf="sidebarOpen" >Logout</span>
+        </div>
+    </button>
         <button routerLink="/{{routeService.login}}" (click)="logout()"
             class="flex items-center justify-between w-full p-4 mb-4 hover:bg-gray-700 focus:outline-none">
             <div class="flex items-center gap-3" >

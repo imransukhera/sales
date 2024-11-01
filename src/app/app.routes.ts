@@ -18,6 +18,8 @@ import { TaskManagementComponent } from './pages/components/task-management/task
 import { TaskComponent } from './pages/components/task-management/components/task/task.component';
 import { ProjectsDetailComponent } from './pages/components/task-management/components/projects-detail/projects-detail.component';
 import { LeavesLogsComponent } from './admin/leaves-logs/leaves-logs.component';
+import { PrivacyPolicyComponent } from './pages/components/policy/privacy-policy/privacy-policy.component';
+import { DashboardPageComponent } from './pages/components/dashboard/dashboard-page/dashboard-page.component';
 
 export const routes: Routes = [
     
@@ -51,6 +53,7 @@ export const routes: Routes = [
         data: { expectedRole: 'user' } ,
         children: [
             { path: '', redirectTo: RoutesEnum.DASHBOARD, pathMatch: 'full' },
+            { path: 'dashboard-page', component: DashboardPageComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},
             { path: RoutesEnum.DASHBOARD, component: TimeLogsSheetComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},
             { path: RoutesEnum.CHECKING_DETAIL, component: CheckingDetailComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},
             { path: RoutesEnum.Leaves, component: LeavesComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},
@@ -61,6 +64,7 @@ export const routes: Routes = [
             { path: 'task', component: TaskComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},   
         ]
     },
+    { path: 'privacy-policy', component: PrivacyPolicyComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},
 
            
         ]

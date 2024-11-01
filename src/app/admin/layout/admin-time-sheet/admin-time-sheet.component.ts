@@ -72,8 +72,8 @@ export class AdminTimeSheetComponent {
   time: Date[] | undefined;
   profileForm!: FormGroup;
   requestdataid: any;
-
-
+  ontime: any;
+  middletime: any;
   constructor(private firestoreService: FirestoreService, private firestore: Firestore, private toaster: ToastrService, private fb: FormBuilder) {
 
   }
@@ -91,6 +91,7 @@ export class AdminTimeSheetComponent {
     this.carousel();
     this.createForm();
     this.getrequest();
+    this.checkCheckInTime();
   }
 
   lastMonthDate() {
@@ -98,6 +99,21 @@ export class AdminTimeSheetComponent {
     const lastSunday = new Date(today.getFullYear(), today.getMonth(), 1);
     const lastFriday = new Date(today.getFullYear(), today.getMonth() + 1, 0);
     this.dateRange = [lastSunday, lastFriday];
+
+  }
+
+  checkCheckInTime() {
+    const currentTime = new Date();
+   
+    const ontime = new Date();
+    const middletime = new Date();
+
+   
+   ontime.setHours(10, 20, 0); // Set cutoff time to 10:30 am
+   middletime.setHours(10, 30, 59); // Set cutoff time to 10:30 am
+   this.ontime = ontime.toLocaleTimeString();
+   this.middletime= middletime.toLocaleTimeString();
+   
 
   }
 

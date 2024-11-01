@@ -1,4 +1,4 @@
-<div class="w-full relative h-full" [ngClass]="{'dull-bg': loading}">
+<div class="w-full relative h-auto" [ngClass]="{'dull-bg': loading}">
     <div class="h-full">
         <!-- Table Header -->
          <app-dashboard>
@@ -16,22 +16,23 @@
                 </button>
          </app-dashboard>
 
-         <div class="my-4 mb-4">
-            <span class="text-3xl font-semibold text-gray-700">Checking Time Detail</span>
-        </div>
+        
       
         <div id="map"></div>
         <!-- Table Header -->
         <div class="header-section flex justify-content-between align-items-center p-2">
-            <div class="header-title flex justify-content-between w-[100%]">
-                <div class="flex w-[100%] justify-end">
+            <div class="header-title flex flex-col md:flex-row gap-2 justify-content-between w-[100%]">
+                <div class="md:w-[50%] mt-3">
+                    <span class="text-xl tracking-wider	 font-semibold  text-slate-800	">Checking Time Detail </span>
+                </div>
+                <div class="flex md:w-[50%] justify-end">
                     <div class="border-[0.5px] rounded-md">
-                        <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true"
+                        <p-calendar [(ngModel)]="rangeDates"  selectionMode="range" [readonlyInput]="true"
                             [showIcon]="true" inputId="range">
                         </p-calendar>
                     </div>
                     <div class="pl-3">
-                        <button type="button"
+                        <button type="button" (click)="searchRecord()"
                             class="focus:outline-none text-white bg-[#1c4c74] hover:bg-green-800 focus:ring-4 focus:ring-green-300 rounded-lg text-sm px-3 me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 h-[35px]">
                             Search
                         </button>
@@ -42,48 +43,94 @@
 
         </div>
 
+        <div class="grid md:grid-cols-3  gap-3 my-5">
+          
+            <div class="shadow-xl flex flex-col justify-between gap-3 p-3 bg-white rounded-lg">
+                <div class="flex justify-between gap-1 mt-2">
+                    <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1">On Time
+                        <span class="text-xl text-black">
+                            {{ontimecount}} </span> </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-5 -5 35 35" fill="#22ac00" class="bg-green-200 rounded-lg">
+                                <path
+                                    d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
+                            </svg>
+                </div>
+            </div>
+            <div class="shadow-xl flex flex-col justify-between gap-3 p-3 bg-white rounded-lg">
+                <div class="flex justify-between gap-1 mt-2">
+                    <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1">Allow Time
+                        <span class="text-xl text-black">
+                            {{middletimecount}} </span> </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-5 -5 35 35" fill="#dfd800" class="bg-yellow-100 rounded-lg">
+                                <path
+                                    d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
+                            </svg>
+                </div>
+            </div>
+            <div class="shadow-xl flex flex-col justify-between gap-3 p-3 bg-white rounded-lg">
+                <div class="flex justify-between gap-1 mt-2">
+                    <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1">After Allow Time
+                        <span class="text-xl text-black">
+                            {{aftertimecount}} </span> </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-5 -5 35 35" fill="#df0044" class="bg-red-200 rounded-lg">
+                                <path
+                                    d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
+                            </svg>
+                </div>
+            </div>
+        </div>
+
         <!-- Weekly Data Table -->
-        <div class="data-table  mt-3 border-4 border-[#1c4c74] rounded-lg p-1">
-            <p-table  [scrollable]="true" scrollHeight="75vh" [virtualScroll]="true"  [value]="[days]" class="p-datatable-gridlines p-datatable-striped">
+        <div class="data-table  mt-3  rounded-lg p-1">
+            <p-table  [scrollable]="true" scrollHeight="75vh"   [value]="[days]" class="p-datatable-gridlines p-datatable-striped ">
                 <ng-template pTemplate="header" >
                     <tr class="p-2 bg-[#1c4c74] ">
-                        <th class="bg-[#1c4c74] p-3 text-white w-[300px]" style="min-width: 300px !important;">
+                        <th class="bg-[#1c4c74] p-2 text-white w-[300px]" style="min-width: 300px !important;">
                             <span class="font-normal text-md ">Name</span>
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[300px]" style="min-width: 200px !important;">
+                        <th class="bg-[#1c4c74] p-2 text-white w-[300px]" style="min-width: 200px !important;">
                             <span class="font-normal text-md">Date</span>
 
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[300px]" style="min-width: 150px !important;">
+                        <th class="bg-[#1c4c74] p-2 text-white w-[300px]" style="min-width: 150px !important;">
                             <span class="font-normal text-md">Check-In</span>
 
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[300px]" style="min-width: 150px !important;">
+                        <th class="bg-[#1c4c74] p-2 text-white w-[300px]" style="min-width: 150px !important;">
                             <span class="font-normal text-md">Check-Out</span>
 
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[300px]" style="min-width: 500px !important;">
+                        <th class="bg-[#1c4c74] p-2 text-white w-[300px] flex justify-center" style="min-width: 150px !important;">
+                            <span class="font-normal text-md">Status</span>
+
+                        </th>
+                        <th class="bg-[#1c4c74] p-2 text-white w-[300px]" style="min-width: 463px !important;">
                             <span class="font-normal text-md">Location</span>
 
                         </th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body">
-                    <tr *ngFor="let day of days" class="border-b-2">
-                        <td class="w-[300px !important] p-3">
+                    <tr *ngFor="let day of datarecord" class="border-b-2 " >
+                        <td class="w-[300px !important] p-2">
                             {{day.name}}
                         </td>
-                        <td class="w-[300px !important] p-3">
+                        <td class="w-[300px !important] p-2">
                             {{day.date}}
                         </td>
-                        <td class="w-[300px !important] p-3">
+                        <td class="w-[300px !important] p-2" >
                             {{day.checkInTime }}
                         </td>
-                        <td class="w-[300px !important] p-3">
+                        <td class="w-[300px !important] p-2">
                             {{day.checkOutTime ? day.checkOutTime : '❌'}}
                         </td>
-                        <td class="w-[300px !important] p-3">
-                            {{day.location ? day.location : '❌'}}
+                        <td class="w-[300px !important] p-2 flex justify-center">
+                            <div class="text-xs bg-green-200 text-green-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center" *ngIf="ontime > day.checkInTime">On Time</div>
+                            <div class="text-xs bg-green-200 text-green-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center" *ngIf=" middletime > day.checkInTime && ontime < day.checkInTime ">Allow Time</div>
+                            <div class="text-xs bg-red-200 text-red-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center" *ngIf="middletime< day.checkInTime">Late Time</div>
+                        </td>
+                        <td class="w-[100px !important] p-2 ">
+                           <p class="truncate w-[390px]">{{day.location ? day.location : '❌'}}</p> 
                         </td>
                     </tr>
                 </ng-template>

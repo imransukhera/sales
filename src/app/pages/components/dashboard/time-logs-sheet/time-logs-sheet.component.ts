@@ -14,6 +14,7 @@ import { ToastrService } from '@services/toastr.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { DashboardComponent } from "../dashboard/dashboard.component";
+import { SharedService } from '@services/shared/shared.service';
 
 interface TimelogEntry {
   date: any; // Use appropriate type if you know it (e.g., Date or Timestamp)
@@ -85,7 +86,7 @@ export class TimeLogsSheetComponent implements OnInit {
   weaklyTotalHorse: any;
   weaklyHours: any;
 
-  constructor(private firestoreService: FirestoreService, private firestore: Firestore, private toaster: ToastrService) {
+  constructor(private firestoreService: FirestoreService, private firestore: Firestore, private toaster: ToastrService, private shared: SharedService) {
     this.dateTime.setDate(this.dateTime.getDate() + 0);
     const today = new Date();
     this.dateOf = today;
@@ -94,6 +95,8 @@ export class TimeLogsSheetComponent implements OnInit {
 
     const projectsCollection = collection(this.firestore, 'projects');
     this.projects$ = collectionData(projectsCollection);
+    this.shared.updateDailyTotalHorse(this.dailyTotalHorse);
+
   }
 
   ngOnInit() {
@@ -108,12 +111,14 @@ export class TimeLogsSheetComponent implements OnInit {
     this.profileData = JSON.parse(this.locathostData)
     this.getproducts();
     this.fetchTimelogData(this.profileData.username);
+    console.log('time check calender', this.rangeDates)
+   
   }
+  
 
   searchRecord() {
     const start = new Date(this.rangeDates[0]);
     const end = new Date(this.rangeDates[1]);
-
     type ApiData = { [key: string]: { data: any[] } };
 
     const apiData = this.apiData as ApiData;
@@ -169,6 +174,7 @@ export class TimeLogsSheetComponent implements OnInit {
         this.loading = false;
         this.processTimelogData(this.apiData);
         this.processTimelo(this.apiData);
+        
         this.filterData();
         this.WeaklyTotalReport()
       })
@@ -480,8 +486,9 @@ export class TimeLogsSheetComponent implements OnInit {
 
     console.log("Total Hours:", filteredData);
     this.dailyReport(filteredData);
-    // this.processTimelogData(filteredData);
-    // this.processTimelo(filteredData);
+    this.processTimelogData(filteredData);
+    
+    this.processTimelo(filteredData);
   }
 
 
@@ -532,6 +539,7 @@ export class TimeLogsSheetComponent implements OnInit {
     grandTotalMinutes = grandTotalMinutes % 60;
 
     this.dailyTotalHorse = `${grandTotalHours}h ${grandTotalMinutes}m`;
+    
     this.currentHours = this.dailyPercent(this.dailyTotalHorse,);
     console.log("daily Hours:", this.currentHours, "Hors:", this.dailyTotalHorse);
     // this.grandTotalTime = grandTotalTime;
@@ -619,7 +627,8 @@ export class TimeLogsSheetComponent implements OnInit {
     grandTotalMinutes = grandTotalMinutes % 60;
 
     this.weaklyTotalHorse = `${grandTotalHours}h ${grandTotalMinutes}m`;
-    this.weaklyHours = this.weaklyPercent(this.dailyTotalHorse,);
+    this.weaklyHours = this.weaklyPercent(this.weaklyTotalHorse);
+    console.log("report weekly Hours:", this.dailyTotalHorse);
     console.log("daily Hours:", this.currentHours, "Hors:", this.dailyTotalHorse);
     // this.grandTotalTime = grandTotalTime;
 

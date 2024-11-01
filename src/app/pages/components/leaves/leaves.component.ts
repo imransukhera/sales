@@ -66,6 +66,7 @@ export class LeavesComponent implements OnInit {
 const profile = localStorage.getItem('userProfile')
 if(profile){
   this.userdata = JSON.parse(profile)
+  this.loading =false
 }
   }
 

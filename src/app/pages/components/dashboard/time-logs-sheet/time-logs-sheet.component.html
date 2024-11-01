@@ -7,12 +7,13 @@
                             Log</button>
         </app-dashboard>
    
-        <div class="my-4 mb-4">
-            <span class="text-3xl font-semibold text-gray-700">TimeLogs Detail</span>
-        </div>
+       
         <div class="header-section flex justify-content-between align-items-center p-2">
-            <div class="header-title flex justify-content-between w-[100%]">
-                <div class="flex w-[100%] justify-end">
+            <div class="header-title flex flex-col md:flex-row gap-2 justify-content-between w-[100%]">
+                <div class="md:w-[50%] mt-3">
+                    <span class="text-xl tracking-wider	 font-semibold  text-slate-800	">Time Logs Detail </span>
+                </div>
+                <div class="flex md:w-[50%] justify-end">
                     <div class="border-[0.5px] rounded-md">
                         <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true"
                             [showIcon]="true" inputId="range">
@@ -28,62 +29,69 @@
             </div>
         </div>
 
-        <div class="grid md:grid-cols-3 gap-4 mb-4 mt-3">
-            <div class="bg-[#1c405e] p-3 rounded-md text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" width="29" height="37" viewBox="0 0 22 22" fill="white">
-                    <path
-                        d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
-                </svg>
-                <div class="flex flex-col gap-1 mt-2">
-                    <span class="text-sm font-medium ">Today Time Log: <span class="text-red-500">( {{dailyTotalHorse}}
-                            )</span></span>
-                    <div class="text-xs font-medium ">
-                        <p-progressBar [value]="currentHours">
-                            <ng-template pTemplate="content" let-value>
-                                <span></span>
-                            </ng-template>
-                        </p-progressBar>
-                    </div>
+        <div class="grid md:grid-cols-3 gap-4 mb-4 mt-3 my-5">
+            <div class="shadow-md flex flex-col justify-between  p-3 bg-white rounded-lg ">
+                
+                <div class="flex justify-between gap-2 mt-2">
+                    <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1 ">
+                        Today Time Log 
+                        <span class="text-lg text-black"> {{dailyTotalHorse}}
+                            </span></span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-5 -5 35 35" fill="#22ac00" class="bg-green-200 rounded-lg">
+                                <path
+                                    d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
+                            </svg>
+                </div>
+                <div class="text-xs font-medium ">
+                    <p-progressBar [value]="currentHours">
+                        <ng-template pTemplate="content" let-value>
+                            <span></span>
+                        </ng-template>
+                    </p-progressBar>
+                </div>
+              
+            </div>
+            <div class="shadow-xl flex flex-col justify-between gap-3 p-3 bg-white rounded-lg">
+              
+                <div class="flex justify-between gap-1 mt-2">
+                    <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1">Weekly Time Log 
+                        <span class="text-lg text-black">
+                            {{weaklyTotalHorse}} </span> </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-5 -5 35 35" fill="#dfd800" class="bg-yellow-100 rounded-lg">
+                                <path
+                                    d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
+                            </svg>
+                </div>
+                <div class="text-xs font-medium ">
+                    <p-progressBar [value]="weaklyHours">
+                        <ng-template pTemplate="content" let-value>
+                            <span></span>
+                        </ng-template>
+                    </p-progressBar>
                 </div>
             </div>
-            <div class="bg-[#1c405e] p-3 rounded-md text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" width="29" height="37" viewBox="0 0 22 22" fill="white">
-                    <path
-                        d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
-                </svg>
-                <div class="flex flex-col gap-1 mt-2">
-                    <span class="text-sm font-medium ">Weekly Time Log: <span class="text-red-500">(
-                            {{weaklyTotalHorse}} )</span> </span>
-                    <div class="text-xs font-medium ">
-                        <p-progressBar [value]="weaklyHours">
-                            <ng-template pTemplate="content" let-value>
-                                <span></span>
-                            </ng-template>
-                        </p-progressBar>
-                    </div>
+            <div class="shadow-xl flex flex-col justify-between gap-3  p-3  bg-white rounded-lg">
+            
+                <div class="flex justify-between gap-1 mt-2">
+                    <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1">Monthly Time Log <span class="text-lg text-black">{{grandTotalTime}} </span> </span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-5 -5 35 35" fill="#df0044" class="bg-red-200 rounded-lg">
+                        <path
+                            d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
+                    </svg>
+                  
                 </div>
-            </div>
-            <div class="bg-[#1c405e] p-3  rounded-md text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" width="29" class="text-white" height="37" viewBox="0 0 22 22"
-                    fill="white">
-                    <path class="text-white"
-                        d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
-                </svg>
-                <div class="flex flex-col gap-1 mt-2">
-                    <span class="text-sm font-medium ">Monthly Time Log: <span class="text-red-500">( {{grandTotalTime}} )</span> </span>
-                    <div class="text-xs font-medium">
-                        <p-progressBar [value]="totalMonthlyValue">
-                            <ng-template pTemplate="content" let-value>
-                                <span></span>
-                            </ng-template>
-                        </p-progressBar>
-                    </div>
+                <div class="text-xs font-medium">
+                    <p-progressBar [value]="totalMonthlyValue">
+                        <ng-template pTemplate="content" let-value>
+                            <span></span>
+                        </ng-template>
+                    </p-progressBar>
                 </div>
             </div>
 
         </div>
 
-        <div class="data-table h-full border-4 border-[#1c4c74] rounded-lg p-1">
+        <div class="data-table h-full rounded-lg p-1">
             <p-table [value]="[days]" scrollHeight="flex" class="p-datatable-gridlines p-datatable-striped">
                 <ng-template pTemplate="header">
                     <tr class="p-2 bg-[#349ce4]">
@@ -347,3 +355,7 @@
         </div>
     </div>
 </div>
+
+
+
+

@@ -66,7 +66,7 @@
                 [responsiveOptions]="responsiveOptions">
                 <ng-template let-userdata pTemplate="item">
                     <div class="py-2 pb-7 px-2 rounded border-2 mx-2 my-7" (click)="search(userdata?.name)"
-                        [ngStyle]="isSelected(userdata) ? {'background-color': '#1c4c74', 'color': 'white'} : {}">
+                        [ngStyle]="isSelected(userdata) ? {'background-color': '#1c4c74', 'color': 'white'} : {'background-color': 'white'}">
                         <div class="flex flex-col justify-center items-center ">
                             <img src="../../../assets/male-image.png" alt="" width="150" height="150"
                                 *ngIf="userdata.gender === 'male'">
@@ -109,21 +109,24 @@
         <div class="data-table h-full">
             <p-table scrollHeight="flex" [value]="[days]" class="p-datatable-gridlines p-datatable-striped">
                 <ng-template pTemplate="header">
-                    <tr class="p-2 bg-[#349ce4]">
-                        <th class="bg-[#1c4c74] p-3 text-white w-[300px]" style="min-width: 300px !important;">
+                    <tr class="p-2 ">
+                        <th class="bg-[#1c4c74] p-3 text-white w-[200px]" style="min-width: 200px !important;">
                             <span class="font-normal text-md">Name</span>
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[300px]" style="min-width: 300px !important;">
+                        <th class="bg-[#1c4c74] p-3 text-white w-[150px]" style="min-width: 150px !important;">
                             <span class="font-normal text-md">Date</span>
 
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[300px]" style="min-width: 300px !important;">
+                        <th class="bg-[#1c4c74] p-3 text-white w-[120px]" style="min-width: 120px !important;">
                             <span class="font-normal text-md">Check-In</span>
 
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[300px]" style="min-width: 300px !important;">
+                        <th class="bg-[#1c4c74] p-3 text-white w-[120px]" style="min-width: 120px !important;">
                             <span class="font-normal text-md">Check-Out</span>
 
+                        </th>
+                        <th class="bg-[#1c4c74] p-3 text-white w-[100px]  " style="min-width: 100px !important;">
+                            <span class="font-normal text-md flex justify-center">Status</span>
                         </th>
                         <th class="bg-[#1c4c74] p-3 text-white w-[300px]" style="min-width: 300px !important;">
                             <span class="font-normal text-md">Location</span>
@@ -132,17 +135,17 @@
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body">
-                    <tr *ngFor="let day of days; let i = index" class="border-b-2">
-                        <td class="w-[300px !important] p-3">
+                    <tr *ngFor="let day of days; let i = index" class="border-b-2 " >
+                        <td class="w-[300px !important] p-2">
                             {{day.name}}
                         </td>
-                        <td class="w-[300px !important] p-3">
+                        <td class="w-[300px !important] p-2">
                             {{day.date}}
                         </td>
-                        <td class="w-[300px !important] p-3">
+                        <td class="w-[300px !important] p-2">
                                
                                 <form [formGroup]="profileForm" class="flex items-center gap-2 " *ngIf="edittime === i ">
-                                    <svg class="h-[25px] w-[25px] text-red-500" (click)="closeedit()" fill="none" viewBox="0 0 24 24"
+                                    <svg class="h-[25px] w-[25px] text-red-500 " (click)="closeedit()" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M3 3h18v18H3zM15 9l-6 6m0-6l6 6" />
@@ -162,7 +165,7 @@
                             </div>
 
                         </td>
-                        <td class="w-[300px !important] p-3">
+                        <td class="w-[300px !important] p-2">
                             <form [formGroup]="profileForm" class="flex items-center gap-2 " *ngIf="edittimeout === i ">
                                 <svg class="h-[25px] w-[25px] text-red-500" (click)="closeedit()" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
@@ -183,7 +186,12 @@
                             {{day.checkOutTime ? day.checkOutTime : '❌'}}
                         </div>
                         </td>
-                        <td class="w-[300px !important] p-3">
+                        <td class="w-[300px !important] p-2 flex justify-center">
+                            <div class="text-xs bg-green-200 text-green-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center" *ngIf="ontime > day.checkInTime">On Time</div>
+                            <div class="text-xs bg-green-200 text-green-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center"  *ngIf=" middletime > day.checkInTime && ontime < day.checkInTime ">Allow Time</div>
+                            <div class="text-xs bg-red-200 text-red-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center" *ngIf="middletime< day.checkInTime">Late Time</div>
+                        </td>
+                        <td class="w-[300px !important] p-2">
                             {{day.location}}
                         </td>
                     </tr>
@@ -282,7 +290,7 @@
 </div>
 
 
-<p-dialog [modal]="true" [(visible)]="visible" [style]="{ width: '85rem' }" class="p-3">
+<p-dialog [modal]="true" [(visible)]="visible" [style]="{ width: '70rem' }" class="p-3">
     <div class="flex justify-between p-3 items-center">
         <span class="font-bold text-lg">Approvel Request</span>
         <button type="button"
@@ -296,18 +304,18 @@
         <table class="table table-bordered w-full">
             <ng-container>
                 <tr class="items-center" *ngFor="let data of requestdata; let i = index ">
-                    <td>
+                    <td class="w-[16%]">
                         <div class="m-2 bg-red-600	 text-white p-2 text-xs rounded-md" style="width: fit-content;">
                             Missing Attendance</div>
                     </td>
-                    <td>
+                    <td class="w-full">
                         <span class="px-2 text-sm"><span class="text-red-600 font-semibold">Name:</span> {{data.name}} -  <span class="text-red-600 font-semibold">Date:</span> {{data.date}} -
                         <span class="text-red-600 font-semibold" *ngIf="data.status == 'Check In' || data.status == 'Both'">Check-in Time:</span > <span *ngIf="data.status == 'Check In'|| data.status == 'Both'">{{data.checkInTime ? data.checkInTime: '❌'}}</span> - <span class="text-red-600 font-semibold" *ngIf="data.status == 'Check Out'|| data.status == 'Both'">Check-out Time:</span> <span *ngIf="data.status == 'Check Out'|| data.status == 'Both'">{{data.checkOutTime ? data.checkOutTime : '❌'}}</span></span>
                     </td>
                     <td>
-                        <div class="flex gap-2 mx-2">
-                            <button class="bg-emerald-500 text-white px-7 py-2 rounded-full" (click)="requestaccept(data)">Accept</button>
-                            <button class="bg-red-500 text-white px-8 py-2 rounded-full" (click)="requestdelete(data)">Reject</button>
+                        <div class="flex gap-2 mx-2 justify-end">
+                            <button class="bg-emerald-500 text-sm text-white px-7 py-2 rounded-full" (click)="requestaccept(data)">Accept</button>
+                            <button class="bg-red-500 text-sm text-white px-8 py-2 rounded-full" (click)="requestdelete(data)">Reject</button>
                         </div>
 
                     </td>

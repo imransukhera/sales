@@ -73,9 +73,9 @@
                         {{item.status}}
                     </div>
                 </td>
-                <td class="px-3 py-2">
+                <td class="px-3 py-2 ">
                     <div class="bg-gray-100 p-3 rounded-lg">
-                        {{item.description}}
+                       <p class="w-full"> {{item.description}}</p>
                     </div>
                 </td>
                 
@@ -89,7 +89,7 @@
 
 
 
-<p-dialog [modal]="true" [(visible)]="visible" [style]="{ width: '85rem' }" class="p-3">
+<p-dialog [modal]="true" [(visible)]="visible" [style]="{ width: '65rem' }" class="p-3">
     <div class="flex justify-between p-3 items-center">
         <span class="font-bold text-lg">Approvel Request</span>
         <button type="button"
@@ -104,7 +104,7 @@
             <ng-container>
                 <tr class="items-center" *ngFor="let data of allData; let i = index ">
                     <div *ngIf="data.status == 'Pending...'">
-                    <td class="w-[10%]">
+                    <td class="w-[13%]">
                         <div class="m-2 bg-red-600	 text-white p-2 text-xs rounded-md" style="width: fit-content;">
                           Apply Leaves</div>
                     </td>
@@ -114,8 +114,8 @@
                     </td>
                     <td>
                         <div class="flex gap-2 mx-2 justify-end">
-                            <button class="bg-emerald-500 text-white px-7 py-2 rounded-full" (click)="acceptleave(data)">Accept</button>
-                            <button class="bg-red-500 text-white px-8 py-2 rounded-full" (click)="rejectleave(data)" >Reject</button>
+                            <button class="bg-emerald-500 text-sm text-white px-7 py-2 rounded-full" (click)="acceptleave(data)">Accept</button>
+                            <button class="bg-red-500 text-sm text-white px-8 py-2 rounded-full" (click)="rejectleave(data)" >Reject</button>
                         </div>
 
                     </td>

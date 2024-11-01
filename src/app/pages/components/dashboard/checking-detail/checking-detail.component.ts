@@ -45,7 +45,9 @@ export class CheckingDetailComponent implements OnInit {
   locathostData: any;
   checkingstatus: boolean = false;
   days: any[] = [];
+  datarecord: any[]=[]
   rangeDates: any;
+
   profileData: any;
   todayDate: any;
   locationName: any;
@@ -54,6 +56,13 @@ export class CheckingDetailComponent implements OnInit {
   currentAddress: any;
   dateTime = new Date();
   canCheckIn: boolean = true;
+  ontime: any;
+  ontimecount: any;
+  middletime: any;
+  middletimecount: any;
+  aftertimecount: any;
+  dateRange: any;
+  employeeName: any;
   issueName: any[] = [
     {
       name: 'Check In' , valuename: 'checkInTime'
@@ -92,6 +101,8 @@ export class CheckingDetailComponent implements OnInit {
     // this.getLocation();
     this.createForm();
     this.getrequest();
+    this. checkCheckInTime();
+    this.searchRecord()
   }
   onchange(type: any) {
     console.log('request type', type)
@@ -102,9 +113,17 @@ export class CheckingDetailComponent implements OnInit {
   checkCheckInTime() {
     const currentTime = new Date();
     const cutoffTime = new Date();
-    cutoffTime.setHours(10, 30, 0); // Set cutoff time to 10:30 am
+    const ontime = new Date();
+    const middletime = new Date();
 
+    cutoffTime.setHours(10, 31, 0); // Set cutoff time to 10:30 am
+   ontime.setHours(10, 20, 0); // Set cutoff time to 10:30 am
+   middletime.setHours(10, 30, 59); // Set cutoff time to 10:30 am
+   this.ontime = ontime.toLocaleTimeString();
+   this.middletime= middletime.toLocaleTimeString();
     this.canCheckIn = currentTime < cutoffTime;
+console.log('ontime', this.ontime);
+console.log("middle time ", this.middletime)
   }
 
   createForm() {
@@ -301,6 +320,7 @@ export class CheckingDetailComponent implements OnInit {
         console.error('Error adding data: ', error);
       });
   }
+  
 
   fetchTimelogData(name: string) {
     this.loading = true;
@@ -311,6 +331,9 @@ export class CheckingDetailComponent implements OnInit {
         const transformedDatainsort = transformedData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
         this.days = transformedDatainsort;
         const choutTime = this.days.find(product => product.date == this.todayDate);
+        
+
+    
         if (choutTime) {
           this.checkingstatus = true;
         }
@@ -318,14 +341,16 @@ export class CheckingDetailComponent implements OnInit {
           this.checkingstatus = false;
         }
         this.loading = false;
-
-
+        this.searchRecord()
+        
       })
       .catch((error) => {
         this.loading = false;
 
         console.error('Error fetching timelog data:', error);
       });
+
+      
   }
 
   transformTimelogData(data: any): any[] {
@@ -436,7 +461,37 @@ export class CheckingDetailComponent implements OnInit {
     this.profileForm.reset();
   }
 
+  searchRecord() {
+    const startDate = new Date(this.rangeDates[0]).toLocaleDateString();
+    const endDate = new Date(this.rangeDates[1]).toLocaleDateString();
 
+    // Filter by date range
+    const filteredData = this.days.filter((data: any) => {
+      const recordDate = new Date(data?.date).toLocaleDateString();
+      return recordDate >= startDate && recordDate <= endDate;
+    });
+
+    // Further filter by employee name if provided
+    let finalData;
+    if (this.employeeName?.name) {
+      finalData = filteredData.filter((data: any) => data?.name === this.employeeName?.name);
+    } else {
+      finalData = filteredData;
+    }
+
+    // Sort the final data by date (ascending)
+    this.datarecord = finalData.sort((a: any, b: any) => {
+      const dateA = new Date(a?.date).getTime();
+      const dateB = new Date(b?.date).getTime();
+      return dateB - dateA;  // Ascending order (for descending, reverse the comparison)
+    });
+    
+    this.ontimecount = this.datarecord.filter(product => product.checkInTime < this.ontime).length;
+        this.middletimecount = this.datarecord.filter(product => product.checkInTime < this.middletime && product.checkInTime > this.ontime ).length;
+        this.aftertimecount = this.datarecord.filter(product => product.checkInTime > this.middletime  ).length;
+        console.log("ontimehhhh", this.ontimecount)
+    console.log("Sorted Filtered Data:", this.datarecord, "Selected Date Range:", this.rangeDates);
+  }
 
 
 }
