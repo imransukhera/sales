@@ -175,7 +175,8 @@ export class TimeLogsSheetComponent implements OnInit {
         this.processTimelogData(this.apiData);
         this.processTimelo(this.apiData);
         
-        this.filterData();
+        // this.filterData();
+        this.searchRecord()
         this.WeaklyTotalReport()
       })
       .catch((error) => {

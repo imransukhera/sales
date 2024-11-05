@@ -462,14 +462,17 @@ console.log("middle time ", this.middletime)
   }
 
   searchRecord() {
-    const startDate = new Date(this.rangeDates[0]).toLocaleDateString();
-    const endDate = new Date(this.rangeDates[1]).toLocaleDateString();
+    const startDate = new Date(this.rangeDates[0]);
+    const endDate = new Date(this.rangeDates[1]);
+    console.log("finaldatatajhgjjkmhkhkkjh:", startDate, endDate)
 
+    console.log("filteredData:", this.days)
     // Filter by date range
     const filteredData = this.days.filter((data: any) => {
-      const recordDate = new Date(data?.date).toLocaleDateString();
+      const recordDate = new Date(data?.date);
       return recordDate >= startDate && recordDate <= endDate;
     });
+    console.log("filteredData:", filteredData)
 
     // Further filter by employee name if provided
     let finalData;
@@ -478,7 +481,7 @@ console.log("middle time ", this.middletime)
     } else {
       finalData = filteredData;
     }
-
+console.log("finaldatata:", finalData)
     // Sort the final data by date (ascending)
     this.datarecord = finalData.sort((a: any, b: any) => {
       const dateA = new Date(a?.date).getTime();
