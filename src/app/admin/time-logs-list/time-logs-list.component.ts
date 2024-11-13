@@ -47,7 +47,7 @@ export class TimeLogsListComponent implements OnInit {
   startTime: any;
   employeeDropdown: any;
   rangeDates: any;
-
+  updateBtn = false;
   employeeName: any;
   searchValue = false;
   getAllData: any;
@@ -175,6 +175,10 @@ export class TimeLogsListComponent implements OnInit {
         console.error('Error adding data: ', error);
       });
   }
+
+  
+
+
   updateUI() {
     const time = this.startTime.toTimeString().split(' ')[0];
     console.log("this is all user data:", this.employeeDropdown);
@@ -206,6 +210,22 @@ export class TimeLogsListComponent implements OnInit {
         console.error('Error adding data: ', error);
       });
 
+  }
+
+  update(data: any, index: any) {
+    const timeString = data?.startTime;
+    this.index = index;
+    const [hours, minutes, seconds] = timeString.split(':').map(Number);
+    const date = new Date();
+    date.setHours(hours, minutes, seconds);
+    const dateof = new Date(data.date);
+    this.startTime = date;
+    this.issueNameVlaue = data.issueName;
+    this.timeSpent = data.spentTame;
+    this.description = data.description;
+    this.dateOf = dateof;
+    this.visible = true;
+    this.updateBtn = true;
   }
 
   getAllUserProfiles() {
