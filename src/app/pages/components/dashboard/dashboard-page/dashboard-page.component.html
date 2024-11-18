@@ -4,6 +4,8 @@
 </div>
 
 <!-- Time Logs Staticies -->
+ <div [ngClass]="{'dull-bg': loading}">
+
 <div class="border-t-2 mb-5 border-gray-300">
 <div class=" mt-3 ">
     <span class="text-xl tracking-wider	 font-semibold  text-slate-800	">Time Logs Staticies </span>
@@ -14,7 +16,7 @@
         <div class="flex justify-between gap-2 mt-2">
             <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1 ">
                 Today Time Log 
-                <span class="text-lg text-black"> 0h
+                <span class="text-lg text-black"> {{TodayHours}}
                     </span></span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-5 -5 35 35" fill="#22ac00" class="bg-green-200 rounded-lg">
                         <path
@@ -22,7 +24,7 @@
                     </svg>
         </div>
         <div class="text-xs font-medium ">
-            <p-progressBar [value]="10">
+            <p-progressBar [value]="totaltodayValue">
                 <ng-template pTemplate="content" let-value>
                     <span></span>
                 </ng-template>
@@ -35,14 +37,14 @@
         <div class="flex justify-between gap-1 mt-2">
             <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1">Weekly Time Log 
                 <span class="text-lg text-black">
-                    20h 30m </span> </span>
+                    {{WeeklyHours}}</span> </span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-5 -5 35 35" fill="#dfd800" class="bg-yellow-100 rounded-lg">
                         <path
                             d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
                     </svg>
         </div>
         <div class="text-xs font-medium ">
-            <p-progressBar [value]="60">
+            <p-progressBar [value]="totalWeeklyValue">
                 <ng-template pTemplate="content" let-value>
                     <span></span>
                 </ng-template>
@@ -52,7 +54,7 @@
     <div class="shadow-xl flex flex-col justify-between gap-3  p-3  bg-white rounded-lg">
     
         <div class="flex justify-between gap-1 mt-2">
-            <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1">Monthly Time Log <span class="text-lg text-black">165h 30m </span> </span>
+            <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1">Monthly Time Log <span class="text-lg text-black">{{MonthlyHours}}</span> </span>
             <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-5 -5 35 35" fill="#df0044" class="bg-red-200 rounded-lg">
                 <path
                     d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
@@ -60,7 +62,7 @@
           
         </div>
         <div class="text-xs font-medium">
-            <p-progressBar [value]="80">
+            <p-progressBar [value]="totalMonthlyValue">
                 <ng-template pTemplate="content" let-value>
                     <span></span>
                 </ng-template>
@@ -84,7 +86,7 @@
             <div class="flex justify-between gap-1 mt-2">
                 <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1">On Time
                     <span class="text-xl text-black">
-                        5 </span> </span>
+                        {{ontimecount}} </span> </span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-5 -5 35 35" fill="#22ac00" class="bg-green-200 rounded-lg">
                             <path
                                 d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
@@ -95,7 +97,7 @@
             <div class="flex justify-between gap-1 mt-2">
                 <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1">Allow Time
                     <span class="text-xl text-black">
-                        25 </span> </span>
+                        {{middletimecount}} </span> </span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-5 -5 35 35" fill="#dfd800" class="bg-yellow-100 rounded-lg">
                             <path
                                 d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
@@ -106,7 +108,7 @@
             <div class="flex justify-between gap-1 mt-2">
                 <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1">After Allow Time
                     <span class="text-xl text-black">
-                        5 </span> </span>
+                        {{aftertimecount}} </span> </span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-5 -5 35 35" fill="#df0044" class="bg-red-200 rounded-lg">
                             <path
                                 d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
@@ -126,7 +128,7 @@
             <div class="flex justify-between gap-2 mt-2">
                 <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1 ">
                     Total Leaves 
-                    <span class="text-lg text-black"> <span class="text-red-500">0.5</span><span class="text-green-500">/22</span>
+                    <span class="text-lg text-black"> <span class="text-red-500">{{totalleave}}</span><span class="text-green-500">/{{userdataleave}}</span>
                         </span></span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-30 -30 178 178" fill="#df0044" class="bg-red-200 rounded-lg">
                             <path
@@ -134,7 +136,7 @@
                         </svg>
             </div>
             <div class="text-xs font-medium mb-1">
-                <span>Remaining: </span><span class="text-green-500">{{22 - 0.5 }}</span>
+                <span>Remaining: </span><span class="text-green-500">{{userdataleave - totalleave }}</span>
             </div>
         </div>
         <div class="shadow-md flex flex-col justify-between gap-2 p-3 bg-white rounded-lg ">     
@@ -149,11 +151,48 @@
                         </svg>
             </div>
             <div class="text-xs font-medium mb-2" >
-                <span class="text-md font-semibold py-1 px-3 shadow-sm rounded-md" [ngClass]="{'bg-green-200 text-green-800': 'Approved' === 'Approved'}" >Approved</span>
+                <span class="text-md font-semibold py-1 px-3 shadow-sm rounded-md" [ngClass]="{'bg-green-200 text-green-800': 'Approved' === 'Approved'}" >{{leavesstatus}}...</span>
             </div>
         </div>
        
     </div>
 </div>
+
+    <!-- Leaves Staticies -->
+    <div class="border-2 p-3 rounded-lg border-gray-300">
+        <div class=" mb-3 ">
+            <span class="text-xl tracking-wider	 font-semibold  text-slate-800	">Live</span>
+        </div>
+        <div class="shadow-md p-3 bg-white rounded-lg h-5/6">
+            <div class="text-2xl font-semibold flex justify-between items-center p-3 ">
+                <i class="pi pi-clock bg-green-200 rounded-lg p-3 text-green-500 font-semibold" style="font-size: 2rem"></i>
+                <div class="flex flex-col items-end">
+                    <span class="text-sm font-semibold text-gray-500 flex flex-col">
+                        Live Time </span>
+                    {{livetime}}
+                </div>
+            </div>
+            <div class="text-xl font-semibold flex justify-between items-center  p-3 ">
+                <i class="pi pi-calendar-clock bg-yellow-100 rounded-lg p-3 text-yellow-400" style="font-size: 2rem"></i>
+                <div class="flex flex-col items-end">
+                    <span class="text-sm font-semibold text-gray-500 flex flex-col">
+                        Today Date </span>
+                        {{date}}
+                    </div>
+            </div>
+            <div class="text-xl font-semibold flex justify-between items-center  p-3 ">
+                <i class="pi pi-telegram bg-yellow-100 rounded-lg p-3 text-yellow-400" style="font-size: 2rem"></i>
+                <div class="flex flex-col items-end">
+                    <span class="text-sm font-semibold text-gray-500 flex flex-col">
+                        TimeZone </span>
+                        {{timezone}}
+                    </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
 
 </div>

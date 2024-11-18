@@ -53,8 +53,8 @@ export const routes: Routes = [
         data: { expectedRole: 'user' } ,
         children: [
             { path: '', redirectTo: RoutesEnum.DASHBOARD, pathMatch: 'full' },
-            { path: 'dashboard-page', component: DashboardPageComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},
-            { path: RoutesEnum.DASHBOARD, component: TimeLogsSheetComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},
+            { path: RoutesEnum.DASHBOARD, component: DashboardPageComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},
+            { path: 'timelogs', component: TimeLogsSheetComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},
             { path: RoutesEnum.CHECKING_DETAIL, component: CheckingDetailComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},
             { path: RoutesEnum.Leaves, component: LeavesComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},
             { path: RoutesEnum.Task, component: TaskManagementComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' },
