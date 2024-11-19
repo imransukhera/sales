@@ -1,0 +1,93 @@
+<div class="justify-end flex ">
+    <button class="py-1 px-4 bg-[#1c4c74] rounded-md text-white" (click)="showDialog()">Create</button>
+</div>
+
+<div class="card flex justify-content-center">
+    <p-dialog header="Create" [modal]="true" [(visible)]="visible" [style]="{ width: '50rem' }"
+        [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
+        <form [formGroup]="profileForm">
+            <div class="p-4">
+                <span>Required fields are marked with an asterisk <span class="text-red-500">*</span></span>
+            </div>
+            <div class="p-4 border-b-2">
+                <div>
+                    <label>Project <span class="text-red-500">*</span></label>
+                </div>
+                <div class="mb-6 lg:w-[50%] mt-1">
+                    <p-dropdown [options]="allProjectName" optionLabel="name" optionValue="name"
+                        formControlName="projectName" placeholder="Select a Project"></p-dropdown>
+                </div>
+                <div class="mb-6 lg:w-[50%] mt-2 ">
+                    <div class="mb-1">
+                        <label>Issue type <span class="text-red-500">*</span></label>
+                    </div>
+                    <p-dropdown [options]="dropdownProject" optionLabel="name" optionValue="name"
+                        formControlName="issueName" placeholder="Select a Issue type"></p-dropdown>
+                </div>
+            </div>
+
+
+            <div class="p-4 border-b-2">
+                <div>
+                    <label>Status <span class="text-red-500">*</span></label>
+                </div>
+                <div class="lg:w-[50%] mt-1">
+                    <p-dropdown [options]="bugStatus" optionLabel="name" optionValue="name" formControlName="bugStatus"
+                        placeholder="Select a Status"></p-dropdown>
+                </div>
+                <div>
+                    <span class="text-[12px]">This is the initial status upon creation</span>
+                </div>
+                <div class="mt-2 mb-8">
+                    <div>
+                        <label>Assignee</label>
+                    </div>
+                    <div class="lg:w-[50%] mt-1">
+                        <p-dropdown [options]="allData" optionLabel="name" optionValue="name"
+                            formControlName="assigneeName" placeholder="Select a Assignee name"></p-dropdown>
+                    </div>
+                </div>
+                <div class="mb-6  mt-2 ">
+                    <div class="mb-1">
+                        <label>Summary <span class="text-red-500">*</span></label>
+                    </div>
+                    <input type="text" class="description-input w-full" formControlName="summary">
+                    <div class="text-red-500 text-[10px]">
+                        <span class="text-red-500">⚠</span> Summary is required
+                    </div>
+                </div>
+
+                <div>
+                    <div class="mb-1">
+                        <label>Description</label>
+                    </div>
+                    <p-editor [style]="{ height: '150px' }" formControlName="description"
+                        placeholder="Enter your description."></p-editor>
+                </div>
+
+                <div class="p-4 border-2 justify-center flex my-2">
+                    <input type="file" (change)="onFileSelected($event)" multiple />
+                </div>
+
+                <div class="image-list">
+                    <div class="image-item" *ngFor="let image of images; let i = index">
+                        <div class="image-wrapper">
+                            <img [src]="image.url" [alt]="image.name" />
+                            <button class="delete-icon" (click)="removeImage(i)">&#10006;</button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                </div>
+            </div>
+
+            <div>
+
+            </div>
+            <div class="flex justify-end gap-2 p-4">
+                <button class="py-1 px-4 border-1 rounded-md">Cancel</button>
+                <button class="py-1 px-4 bg-[#1c4c74] text-white rounded-md" (click)="onSumbit()">Create</button>
+            </div>
+        </form>
+    </p-dialog>
+</div>

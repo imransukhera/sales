@@ -20,9 +20,10 @@ import { ProjectsDetailComponent } from './pages/components/task-management/comp
 import { LeavesLogsComponent } from './admin/leaves-logs/leaves-logs.component';
 import { PrivacyPolicyComponent } from './pages/components/policy/privacy-policy/privacy-policy.component';
 import { DashboardPageComponent } from './pages/components/dashboard/dashboard-page/dashboard-page.component';
+import { IssueReportComponent } from './pages/components/task-management/components/issue-report/issue-report.component';
 
 export const routes: Routes = [
-    
+
     {
         path: RoutesEnum.LOGIN,
         loadComponent: () => import('./pages/components/public/login/login.component').then(m => m.LoginComponent),
@@ -31,7 +32,7 @@ export const routes: Routes = [
         //     { path: '', redirectTo: RoutesEnum.DASHBOARD, pathMatch: 'full' },
         //     { path: RoutesEnum.DASHBOARD, component:  DashboardLayoutComponent, canActivate: [AuthGuard], data: { expectedRole: 'user' }},
         //     { path: RoutesEnum.CHECKING_DETAIL, component: CheckingLayoutComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},
-     
+
         // ]
     },
 
@@ -49,27 +50,30 @@ export const routes: Routes = [
     {
         path: '',
         loadComponent: () => import('./pages/components/dashboard/dashboard-layout/dashboard-layout.component').then(m => m.DashboardLayoutComponent),
-        canActivate: [AuthGuard], 
-        data: { expectedRole: 'user' } ,
+        canActivate: [AuthGuard],
+        data: { expectedRole: 'user' },
         children: [
             { path: '', redirectTo: RoutesEnum.DASHBOARD, pathMatch: 'full' },
-            { path: RoutesEnum.DASHBOARD, component: DashboardPageComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},
-            { path: 'timelogs', component: TimeLogsSheetComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},
-            { path: RoutesEnum.CHECKING_DETAIL, component: CheckingDetailComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},
-            { path: RoutesEnum.Leaves, component: LeavesComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},
-            { path: RoutesEnum.Task, component: TaskManagementComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' },
-        children:[
-            { path: '', redirectTo: 'projects', pathMatch: 'full' },
-            { path: 'projects', component: ProjectsDetailComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},   
-            { path: 'task', component: TaskComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},   
-        ]
-    },
-    { path: 'privacy-policy', component: PrivacyPolicyComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' }},
+            { path: RoutesEnum.DASHBOARD, component: DashboardPageComponent, canActivate: [AuthGuard], data: { expectedRole: 'user' } },
+            { path: 'timelogs', component: TimeLogsSheetComponent, canActivate: [AuthGuard], data: { expectedRole: 'user' } },
+            { path: RoutesEnum.CHECKING_DETAIL, component: CheckingDetailComponent, canActivate: [AuthGuard], data: { expectedRole: 'user' } },
+            { path: RoutesEnum.Leaves, component: LeavesComponent, canActivate: [AuthGuard], data: { expectedRole: 'user' } },
+            {
+                path: RoutesEnum.Task, component: TaskManagementComponent, canActivate: [AuthGuard], data: { expectedRole: 'user' },
+                children: [
+                    { path: '', redirectTo: 'projects', pathMatch: 'full' },
+                    { path: 'projects', component: ProjectsDetailComponent, canActivate: [AuthGuard], data: { expectedRole: 'user' } },
+                    { path: 'task', component: TaskComponent, canActivate: [AuthGuard], data: { expectedRole: 'user' } },
+                    { path: 'issue-report', component: IssueReportComponent, canActivate: [AuthGuard], data: { expectedRole: 'user' } },
 
-           
+                ]
+            },
+            { path: 'privacy-policy', component: PrivacyPolicyComponent, canActivate: [AuthGuard], data: { expectedRole: 'user' } },
+
+
         ]
     },
-    
+
     // {
     //     path: RoutesEnum.CHECKING_DETAIL,
     //     loadComponent: () => import('./pages/components/checkingtime/checking-layout/checking-layout.component').then(m => m.CheckingLayoutComponent),
@@ -83,11 +87,11 @@ export const routes: Routes = [
         data: { expectedRole: 'admin' },
         children: [
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-            { path: 'dashboard', component: AdminDashboardComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' }},
-            { path: 'time-sheet', component: AdminTimeSheetComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' }},
-            { path: 'projects', component: ProjectsComponent  , canActivate: [AuthGuard], data: { expectedRole: 'admin' }},
-            { path: 'add-users', component: AddUsersComponent  , canActivate: [AuthGuard], data: { expectedRole: 'admin' }},
-            { path: 'leaves-logs', component: LeavesLogsComponent  , canActivate: [AuthGuard], data: { expectedRole: 'admin' }}
+            { path: 'dashboard', component: AdminDashboardComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
+            { path: 'time-sheet', component: AdminTimeSheetComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
+            { path: 'projects', component: ProjectsComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
+            { path: 'add-users', component: AddUsersComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
+            { path: 'leaves-logs', component: LeavesLogsComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin' } }
 
         ]
     },
