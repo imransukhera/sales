@@ -33,7 +33,9 @@ export class LeavesComponent implements OnInit {
   leavedata: any;
   leaveForm!: FormGroup;
   recent: any;
-  date: Date[] | undefined;
+  startDate: Date[] | undefined;
+  endDate: Date[] | undefined;
+
   
   leaveduration: any;
   totalleave: any;
@@ -73,7 +75,8 @@ if(profile){
   createForm() {
     this.leaveForm = this.fb.group({
       leavetype: [undefined, [Validators.required]],
-      date: [undefined, [Validators.required]],
+      startDate: [undefined, [Validators.required]],
+      endDate: [undefined, [Validators.required]],
       description: [undefined]
     });
   }
@@ -163,12 +166,14 @@ if(profile){
 
   leavesubmit(){
     const value = this.leaveForm.value;
-    const date = value.date.toDateString();
+    console.log('data',value)
+    const date = value.startDate.toDateString();
     const username = this.userdata.username
     const data = {
      name: this.userdata.name,
      leavetype:  value.leavetype,
-     date: value.date.toDateString(),
+     startDate: value.startDate.toDateString(),
+     endDate: value.endDate.toDateString(),
      description: value.description,
      username: this.userdata.username,
      status: 'Pending...' 

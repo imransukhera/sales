@@ -50,7 +50,8 @@ export class DashboardPageComponent implements OnInit  {
   livetime: any;
   timer: any;
 
-  constructor(private firestoreService: FirestoreService  ) {
+
+  constructor(private firestoreService: FirestoreService ) {
     
 const date = new Date();
     const dateString = date.toString();
@@ -74,8 +75,9 @@ const date = new Date();
     }
   }
 
-  getusername(){
 
+  getusername(){
+  
     const locathostData = localStorage.getItem('userProfile')
     if(locathostData){
       const profileData =  JSON.parse(locathostData);
@@ -88,7 +90,7 @@ const date = new Date();
   }
 
   getlogstime(){
-    this.loading = true;
+
 
     this.firestoreService.getTimelog(this.username).then((data)=>{
       this.data = []
@@ -105,14 +107,14 @@ const date = new Date();
   }
 
   gethourtimelog(){
-
+   this.loading = false
     const options: Intl.DateTimeFormatOptions = {
       weekday: 'short',
       year: 'numeric',
       month: 'short',
       day: 'numeric'
   };
-  
+
     const startDate = new Date();
     startDate.setDate(1); 
     startDate.setHours(0, 0, 0, 0);
@@ -148,7 +150,7 @@ const date = new Date();
     console.log('data', this.data)
     const monthlyhour = this.data.filter((item: any)=>{
       const itemDate = new Date(item.date); 
-      return itemDate >= startDate && itemDate <= endDate   ;
+      return itemDate >= startDate && itemDate <= endDate  ;
     }).map((item: any) => item.spentTame);
     console.log('monthly start date', startDate)
     console.log('monthly hour', monthlyhour)
@@ -204,6 +206,7 @@ let totalHourpersent = 0;
 
     let value = (totalHourpersent / 160) * 100;
     this.totalMonthlyValue = Math.round(value);
+
 
   }
   
@@ -278,13 +281,14 @@ let totalHourpersent = 0;
   }
   
   checkintimedata(){
-
+this.loading = true;
     this.firestoreService.getAttendanceRecord(this.username).then((data2)=>{
       this.timedata = []
       for (const key in data2) {
         if (data2[key]?.data) { // Check if `data[key].data` exists
             const dataarray = data2[key].data;
             this.timedata.push(...dataarray); // Push all elements of `dataarray` into `this.data`
+            this.loading = false;
         }
     }
     console.log('timedata????', this.timedata)
@@ -321,6 +325,7 @@ let totalHourpersent = 0;
   
 
   getuserleave() {
+
     const date = new Date().toDateString();
     this.firestoreService.getleave().subscribe((req) => {
       console.log("date", date)
@@ -336,7 +341,6 @@ let totalHourpersent = 0;
           if (data[key][key2] && data[key][key2].data && Array.isArray(data[key][key2].data)) {
             this.leavedata.push(...data[key][key2].data );
             this.leavedata.sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
-            this.loading = false;
 
           }
         }

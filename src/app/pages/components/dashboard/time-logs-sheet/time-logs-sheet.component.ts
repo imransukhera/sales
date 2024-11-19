@@ -95,7 +95,6 @@ export class TimeLogsSheetComponent implements OnInit {
 
     const projectsCollection = collection(this.firestore, 'projects');
     this.projects$ = collectionData(projectsCollection);
-    this.shared.updateDailyTotalHorse(this.dailyTotalHorse);
 
   }
 

@@ -43,7 +43,7 @@
        
     </div>
 
-    <div class="data-table ] rounded-lg p-1 md:w-[75%]">
+    <div class="data-table ] rounded-lg p-1 md:w-[75%] hidden md:block">
 
     <p-table [value]="[leavedata]" scrollHeight="flex"  class="p-datatable-gridlines p-datatable-striped ">
         <ng-template pTemplate="header">
@@ -55,7 +55,10 @@
                     <span class="font-semibold text-md">Leave Type</span>
                 </th>
                 <th class="bg-[#1c4c74] p-3 text-white w-[250px]">
-                    <span class="font-semibold text-md">Date</span>
+                    <span class="font-semibold text-md">startDate</span>
+                </th>
+                <th class="bg-[#1c4c74] p-3 text-white w-[250px]">
+                    <span class="font-semibold text-md">endDate</span>
                 </th>
                 <th class="bg-[#1c4c74] p-3 text-white w-[250px]">
                     <span class="font-semibold text-md">Status</span>
@@ -76,7 +79,12 @@
                 </td>
                 <td class="p-3">
                     <div class=" min-w-32	">
-                        {{item.date}}
+                        {{item.startDate}}
+                    </div>
+                </td>
+                <td class="p-3">
+                    <div class=" min-w-32	">
+                        {{item.endDate}}
                     </div>
                 </td>
                 <td class="p-3">
@@ -89,6 +97,33 @@
     </p-table>
 
     </div>
+ <!-- mobile view -->
+ <div class=" border-2 border-gray-300 rounded-md p-3 md:hidden" *ngFor="let item of leavedata">
+    <div class="flex justify-between items-center">
+     <span class="text-lg">{{item.date}}</span>
+     <div class=" text-xs font-semibold w-fit	rounded-md shadow-sm p-2" [ngClass]="{'bg-green-200 text-green-800': item.status === 'Approved', 'bg-yellow-100 text-yellow-800': item.status === 'Pending...'}" >
+        {{item.status}}
+    </div>
+    </div> 
+     <div class="bg-white p-2  shadow-md rounded-lg flex flex-col gap-2 my-2">
+         <span class=" font-medium text-lg">Name: {{item.name}}</span>
+<table>
+<tr class="bg-gray-100" style="text-align: left;">
+ <th class="p-2"> Leave Type</th>
+
+</tr>
+<tr>
+ <td class="p-2">{{item.leavetype}}</td>
+
+</tr>
+</table>
+
+
+     </div>
+
+  </div>
+
+
 </div>
 </div>
 
@@ -97,9 +132,21 @@
     <form [formGroup]="leaveForm">
     <div class="flex flex-col items-center justify-center p-3 gap-3">
         <div class="align-items-center mt-3 w-full">
-            <label class="text-sm ">Date <span class="text-red-500">*</span></label>
+            <label class="text-sm ">Start Date <span class="text-red-500">*</span></label>
             <div class="mt-1 border-[0.5px] rounded-md mb-1 w-full">
-                <p-calendar [ngModel]="date" formControlName="date" appendTo="body" [readonlyInput]="true" inputId="range" class="w-full">
+                <p-calendar [ngModel]="startDate" formControlName="startDate" appendTo="body" [readonlyInput]="true" inputId="range" class="w-full">
+                </p-calendar>
+            </div>
+            <!-- <div *ngIf="submitted && f['date'].errors" class="invalid-feedback">
+                <div *ngIf="!f['date'].value" class="error text-sm text-red-500">
+                    Field is required
+                </div>
+            </div> -->
+        </div>
+        <div class="align-items-center mt-3 w-full">
+            <label class="text-sm ">End Date <span class="text-red-500">*</span></label>
+            <div class="mt-1 border-[0.5px] rounded-md mb-1 w-full">
+                <p-calendar [ngModel]="endDate" formControlName="endDate" appendTo="body" [readonlyInput]="true" inputId="range" class="w-full">
                 </p-calendar>
             </div>
             <!-- <div *ngIf="submitted && f['date'].errors" class="invalid-feedback">

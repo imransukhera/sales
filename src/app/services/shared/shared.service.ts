@@ -6,22 +6,18 @@ import { TimeLogsSheetComponent } from '../../pages/components/dashboard/time-lo
   providedIn: 'root'
 })
 export class SharedService {
-  private dailyTotalHorse = signal<any>(0);
+  private sidebarState = new BehaviorSubject<boolean>(false);
+  sidebarState$ = this.sidebarState.asObservable();
 
-dailytime: any;
 
   constructor() { }
-  getDailyTotalHorse() {
-    return this.dailyTotalHorse;
-  }
-  updateDailyTotalHorse(newTotal: any) {
-    this.dailyTotalHorse.set(newTotal);
-  }
 
-//   time(){
-// this.dailytime = this.timelogs.dailyTotalHorse;
-// console.log('tiem', this.dailytime)
-// return this.dailytime;
-//   }
+
+
+
+toggleSidebar(): void {
+  const currentState = this.sidebarState.getValue();
+  this.sidebarState.next(!currentState);
+}
  
 }

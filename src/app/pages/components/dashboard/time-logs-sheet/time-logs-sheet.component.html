@@ -8,12 +8,12 @@
         </app-dashboard>
    
        
-        <div class="header-section flex justify-content-between align-items-center p-2">
+        <div class="header-section flex justify-content-between align-items-center py-2 md:p-2">
             <div class="header-title flex flex-col md:flex-row gap-2 justify-content-between w-[100%]">
                 <div class="md:w-[50%] mt-3">
                     <span class="text-xl tracking-wider	 font-semibold  text-slate-800	">Time Logs Detail </span>
                 </div>
-                <div class="flex md:w-[50%] justify-end">
+                <div class="flex md:w-[50%]  md:justify-end">
                     <div class="border-[0.5px] rounded-md">
                         <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true"
                             [showIcon]="true" inputId="range">
@@ -42,7 +42,7 @@
                                     d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
                             </svg>
                 </div>
-                <div class="text-xs font-medium ">
+                <div class="text-xs font-medium pt-3 md:pt-0 ">
                     <p-progressBar [value]="currentHours">
                         <ng-template pTemplate="content" let-value>
                             <span></span>
@@ -91,7 +91,7 @@
 
         </div>
 
-        <div class="data-table h-full rounded-lg p-1">
+        <div class="data-table h-full rounded-lg p-1 hidden md:block">
             <p-table [value]="[days]" scrollHeight="flex" class="p-datatable-gridlines p-datatable-striped">
                 <ng-template pTemplate="header">
                     <tr class="p-2 bg-[#349ce4]">
@@ -177,6 +177,63 @@
                 </ng-template>
             </p-table>
         </div>
+<!-- mobile veiw -->
+ <div class="my-5 border-2 border-gray-300 rounded-md p-3 md:hidden" *ngFor="let day of days.slice().reverse()">
+   <span class="text-xl ">{{day}}</span> 
+    <div class="bg-white p-1  shadow-md rounded-lg flex flex-col my-2">
+       <span class="pl-2 font-semibold text-lg">Name: {{weeklyData[day][0]?.name}}</span>
+       <span class="pl-2 font-medium text-lg">Total Hours: {{ calculateTotalSpentTimeForDay(weeklyData[day]) }}</span> 
+
+       <div class="">
+        <div *ngIf="(weeklyData[day] && weeklyData[day].length > 0); else noData">
+            <div *ngFor="let entry of weeklyData[day]; let i = index ">
+                <div class="bg-slate-100 p-2 m-1 rounded-md">
+                    <div class="entry">
+                        <div class="flex justify-between">
+                            <div>
+                                <span class="font-semibold text-sm">{{ entry.issueName }}
+                                    <span class="text-red-500">({{entry?.projectCode ?
+                                        entry?.projectCode: 'No Project Id'}})</span></span>
+                            </div>
+                            <div class="flex">
+                                <div (click)="deleteIndex(entry,i)" class="cursor-pointer">
+                                    <img src="../../../../../assets/trash.png" alt=""
+                                        class="w-[15px]">
+                                </div>
+                                <div class="ml-2 cursor-pointer" (click)="update(entry,i)">
+                                    <svg class="h-[15px] w-[15px] text-red-500" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div>
+                            <span class="text-xs limitline ">{{ entry.description }}</span>
+                        </div>
+                        <div class="text-right text-sm font-semibold">
+                            <span>{{ entry.spentTame }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ng-template #noData>
+            <div class="text-gray-500">
+                No data available
+            </div>
+        </ng-template>
+    </div>
+
+    </div>
+
+ </div>
+
+
     </div>
 </div>
 
@@ -194,7 +251,7 @@
         <div class="align-items-center mt-3">
             <label class="text-sm ">Date <span class="text-red-500">*</span></label>
             <div class="mt-1 border-[0.5px] rounded-md">
-                <p-calendar [(ngModel)]="dateOf" [maxDate]="dateTime" [disabled]="updateBtn" [readonlyInput]="true"
+                <p-calendar [(ngModel)]="dateOf" [maxDate]="dateTime"  [readonlyInput]="true"
                     inputId="range">
                 </p-calendar>
             </div>

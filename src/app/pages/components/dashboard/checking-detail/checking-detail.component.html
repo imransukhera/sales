@@ -20,12 +20,12 @@
       
         <div id="map"></div>
         <!-- Table Header -->
-        <div class="header-section flex justify-content-between align-items-center p-2">
+        <div class="header-section flex justify-content-between align-items-center py-2 md:p-2">
             <div class="header-title flex flex-col md:flex-row gap-2 justify-content-between w-[100%]">
                 <div class="md:w-[50%] mt-3">
                     <span class="text-xl tracking-wider	 font-semibold  text-slate-800	">Checking Time Detail </span>
                 </div>
-                <div class="flex md:w-[50%] justify-end">
+                <div class="flex md:w-[50%] md:justify-end">
                     <div class="border-[0.5px] rounded-md">
                         <p-calendar [(ngModel)]="rangeDates"  selectionMode="range" [readonlyInput]="true"
                             [showIcon]="true" inputId="range">
@@ -81,7 +81,7 @@
         </div>
 
         <!-- Weekly Data Table -->
-        <div class="data-table  mt-3  rounded-lg p-1">
+        <div class="data-table  mt-3  rounded-lg p-1  hidden md:block">
             <p-table  [scrollable]="true" scrollHeight="75vh"   [value]="[datarecord]" class="p-datatable-gridlines p-datatable-striped ">
                 <ng-template pTemplate="header" >
                     <tr class="p-2 bg-[#1c4c74] ">
@@ -136,6 +136,41 @@
                 </ng-template>
             </p-table>
         </div>
+
+        <!-- mobile view -->
+         <div class="my-5 border-2 border-gray-300 rounded-md p-3 md:hidden" *ngFor="let day of datarecord">
+           <div class="flex justify-between items-center">
+            <span class="text-lg">{{day.date}}</span>
+            <div>
+                <div class="text-xs bg-green-200 text-green-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center" *ngIf="ontime > day.checkInTime">On Time</div>
+                <div class="text-xs bg-green-200 text-green-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center" *ngIf=" middletime > day.checkInTime && ontime < day.checkInTime ">Allow Time</div>
+                <div class="text-xs bg-red-200 text-red-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center" *ngIf="middletime< day.checkInTime">Late Time</div>
+            </div>
+           </div> 
+            <div class="bg-white p-2  shadow-md rounded-lg flex flex-col gap-2 my-2">
+                <span class=" font-medium text-lg">Name: {{day.name}}</span>
+<table>
+    <tr class="bg-gray-100" style="text-align: left;">
+        <th class="p-2">Check-In</th>
+        <th class="p-2">Check-Out</th>
+      </tr>
+      <tr>
+        <td class="p-2">{{day.checkInTime }}</td>
+        <td class="p-2">{{day.checkOutTime ? day.checkOutTime : '❌'}}</td>
+      </tr>
+</table>
+<table>
+    <tr class="bg-gray-100" style="text-align: left;">
+        <th class="p-2">Location</th>
+      </tr>
+      <tr>
+        <td class="p-2">{{day.location ? day.location : '❌'}}</td>
+      </tr>
+</table>
+
+            </div>
+
+         </div>
     </div>
 </div>
 
