@@ -1,30 +1,35 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { Firestore, collectionData, collection } from '@angular/fire/firestore';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { FirestoreService } from '@services/firestore.service';
 import { ImageServiceService } from '@services/image-service.service';
 import { IssueReportService } from '@services/issue/issue-report.service';
 import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
-import { EditorModule } from 'primeng/editor';
+import { Editor, EditorModule } from 'primeng/editor';
 import { Observable } from 'rxjs';
 @Component({
   selector: 'app-issue-report',
   standalone: true,
-  imports: [DialogModule, DropdownModule, EditorModule, HttpClientModule, CommonModule, ReactiveFormsModule],
+  imports: [DialogModule, FormsModule, DropdownModule, EditorModule, HttpClientModule, CommonModule, ReactiveFormsModule],
   providers: [ImageServiceService],
   templateUrl: './issue-report.component.html',
   styleUrl: './issue-report.component.scss'
 })
 export class IssueReportComponent {
+  text!: any;
   images: { url: string; name: string }[] = [];
   projects$!: Observable<any[]>;
+  allIssueReported!: Observable<any[]>;
   allProjectName: any;
+  allGetAllIssue: any;
   allData: any;
   filterData: any;
-  visible: boolean = true;
+  visible: boolean = false;
 
   dropdownProject: any[] = [
     { name: 'Story' },
@@ -55,6 +60,7 @@ export class IssueReportComponent {
     issueName: new FormControl(''),
     bugStatus: new FormControl(''),
     assigneeName: new FormControl(''),
+    reporterName: new FormControl(''),
     summary: new FormControl(''),
     description: new FormControl(''),
     imageUrl: new FormControl(''),
@@ -62,18 +68,53 @@ export class IssueReportComponent {
   });
 
   constructor(
-    private imageService: ImageServiceService
+    private router: Router
+    , private sanitizer: DomSanitizer
+    , private imageService: ImageServiceService
     , private firestore: Firestore
     , private issueService: IssueReportService
-    , private firestoreService: FirestoreService) {
+    , private firestoreService: FirestoreService, private _fb: FormBuilder) {
+    this.getProject();
+    this.getAllIssue();
+    this.getAllIss();
+
+  }
+
+  getProject() {
     const projectsCollection = collection(this.firestore, 'projects');
     this.projects$ = collectionData(projectsCollection);
   }
 
-  ngOnInit() {
-    this.getproducts();
-    this.getAllUserProfiles();
+  getAllIssue() {
+    const projectsCollection = collection(this.firestore, 'codeteck_bugsReports');
+    this.allIssueReported = collectionData(projectsCollection);
   }
+
+  ngOnInit() {
+    this.getAllUserProfiles();
+    this.getproducts();
+    this.text = "<p>PAkistan</p>"
+  }
+
+  pactValue(data: any) {
+    this.router.navigate(['task-management/issue', 4]);
+    // console.log("Patch Data:", data.description);
+    // this.profileForm.patchValue(data);
+    // this.visible = true;
+    // this.text = data.description
+  }
+
+
+  getAllIss() {
+
+    this.allIssueReported.subscribe(data => {
+      this.allGetAllIssue = data;
+      console.log(this.allGetAllIssue);
+    });
+
+
+  }
+
 
   getproducts() {
     this.projects$.subscribe(data => {
@@ -110,7 +151,7 @@ export class IssueReportComponent {
   }
 
   removeImage(index: number): void {
-    this.images.splice(index, 1); // Remove the image from the array
+    this.images.splice(index, 1);
   }
 
   onSumbit() {
@@ -129,15 +170,17 @@ export class IssueReportComponent {
       issueName: this.profileForm.value.issueName,
       bugStatus: this.profileForm.value.bugStatus,
       assigneeName: this.profileForm.value.assigneeName,
+      reporterName: this.profileForm.value.reporterName,
       summary: this.profileForm.value.summary,
-      imageUrl: this.images[0]?.url,
-      description: this.profileForm.value.description,
+      imageUrl: this.images[0]?.url ? this.images[0]?.url : 'null',
+      description: this.text,
     };
 
     console.log("This is issue payload:", date, "Project name:", projectData);
-    this.issueService.postIssueData(date, projectData)
+    this.issueService.postIssueData(projectData)
       .then((data) => {
         console.log('Project posted successfully', data);
+        this.profileForm.reset();
         this.visible = false;
       })
       .catch((error) => console.error('Error posting project: ', error));
