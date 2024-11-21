@@ -7,6 +7,8 @@ import { SharedService } from '@services/shared/shared.service';
 import { FirestoreService } from '@services/firestore.service';
 import { range } from 'rxjs';
 import { push } from 'firebase/database';
+import { ChartModule } from 'primeng/chart';
+
 
 
 @Injectable({
@@ -20,7 +22,8 @@ import { push } from 'firebase/database';
     CommonModule, 
     DashboardComponent, 
     ProgressBarModule, 
-    TimeLogsSheetComponent],
+    TimeLogsSheetComponent,
+    ChartModule ],
   templateUrl: './dashboard-page.component.html',
   styleUrl: './dashboard-page.component.scss'
 })
@@ -49,7 +52,10 @@ export class DashboardPageComponent implements OnInit  {
   leavesstatus : any;
   livetime: any;
   timer: any;
-
+  timechartdata: any;
+  timechartoptions: any;
+  leavechartdata: any;
+  leavechartoptions: any;
 
   constructor(private firestoreService: FirestoreService ) {
     
@@ -75,6 +81,62 @@ const date = new Date();
     }
   }
 
+  timechart(ontime: any, alowtimecount: any, aftertimecount:any){
+    const documentStyle = getComputedStyle(document.documentElement);
+    const textColor = documentStyle.getPropertyValue('--text-color');
+   
+
+    this.timechartdata = {
+        labels: ['On Time', 'Allow Time', 'Late'],
+        datasets: [
+            {
+                data: [ontime, alowtimecount, aftertimecount],
+                backgroundColor: [documentStyle.getPropertyValue('--green-500'), documentStyle.getPropertyValue('--yellow-500'),  documentStyle.getPropertyValue('--red-500')],
+                hoverBackgroundColor: [documentStyle.getPropertyValue('--green-400'), documentStyle.getPropertyValue('--yellow-400'), documentStyle.getPropertyValue('--red-400')]
+            }
+        ]
+    };
+    this.timechartoptions = {
+      plugins: {
+          legend: {
+              labels: {
+                usePointStyle: true,
+                color: textColor
+              }
+          }
+      }
+  };
+
+  }
+
+  leaveschart(totalleave: any, Remainings: any){
+    const documentStyle = getComputedStyle(document.documentElement);
+    const textColor = documentStyle.getPropertyValue('--text-color');
+   
+console.log('apply leaves chart ', Remainings , 'totle', totalleave)
+    this.leavechartdata = {
+        labels: ['Compensatory Leave', 'Total Leaves'],
+        datasets: [
+            {
+                data: [Remainings, totalleave],
+                backgroundColor: [documentStyle.getPropertyValue('--green-500'), documentStyle.getPropertyValue('--blue-500')],
+                hoverBackgroundColor: [documentStyle.getPropertyValue('--green-400'), documentStyle.getPropertyValue('--blue-400')]
+            }
+        ]
+    };
+    this.leavechartoptions = {
+      cutout: '40%',
+      plugins: {
+          legend: {
+              labels: {
+                usePointStyle: true,
+                color: textColor
+              }
+          }
+      }
+  };
+
+  }
 
   getusername(){
   
@@ -319,7 +381,7 @@ this.loading = true;
         this.middletimecount = monthydata.filter((product: any) => product.checkInTime < this.middletime && product.checkInTime > this.ontime ).length;
         this.aftertimecount = monthydata.filter((product: any) => product.checkInTime > this.middletime  ).length;
         
-
+this.timechart(this.ontimecount,this.middletimecount, this.aftertimecount)
 
   }
   
@@ -363,6 +425,8 @@ this.loading = true;
       }
     });
       console.log("Processed leave data", this.leavedata);
+      this.leaveschart(this.userdataleave, this.totalleave )
+
     });
   }
 
