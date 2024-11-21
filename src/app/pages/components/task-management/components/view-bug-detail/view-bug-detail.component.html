@@ -1,1 +1,27 @@
-<p>view-bug-detail works!</p>
+<div class="overflow-auto">
+    <span>/</span> <span>Backlog <span>212</span></span>
+
+    <form [formGroup]="viewForm">
+        <div>
+            <div>
+                <h1 class="summary-text p-1 rounded-md" [attr.contenteditable]="isEditing" (click)="editSummary()"
+                    (blur)="saveSummary()" [style.border]="isEditing ? '1px solid #ccc' : 'none'">
+                    {{ summary }}
+                </h1>
+            </div>
+
+            <!-- <input type="text" pInputText variant="filled" [(ngModel)]="summary" formControlName="summary" /> -->
+        </div>
+        <div>
+            <span class="text-lg font-medium">
+                Description
+            </span>
+        </div>
+        <p-editor [(ngModel)]="text" id="content" [style]="{ height: 'auto' }" [ngModelOptions]="{standalone: true}"
+            placeholder="Enter your description."></p-editor>
+
+        <div>
+            <div [innerHTML]="sanitizedDescription"></div>
+        </div>
+    </form>
+</div>
