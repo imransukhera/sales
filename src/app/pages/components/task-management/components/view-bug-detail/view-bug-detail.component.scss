@@ -3,3 +3,48 @@
         max-height: 300px !important;
     }
 }
+:host ::ng-deep{
+    .p-dropdown{
+        padding: 3px 7px 3px 7px;
+        background-color: #1c4c74;
+      color: white !important;
+      font-weight: 600;
+    }
+    .p-dropdown-label{
+        color: white;
+        font-size: 12px;
+        padding: 0 7px 0 0;
+
+    }
+    .p-dropdown-trigger{
+        color: white;
+        font-size: 12px;
+        width:auto;
+
+    }
+    .p-dropdown-item{
+        padding: 7px;
+        padding-bottom: 9px;
+        font-size: 12px;
+        font-weight: 600;
+
+    }
+    .p-dropdown-item:hover{
+      background-color: #1c4c74;
+      color: white;
+    }
+    .p-progressbar {
+        height: 0.5rem;
+    }
+    .p-progressbar .p-progressbar-value {
+        background: #1c4c74;
+    }
+    .p-dialog-header{
+        padding: 15px 15px 0 15px;
+    }
+    chevrondownicon.p-element.p-icon-wrapper {
+        width: 11px;
+        margin-bottom: -4px;
+    }
+   
+}
