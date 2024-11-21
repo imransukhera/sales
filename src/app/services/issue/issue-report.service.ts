@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, doc, setDoc, deleteDoc } from '@angular/fire/firestore';
+import { Firestore, doc, setDoc, deleteDoc, runTransaction } from '@angular/fire/firestore';
 
 
 @Injectable({
@@ -10,17 +10,37 @@ export class IssueReportService {
 
   constructor(private firestore: Firestore) { }
 
-  async postIssueData(id: any, data: any): Promise<void> {
-    const projectDocRef = doc(this.firestore, `${this.collectionName}/${id}`);
+  async generateNumericId(): Promise<number> {
+    const counterDocRef = doc(this.firestore, 'counters/issues');
     try {
-      await setDoc(projectDocRef, { ...data });
-      console.log(`Document with ID ${id} psoted written or updated!`);
+
+      const newId = await runTransaction(this.firestore, async (transaction) => {
+        const counterDoc = await transaction.get(counterDocRef);
+        let currentId = counterDoc.exists() ? counterDoc.data()?.['currentId'] : 0;
+
+        const updatedId = currentId + 1;
+        transaction.set(counterDocRef, { currentId: updatedId });
+        return updatedId;
+      });
+      return newId;
     } catch (error) {
-      console.error('Error writing or post document: ', error);
+      console.error('Error generating numeric ID:', error);
+      throw new Error('Failed to generate ID');
     }
   }
 
-  // Function to post data to Firestore
+  async postIssueData(data: any): Promise<void> {
+    try {
+      const id = await this.generateNumericId();
+      const projectDocRef = doc(this.firestore, `${this.collectionName}/${id}`);
+      await setDoc(projectDocRef, { ...data, id });
+      console.log(`Document with ID ${id} created successfully!`);
+    } catch (error) {
+      console.error('Error posting project data: ', error);
+    }
+  }
+
+
   async updateProjectData(id: string, data: any): Promise<void> {
     const projectDocRef = doc(this.firestore, `${this.collectionName}/${id}`);
     try {

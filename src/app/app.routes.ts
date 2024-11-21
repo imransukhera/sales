@@ -21,6 +21,7 @@ import { LeavesLogsComponent } from './admin/leaves-logs/leaves-logs.component';
 import { PrivacyPolicyComponent } from './pages/components/policy/privacy-policy/privacy-policy.component';
 import { DashboardPageComponent } from './pages/components/dashboard/dashboard-page/dashboard-page.component';
 import { IssueReportComponent } from './pages/components/task-management/components/issue-report/issue-report.component';
+import { ViewBugDetailComponent } from './pages/components/task-management/components/view-bug-detail/view-bug-detail.component';
 
 export const routes: Routes = [
 
@@ -65,6 +66,8 @@ export const routes: Routes = [
                     { path: 'projects', component: ProjectsDetailComponent, canActivate: [AuthGuard], data: { expectedRole: 'user' } },
                     { path: 'task', component: TaskComponent, canActivate: [AuthGuard], data: { expectedRole: 'user' } },
                     { path: 'issue-report', component: IssueReportComponent, canActivate: [AuthGuard], data: { expectedRole: 'user' } },
+                    { path: 'issue/:id', component: ViewBugDetailComponent, canActivate: [AuthGuard], data: { expectedRole: 'user' } },
+
 
                 ]
             },

@@ -1,10 +1,48 @@
 <div class="justify-end flex ">
     <button class="py-1 px-4 bg-[#1c4c74] rounded-md text-white" (click)="showDialog()">Create</button>
 </div>
+<div class="mt-2">
+    <div class="flex border-b-2 bg-[#1c4c74] p-2 rounded-md text-white">
+        <div class="w-[10%] pr-2">
+            Type
+        </div>
+        <div class="w-[10%] pr-2">
+            Key
+        </div>
+        <div class="w-[50%] pr-2">
+            Summary
+        </div>
+        <div class="w-[15%] pr-2">
+            Assignee
+        </div>
+        <div class="w-[15%] pr-2">
+            Reporter
+        </div>
+
+    </div>
+    <div class="flex border-2 mt-1 p-2 rounded-md" *ngFor="let data of allGetAllIssue" (click)="pactValue(data)">
+        <!-- type -->
+        <div class="w-[10%] pr-2">
+            {{data?.bugStatus}}
+        </div>
+        <div class="w-[10%] pr-2">
+            {{data?.id}}
+        </div>
+        <div class="w-[50%] text-[#1d4ed8] font-medium pr-2">
+            {{data?.summary}}
+        </div>
+        <div class="w-[15%] pr-2">
+            {{data?.assigneeName}}
+        </div>
+        <div class="w-[15%] pr-2">
+            {{data?.reporterName}}
+        </div>
+    </div>
+</div>
 
 <div class="card flex justify-content-center">
-    <p-dialog header="Create" [modal]="true" [(visible)]="visible" [style]="{ width: '50rem' }"
-        [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
+    <p-dialog header="Create" [modal]="true" (onHide)="profileForm.reset()" [(visible)]="visible"
+        [style]="{ width: '50rem' }" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
         <form [formGroup]="profileForm">
             <div class="p-4">
                 <span>Required fields are marked with an asterisk <span class="text-red-500">*</span></span>
@@ -47,6 +85,15 @@
                             formControlName="assigneeName" placeholder="Select a Assignee name"></p-dropdown>
                     </div>
                 </div>
+                <div class="mt-2 mb-8">
+                    <div>
+                        <label>Reporter</label>
+                    </div>
+                    <div class="lg:w-[50%] mt-1">
+                        <p-dropdown [options]="allData" optionLabel="name" optionValue="name"
+                            formControlName="reporterName" placeholder="Select a Reporter name"></p-dropdown>
+                    </div>
+                </div>
                 <div class="mb-6  mt-2 ">
                     <div class="mb-1">
                         <label>Summary <span class="text-red-500">*</span></label>
@@ -61,8 +108,10 @@
                     <div class="mb-1">
                         <label>Description</label>
                     </div>
-                    <p-editor [style]="{ height: '150px' }" formControlName="description"
-                        placeholder="Enter your description."></p-editor>
+                    <p-editor [(ngModel)]="text" id="content" [style]="{ height: '150px' }"
+                        [ngModelOptions]="{standalone: true}" placeholder="Enter your description."></p-editor>
+
+                    <!-- <button (click)="pactValue()">Update Content</button> -->
                 </div>
 
                 <div class="p-4 border-2 justify-center flex my-2">
@@ -85,9 +134,16 @@
 
             </div>
             <div class="flex justify-end gap-2 p-4">
-                <button class="py-1 px-4 border-1 rounded-md">Cancel</button>
+                <button class="py-1 px-4 border-1 rounded-md"
+                    (click)="profileForm.reset();visible = false">Cancel</button>
                 <button class="py-1 px-4 bg-[#1c4c74] text-white rounded-md" (click)="onSumbit()">Create</button>
             </div>
         </form>
     </p-dialog>
 </div>
+
+
+
+
+<!-- View the bugs details -->
+
