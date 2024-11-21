@@ -44,4 +44,8 @@ export class DashboardLayoutComponent implements OnInit {
       this.open = state;
     });
   }
+
+  sidemenu(){
+    this.shared.toggleSidebar();
+  }
 }

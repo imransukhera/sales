@@ -34,7 +34,9 @@ ngOnInit(): void {
 }
 
 sidemenu(){
-  this.open = false;
+  if(window.innerWidth <= 767){
+    this.shared.toggleSidebar();
+  }
 }
 
   toggleSidebar() {

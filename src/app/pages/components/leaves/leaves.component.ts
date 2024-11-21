@@ -49,6 +49,7 @@ export class LeavesComponent implements OnInit {
   ){}
 
   ngOnInit(): void {
+
     this.leaveduration =[
       {name: 'Full Leave'},
       {name: 'Half Leave'},
@@ -68,7 +69,6 @@ export class LeavesComponent implements OnInit {
 const profile = localStorage.getItem('userProfile')
 if(profile){
   this.userdata = JSON.parse(profile)
-  this.loading =false
 }
   }
 
@@ -118,7 +118,7 @@ if(profile){
         for(let key2 in data[key]){
           if (data[key][key2] && data[key][key2].data && Array.isArray(data[key][key2].data)) {
             this.leavedata.push(...data[key][key2].data );
-            this.leavedata.sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
+            this.leavedata.sort((a: any, b: any) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
             this.loading = false;
 
           }
@@ -151,7 +151,7 @@ if(profile){
       const total = filter.length;
       console.log("filter ", filter);
 
-    this.totalleave = 0;  // Initialize the leave counter
+    this.totalleave = 0;  
 
     filter.forEach((item: any) => {
       if (item.leavetype === 'Half Leave') {

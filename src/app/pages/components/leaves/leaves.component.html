@@ -55,10 +55,10 @@
                     <span class="font-semibold text-md">Leave Type</span>
                 </th>
                 <th class="bg-[#1c4c74] p-3 text-white w-[250px]">
-                    <span class="font-semibold text-md">startDate</span>
+                    <span class="font-semibold text-md">Start Date</span>
                 </th>
                 <th class="bg-[#1c4c74] p-3 text-white w-[250px]">
-                    <span class="font-semibold text-md">endDate</span>
+                    <span class="font-semibold text-md">End Date</span>
                 </th>
                 <th class="bg-[#1c4c74] p-3 text-white w-[250px]">
                     <span class="font-semibold text-md">Status</span>
@@ -98,24 +98,39 @@
 
     </div>
  <!-- mobile view -->
- <div class=" border-2 border-gray-300 rounded-md p-3 md:hidden" *ngFor="let item of leavedata">
-    <div class="flex justify-between items-center">
-     <span class="text-lg">{{item.date}}</span>
-     <div class=" text-xs font-semibold w-fit	rounded-md shadow-sm p-2" [ngClass]="{'bg-green-200 text-green-800': item.status === 'Approved', 'bg-yellow-100 text-yellow-800': item.status === 'Pending...'}" >
-        {{item.status}}
-    </div>
-    </div> 
+ <div class=" md:hidden" *ngFor="let item of leavedata">
+  
      <div class="bg-white p-2  shadow-md rounded-lg flex flex-col gap-2 my-2">
          <span class=" font-medium text-lg">Name: {{item.name}}</span>
+         <table>
+            <tr class="bg-gray-100" style="text-align: left;">
+             <th class="p-2"> Start Date</th>
+             <th class="p-2"> End Date</th>
+            </tr>
+            <tr>
+             <td class="p-2">{{item.startDate ? item.startDate : '❌' }}</td>
+             <td class="p-2">{{item.endDate ? item.endDate : '❌'}}</td>
+            </tr>
+            </table>
 <table>
 <tr class="bg-gray-100" style="text-align: left;">
  <th class="p-2"> Leave Type</th>
-
+ <th class="p-2"> Status</th>
 </tr>
 <tr>
  <td class="p-2">{{item.leavetype}}</td>
-
+ <td class="p-2"><div class=" text-xs font-semibold w-fit	rounded-md shadow-sm p-2" [ngClass]="{'bg-green-200 text-green-800': item.status === 'Approved', 'bg-yellow-100 text-yellow-800': item.status === 'Pending...'}" >
+    {{item.status}}
+</div></td>
 </tr>
+</table>
+<table>
+    <tr class="bg-gray-100" style="text-align: left;">
+        <th class="p-2">Description</th>
+      </tr>
+      <tr>
+        <td class="p-2">{{item.description ? item.description : '❌'}}</td>
+      </tr>
 </table>
 
 
