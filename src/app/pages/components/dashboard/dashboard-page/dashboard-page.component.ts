@@ -8,6 +8,7 @@ import { FirestoreService } from '@services/firestore.service';
 import { range } from 'rxjs';
 import { push } from 'firebase/database';
 import { ChartModule } from 'primeng/chart';
+import { AnylogClockComponent } from "./compound/anylog-clock/anylog-clock.component";
 
 
 
@@ -19,11 +20,13 @@ import { ChartModule } from 'primeng/chart';
   selector: 'app-dashboard-page',
   standalone: true,
   imports: [
-    CommonModule, 
-    DashboardComponent, 
-    ProgressBarModule, 
+    CommonModule,
+    DashboardComponent,
+    ProgressBarModule,
     TimeLogsSheetComponent,
-    ChartModule ],
+    ChartModule,
+    AnylogClockComponent
+],
   templateUrl: './dashboard-page.component.html',
   styleUrl: './dashboard-page.component.scss'
 })

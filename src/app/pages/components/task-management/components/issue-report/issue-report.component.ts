@@ -30,13 +30,14 @@ export class IssueReportComponent {
   allData: any;
   filterData: any;
   visible: boolean = false;
+  selectedBug: any; 
 
   dropdownProject: any[] = [
-    { name: 'Story' },
-    { name: 'Task' },
-    { name: 'Bug' },
-    { name: 'Epic' },
-    { name: 'Improvment' },
+    { name: 'Story' , icon: 'pi pi-bullseye text-white bg-red-600 p-1 rounded-sm'},
+    { name: 'Task' , icon: 'pi pi-bullseye text-white bg-red-600 p-1 rounded-sm'},
+    { name: 'Bug' , icon: 'pi pi-bullseye text-white bg-red-600 p-1 rounded-sm'},
+    { name: 'Epic' , icon: 'pi pi-bullseye text-white bg-red-600 p-1 rounded-sm'},
+    { name: 'Improvment' , icon: 'pi pi-bullseye text-white bg-red-600 p-1 rounded-sm'},
   ];
 
   bugStatus: any[] = [

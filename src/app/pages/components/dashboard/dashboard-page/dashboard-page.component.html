@@ -24,7 +24,7 @@
                             d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
                     </svg>
         </div>
-        <div class="text-xs font-medium ">
+        <div class="text-xs font-medium mt-3">
             <p-progressBar [value]="totaltodayValue">
                 <ng-template pTemplate="content" let-value>
                     <span></span>
@@ -74,7 +74,7 @@
 </div>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
 
     <!-- Attendance Staticies -->
 <div class="p-1">
@@ -84,42 +84,6 @@
     <div class="bg-white rounded-lg shadow-xl p-3">
         <p-chart type="pie" [data]="timechartdata" [options]="timechartoptions" width="50" />
     </div>
-    <!-- <div class="grid grid-cols-1  gap-3 ">
-          
-        <div class="shadow-xl flex flex-col justify-between gap-3 p-3 bg-white rounded-lg">
-            <div class="flex justify-between gap-1 mt-2">
-                <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1">On Time
-                    <span class="text-xl text-black">
-                        {{ontimecount}} </span> </span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-5 -5 35 35" fill="#22ac00" class="bg-green-200 rounded-lg">
-                            <path
-                                d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
-                        </svg>
-            </div>
-        </div>
-        <div class="shadow-xl flex flex-col justify-between gap-3 p-3 bg-white rounded-lg">
-            <div class="flex justify-between gap-1 mt-2">
-                <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1">Allow Time
-                    <span class="text-xl text-black">
-                        {{middletimecount}} </span> </span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-5 -5 35 35" fill="#dfd800" class="bg-yellow-100 rounded-lg">
-                            <path
-                                d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
-                        </svg>
-            </div>
-        </div>
-        <div class="shadow-xl flex flex-col justify-between gap-3 p-3 bg-white rounded-lg">
-            <div class="flex justify-between gap-1 mt-2">
-                <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1">After Allow Time
-                    <span class="text-xl text-black">
-                        {{aftertimecount}} </span> </span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-5 -5 35 35" fill="#df0044" class="bg-red-200 rounded-lg">
-                            <path
-                                d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
-                        </svg>
-            </div>
-        </div>
-    </div> -->
 </div>
 
     <!-- Leaves Staticies -->
@@ -127,79 +91,39 @@
     <div class=" mb-3 ">
         <span class="text-xl tracking-wider	 font-semibold  text-slate-800	">Leaves Staticies </span>
     </div>
-    <div class="bg-white rounded-lg shadow-xl p-3">
-        <p-chart type="doughnut" [data]="leavechartdata" [options]="leavechartoptions" width="50" />
+    <div class="bg-white rounded-lg shadow-xl p-3 ">
+        <p-chart type="doughnut" [data]="leavechartdata" [options]="leavechartoptions" width="50"  />
     </div>
-    <!-- <div class="grid grid-cols-1  gap-3   ">
-        <div class="shadow-md flex flex-col justify-between  p-3 bg-white rounded-lg ">     
-            <div class="flex justify-between gap-2 mt-2">
-                <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1 ">
-                    Total Leaves 
-                    <span class="text-lg text-black"> <span class="text-red-500">{{totalleave}}</span><span class="text-green-500">/{{userdataleave}}</span>
-                        </span></span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-30 -30 178 178" fill="#df0044" class="bg-red-200 rounded-lg">
-                            <path
-                                d="M95.53,63.65A27.35,27.35,0,1,1,68.19,91,27.35,27.35,0,0,1,95.53,63.65ZM71.59,4.05c0-2.23,2.21-4,4.94-4s4.94,1.82,4.94,4.05V22.9c0,2.24-2.21,4.05-4.94,4.05s-4.94-1.81-4.94-4.05V4.05Zm-44.26,0c0-2.23,2.21-4,4.94-4s4.95,1.82,4.95,4.05V22.9C37.22,25.14,35,27,32.27,27s-4.94-1.81-4.94-4.05V4.05ZM63.91,111.92H10.24A10.28,10.28,0,0,1,0,101.68V20.54A10.29,10.29,0,0,1,10.24,10.3h9.44V22.9a11.24,11.24,0,0,0,4.26,8.75,13.25,13.25,0,0,0,16.67,0,11.24,11.24,0,0,0,4.26-8.75V10.3H63.94V22.9a11.23,11.23,0,0,0,4.25,8.75,13.26,13.26,0,0,0,16.68,0,11.26,11.26,0,0,0,4.25-8.75V10.3H99a10.28,10.28,0,0,1,10.24,10.24V55.63a38.34,38.34,0,0,0-4.37-1.4V39.94H4.37V99.5a8.08,8.08,0,0,0,8.05,8h49a40.11,40.11,0,0,0,2.5,4.37ZM19.68,56.24l3.46,3.25,7.09-7.21c.73-.75,1.2-1.35,2.11-.41l3,3c1,1,.91,1.52,0,2.42L24.82,67.58c-1.92,1.89-1.59,2-3.55.07l-6.56-6.53a.85.85,0,0,1,.08-1.33l3.43-3.55c.51-.54.93-.51,1.46,0ZM48,51.71H62.68a1.87,1.87,0,0,1,1.87,1.86V65.78a1.89,1.89,0,0,1-1.87,1.87H48a1.88,1.88,0,0,1-1.87-1.87V53.57A1.88,1.88,0,0,1,48,51.71Zm29.59,0H92.27a1.89,1.89,0,0,1,1.81,1.4,37.79,37.79,0,0,0-18.35,5.55V53.57a1.87,1.87,0,0,1,1.87-1.86ZM48,77.66H60A37.81,37.81,0,0,0,57.62,91c0,.87,0,1.74.09,2.6H48a1.88,1.88,0,0,1-1.87-1.87V79.53A1.88,1.88,0,0,1,48,77.66Zm-29.58,0H33.1A1.87,1.87,0,0,1,35,79.53v12.2A1.89,1.89,0,0,1,33.1,93.6H18.43a1.87,1.87,0,0,1-1.87-1.87V79.53a1.87,1.87,0,0,1,1.87-1.87Zm73.31-.43h3.34a1.12,1.12,0,0,1,1.12,1.12V91.23H108a1.12,1.12,0,0,1,1.12,1.11v3.35A1.12,1.12,0,0,1,108,96.8H90.63V78.35a1.12,1.12,0,0,1,1.11-1.12Zm3.79-7.37A21.14,21.14,0,1,1,74.4,91,21.13,21.13,0,0,1,95.53,69.86Z" />
-                        </svg>
-            </div>
-            <div class="text-xs font-medium mb-1">
-                <span>Remaining: </span><span class="text-green-500">{{userdataleave - totalleave }}</span>
-            </div>
-        </div>
-        <div class="shadow-md flex flex-col justify-between gap-2 p-3 bg-white rounded-lg ">     
-            <div class="flex justify-between gap-2 mt-2">
-                <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1 ">
-                    Apply Leaves Request 
-                    <span class="text-lg text-black"> Recent Apply Leave Status
-                        </span></span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-30 -30 178 178" fill="#22ac00" class="bg-green-200 rounded-lg">
-                            <path
-                                d="M95.53,63.65A27.35,27.35,0,1,1,68.19,91,27.35,27.35,0,0,1,95.53,63.65ZM71.59,4.05c0-2.23,2.21-4,4.94-4s4.94,1.82,4.94,4.05V22.9c0,2.24-2.21,4.05-4.94,4.05s-4.94-1.81-4.94-4.05V4.05Zm-44.26,0c0-2.23,2.21-4,4.94-4s4.95,1.82,4.95,4.05V22.9C37.22,25.14,35,27,32.27,27s-4.94-1.81-4.94-4.05V4.05ZM63.91,111.92H10.24A10.28,10.28,0,0,1,0,101.68V20.54A10.29,10.29,0,0,1,10.24,10.3h9.44V22.9a11.24,11.24,0,0,0,4.26,8.75,13.25,13.25,0,0,0,16.67,0,11.24,11.24,0,0,0,4.26-8.75V10.3H63.94V22.9a11.23,11.23,0,0,0,4.25,8.75,13.26,13.26,0,0,0,16.68,0,11.26,11.26,0,0,0,4.25-8.75V10.3H99a10.28,10.28,0,0,1,10.24,10.24V55.63a38.34,38.34,0,0,0-4.37-1.4V39.94H4.37V99.5a8.08,8.08,0,0,0,8.05,8h49a40.11,40.11,0,0,0,2.5,4.37ZM19.68,56.24l3.46,3.25,7.09-7.21c.73-.75,1.2-1.35,2.11-.41l3,3c1,1,.91,1.52,0,2.42L24.82,67.58c-1.92,1.89-1.59,2-3.55.07l-6.56-6.53a.85.85,0,0,1,.08-1.33l3.43-3.55c.51-.54.93-.51,1.46,0ZM48,51.71H62.68a1.87,1.87,0,0,1,1.87,1.86V65.78a1.89,1.89,0,0,1-1.87,1.87H48a1.88,1.88,0,0,1-1.87-1.87V53.57A1.88,1.88,0,0,1,48,51.71Zm29.59,0H92.27a1.89,1.89,0,0,1,1.81,1.4,37.79,37.79,0,0,0-18.35,5.55V53.57a1.87,1.87,0,0,1,1.87-1.86ZM48,77.66H60A37.81,37.81,0,0,0,57.62,91c0,.87,0,1.74.09,2.6H48a1.88,1.88,0,0,1-1.87-1.87V79.53A1.88,1.88,0,0,1,48,77.66Zm-29.58,0H33.1A1.87,1.87,0,0,1,35,79.53v12.2A1.89,1.89,0,0,1,33.1,93.6H18.43a1.87,1.87,0,0,1-1.87-1.87V79.53a1.87,1.87,0,0,1,1.87-1.87Zm73.31-.43h3.34a1.12,1.12,0,0,1,1.12,1.12V91.23H108a1.12,1.12,0,0,1,1.12,1.11v3.35A1.12,1.12,0,0,1,108,96.8H90.63V78.35a1.12,1.12,0,0,1,1.11-1.12Zm3.79-7.37A21.14,21.14,0,1,1,74.4,91,21.13,21.13,0,0,1,95.53,69.86Z" />
-                        </svg>
-            </div>
-            <div class="text-xs font-medium mb-2" >
-                <span class="text-md font-semibold py-1 px-3 shadow-sm rounded-md" [ngClass]="{'bg-green-200 text-green-800': leavesstatus === 'Approved', 'bg-yellow-100 text-yellow-800': leavesstatus === 'Pending...'}" >{{leavesstatus}}...</span>
-            </div>
-        </div>
-       
-    </div> -->
 </div>
 
     <!-- Leaves Staticies -->
-    <div class="border-2 p-3 rounded-lg border-gray-300">
+    <div class=" p-1 ">
         <div class=" mb-3 ">
             <span class="text-xl tracking-wider	 font-semibold  text-slate-800	">Live</span>
         </div>
-        <div class="shadow-md p-3 bg-white rounded-lg h-5/6">
-            <div class="text-2xl font-semibold flex justify-between items-center p-3 ">
-                <i class="pi pi-clock bg-green-200 rounded-lg p-3 text-green-500 font-semibold" style="font-size: 2rem"></i>
-                <div class="flex flex-col items-end">
-                    <span class="text-sm font-semibold text-gray-500 flex flex-col">
-                        Live Time </span>
-                    {{livetime}}
-                </div>
+        <div class="   bg-white rounded-lg shadow-xl px-4 py-[1.4rem] ">
+        <div class="flex lg:flex-row flex-col-reverse gap-3 justify-between items-center">
+            <app-anylog-clock></app-anylog-clock>
+            <div class="flex flex-col items-end text-4xl font-semibold">
+                <span class="text-sm font-semibold text-gray-500 flex flex-col">
+                    Live Time </span>
+                {{livetime}}
             </div>
-            <div class="text-xl font-semibold flex justify-between items-center  p-3 ">
-                <i class="pi pi-calendar-clock bg-yellow-100 rounded-lg p-3 text-yellow-400" style="font-size: 2rem"></i>
-                <div class="flex flex-col items-end">
-                    <span class="text-sm font-semibold text-gray-500 flex flex-col">
-                        Today Date </span>
-                        {{date}}
-                    </div>
-            </div>
-            <div class="text-xl font-semibold flex justify-between items-center  p-3 ">
-                <i class="pi pi-telegram bg-yellow-100 rounded-lg p-3 text-yellow-400" style="font-size: 2rem"></i>
-                <div class="flex flex-col items-end">
-                    <span class="text-sm font-semibold text-gray-500 flex flex-col">
-                        TimeZone </span>
-                        {{timezone}}
-                    </div>
-            </div>
-
         </div>
+         
+    </div>
+    <div class="text-xl font-semibold flex justify-between items-center bg-white rounded-lg shadow-xl mt-3 p-3 ">
+        <i class="pi pi-calendar-clock bg-yellow-100 rounded-lg p-3 text-yellow-400" style="font-size: 2rem"></i>
+        <div class="flex flex-col items-end">
+            <span class="text-sm font-semibold text-gray-500 flex flex-col">
+                Today Date </span>
+                {{date}}
+            </div>
+    </div>
     </div>
 
 </div>
 
 
 </div>
+
