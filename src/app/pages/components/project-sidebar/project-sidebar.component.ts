@@ -49,5 +49,6 @@ sidemenu(){
     this.router.navigate(['']); // Navigate to the login page or home
     this.toaster.success('Successfully Logout');
     console.log('Logged out');
+    sessionStorage.removeItem("reloadedAfterLogin");
   }
 }

@@ -43,6 +43,13 @@ export class DashboardLayoutComponent implements OnInit {
     this.shared.sidebarState$.subscribe((state) => {
       this.open = state;
     });
+        // Check if the page has already been reloaded once
+if (!sessionStorage.getItem("reloadedAfterLogin")) {
+  // Perform the reload
+  window.location.reload();
+  // Set a flag in sessionStorage to prevent further reloads
+  sessionStorage.setItem("reloadedAfterLogin", "true");
+}
   }
 
   sidemenu(){
