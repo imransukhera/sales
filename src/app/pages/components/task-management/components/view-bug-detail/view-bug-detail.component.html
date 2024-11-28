@@ -54,9 +54,26 @@
         <div>
             <div [innerHTML]="sanitizedDescription"></div>
         </div>
-<div class="my-7">
-    <p-editor formControlName="text" [style]="{ height: '120px' }" />
-    <button class="bg-[#1c4c74] text-white py-1 px-3 rounded-md mt-1">Save</button>
+<div class="my-7 flex flex-col p-0 gap-2">
+    <div class="flex gap-2">
+        <p-avatar 
+    label="V" 
+    styleClass="mr-2" 
+    size="large" 
+    [style]="{ 'background-color': '#ece9fc', color: '#2a1261' }" 
+    shape="circle" />
+        <textarea 
+        rows="5"
+        cols="30" 
+        pInputTextarea 
+        [autoResize]="true" class="border-2 border-gray-300 p-2 shadow-none" placeholder="Add a comment...">
+        
+    </textarea>
+    </div>
+<div>
+    <button class="bg-[#1c4c74] text-white py-2 px-3 rounded-md mt-1">Save</button>
+</div>
+   
     <div class="flex flex-col my-5 gap-1">
         <span class="text-lg font-semibold text-gray-600 ">Muhammad Imran <span class="ml-1 font-normal text-xs text-gray-400">Nov 13 , 2024</span></span>
         <p class="text-sm text-gray-500 border-2 border-gray-300 rounded-md p-2">sjahadkjdlakjsdkjalkdjlkajdslkjalksdjlakjlkdjaljdlkjalkjdlkajsdlkjalkjdlkajlkdjalkjdlkajlkjdlakjdlja askjdhakh</p>

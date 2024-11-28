@@ -13,6 +13,9 @@ import { Observable } from 'rxjs';
 import jsPDF from 'jspdf';
 import { CarouselModule } from 'primeng/carousel';
 import { RouterLink } from '@angular/router';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
+import { TooltipModule } from 'primeng/tooltip';
 @Component({
   selector: 'app-time-logs-list',
   standalone: true,
@@ -25,7 +28,8 @@ import { RouterLink } from '@angular/router';
     CommonModule,
     InputTextModule,
     CarouselModule,
-    RouterLink
+    RouterLink,
+    TooltipModule
   ],
   templateUrl: './time-logs-list.component.html',
   styleUrl: './time-logs-list.component.scss'
@@ -46,6 +50,8 @@ export class TimeLogsListComponent implements OnInit {
   timeSpent: any;
   startTime: any;
   employeeDropdown: any;
+  allProjectName: any;
+  filterproject: any;
   rangeDates: any;
   updateBtn = false;
   employeeName: any;
@@ -55,16 +61,17 @@ export class TimeLogsListComponent implements OnInit {
   profileData: any;
   locathostData: any;
   grandTotalTime: any;
-
+filterdata: any;
   userdata: any[] = [];
   responsiveOptions: any[] | undefined;
-
+  innerdata: any;
 
 
   constructor(
     private firestoreService: FirestoreService
     , private firestore: Firestore
-    , private toaster: ToastrService
+    , private toaster: ToastrService ,
+   
   ) {
     const today = new Date();
     this.dateOf = today;
@@ -137,7 +144,7 @@ export class TimeLogsListComponent implements OnInit {
       const dateDate = reorganizedData.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
       this.tableData(dateDate);
-
+this.search();
     });
   }
 
@@ -153,6 +160,7 @@ export class TimeLogsListComponent implements OnInit {
   getproducts() {
     this.projects$.subscribe(data => {
       this.issueName = data;
+      this.allProjectName = data;
     });
   }
 
@@ -237,7 +245,6 @@ export class TimeLogsListComponent implements OnInit {
 
 
 
-
   processTimelo(data: any) {
     let grandTotalHours = 0;
     let grandTotalMinutes = 0;
@@ -258,6 +265,13 @@ export class TimeLogsListComponent implements OnInit {
     return `${grandTotalHours}h ${grandTotalMinutes}m`;
   }
 
+  clear(){
+    this.employeeName = "";
+    this.allProjectName ="";
+    this.filterproject = null;
+    this.search();
+  }
+
   search() {
     const startDate = new Date(this.rangeDates[0]);
     const endDate = new Date(this.rangeDates[1]);
@@ -266,10 +280,31 @@ export class TimeLogsListComponent implements OnInit {
       return recordDate >= startDate && recordDate <= endDate;
     });
     if (this.employeeName?.name) {
-      this.allData = filteredData.filter((data: any) => data?.name === this.employeeName?.name);
-    } else {
-      this.allData = filteredData;
+      this.filterdata = filteredData.filter((data: any) => data?.name === this.employeeName?.name );
+      if(this.allProjectName?.name){
+        this.filterdata = this.filterdata.filter((item: any) => 
+          item.data?.some((innerData: any) => innerData.issueName === this.allProjectName?.name)
+        );
+        this.filterproject = this.allProjectName?.name;
+      }
+      
+    } else if(this.allProjectName?.name){
+      this.filterdata = filteredData.filter((item: any) => 
+        item.data?.some((innerData: any) => innerData.issueName === this.allProjectName?.name)
+      );
+      if (this.employeeName?.name) {
+        this.filterdata = this.filterdata.filter((data: any) => data?.name === this.employeeName?.name );
+      }
+      this.filterproject = this.allProjectName?.name;
+      console.log('all project filterdata', this.allData)
+      return
     }
+    else {
+      this.filterdata = filteredData;
+      console.log('alldata', this.allData)
+    }
+
+    this.innerdata = this.filterdata.flatMap((item: any) => item.data);
   }
 
   showingDialog(namehg: any, entry: any, index: any) {
@@ -300,15 +335,119 @@ export class TimeLogsListComponent implements OnInit {
     return hours * 60 + minutes;
   }
 
+  filterlogdata(data: any){
+    if(this.filterproject){
+      const filterdataproject = data.filter((item: any)=> item.issueName === this.allProjectName.name)
+      return this.calculateTotalTime(filterdataproject)
+    }else{
+      return this.calculateTotalTime(data)
+    }
+
+
+  }
+
   // Function to calculate the total spent time
   calculateTotalTime(logs: any[]): string {
     let totalMinutes = logs.reduce((acc, log) => acc + this.convertToMinutes(log.spentTame), 0);
-
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
-
     return `${hours}h ${minutes}m`;
   }
+
+  generateExcel() {
+    // console.log('called');
+    //  this.excelService.exportToExcel();
+    let data
+    console.log('innerdata', this.innerdata)
+    console.log('employeeName', this.allProjectName )
+
+if(this.filterproject){
+  data = this.innerdata.filter((item: any)=> item.issueName === this.allProjectName.name)
+  // console.log('name', data)
+}else{
+  data = this.innerdata;
+}
+  
+  
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Sheet1');
+      
+      // Add header row dynamically
+      console.log('outname', data)
+      // const columns = Object.keys(this.innerdata[0]).map((key: any) => ({ header: key, key }));
+      // worksheet.columns = columns;
+      // console.log('name', columns)
+      worksheet.columns = [
+        {header: 'Date', key: 'date', width: 20},
+        {header: 'Project Code', key: 'projectCode', width: 15},
+        {header: 'Project Name', key: 'issueName', width: 30, style:{alignment: { horizontal: 'left' }}},
+        {header: 'Employee Name', key: 'name', width: 30},
+        {header: 'Description', key: 'description', width: 40},
+        {header: 'Hours', key: 'spentTame', width: 10, style:{alignment: { horizontal: 'right' }}},
+      ];
+
+      worksheet.getRow(1).font = { bold: true };
+
+      let totalMinutes = 0;  // To accumulate the total minutes
+        // Function to parse time in "Xh Ym" format and convert to minutes
+  function parseTime(time: string): number {
+    let minutes = 0;
+    if (time) {
+      const hourMatch = time.match(/(\d+)h/);
+      const minuteMatch = time.match(/(\d+)m/);
+      
+      if (hourMatch) {
+        minutes += parseInt(hourMatch[1], 10) * 60; // Convert hours to minutes
+      }
+      if (minuteMatch) {
+        minutes += parseInt(minuteMatch[1], 10); // Add minutes
+      }
+    }
+    return minutes;
+  }
+
+      // Add data rows dynamically
+      data.forEach((item: any) => {
+        const time = item.spentTame || '0h 0m';  // Default to '0h 0m' if no hours
+        const minutes = parseTime(time); // Convert time to minutes
+        
+        worksheet.addRow({
+        date: item.date,
+        projectCode: item.projectCode,
+        issueName: item.issueName,
+        name: item.name,
+        description: item.description,
+        spentTame: item.spentTame
+      })
+    
+      totalMinutes += minutes;
+  });
+      
+   // Convert total minutes to "Xh Ym" format
+   const totalHours = Math.floor(totalMinutes / 60);
+   const remainingMinutes = totalMinutes % 60;
+   const totalTimeFormatted = `${totalHours}h ${remainingMinutes}m`;
+ 
+   // Add total hours row at the bottom
+   const totalRow = worksheet.addRow({
+    date: 'Total',
+        projectCode: '',
+        issueName: '',
+        name: '',
+        description: '',
+        spentTame: totalTimeFormatted
+   });
+
+   totalRow.font = { bold: true };
+   const date = new Date().toISOString();
+      // Write the workbook to a buffer and save as a file
+      workbook.xlsx.writeBuffer().then(buffer => {
+        const blob = new Blob([buffer], { type: 'application/octet-stream' });
+        saveAs(blob, `TimeLogsExcelsheet${date}.xlsx`);
+      });
+    
+
+   }
 
   totalTime(data: any) {
     console.log("this is all data", data);
@@ -366,21 +505,42 @@ export class TimeLogsListComponent implements OnInit {
       if (log.data && Array.isArray(log.data)) {
         // Iterate over each item in the 'data' array
         log.data.forEach((item: any) => {
-          const time = item.spentTame;
 
-          if (time) {
-            // Match and parse hours (e.g., '7h' or '1h')
-            const hourMatch = time.match(/(\d+)h/);
-            if (hourMatch) {
-              const hours = parseInt(hourMatch[1], 10); // Convert to number
-              totalHours += hours; // Sum up the hours
+          if (item.issueName === this.filterproject) {
+            const time = item.spentTame;
+
+            if (time) {
+              // Match and parse hours (e.g., '7h' or '1h')
+              const hourMatch = time.match(/(\d+)h/);
+              if (hourMatch) {
+                const hours = parseInt(hourMatch[1], 10); // Convert to number
+                totalHours += hours; // Sum up the hours
+              }
+  
+              // Match and parse minutes (e.g., '30m')
+              const minuteMatch = time.match(/(\d+)m/);
+              if (minuteMatch) {
+                const minutes = parseInt(minuteMatch[1], 10); // Convert to number
+                totalMinutes += minutes; // Sum up the minutes
+              }
             }
+          }else{
+            const time = item.spentTame;
 
-            // Match and parse minutes (e.g., '30m')
-            const minuteMatch = time.match(/(\d+)m/);
-            if (minuteMatch) {
-              const minutes = parseInt(minuteMatch[1], 10); // Convert to number
-              totalMinutes += minutes; // Sum up the minutes
+            if (time) {
+              // Match and parse hours (e.g., '7h' or '1h')
+              const hourMatch = time.match(/(\d+)h/);
+              if (hourMatch) {
+                const hours = parseInt(hourMatch[1], 10); // Convert to number
+                totalHours += hours; // Sum up the hours
+              }
+  
+              // Match and parse minutes (e.g., '30m')
+              const minuteMatch = time.match(/(\d+)m/);
+              if (minuteMatch) {
+                const minutes = parseInt(minuteMatch[1], 10); // Convert to number
+                totalMinutes += minutes; // Sum up the minutes
+              }
             }
           }
         });

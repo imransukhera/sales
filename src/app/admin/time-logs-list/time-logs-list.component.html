@@ -13,14 +13,14 @@
         </div>
         <div class="w-[50%] justify-end flex">
             <div class=" justify-end flex">
+                <button type="button" (click)="generateExcel()"
+                class="text-gray-400 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100  rounded-lg text-sm px-3 me-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 h-[35px]">
+                <i class="pi pi-file-excel text-green-500 text-2xl"></i>
+            </button>
 
-                <button type="button" (click)="changeIf()"
-                    class="text-gray-400 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100  rounded-lg text-sm px-3 me-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 h-[35px]">
-                    <svg class="w-11 h-5 text-gray-400 dark:text-white" aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 18">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M8 1v11m0 0 4-4m-4 4L4 8m11 4v3a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-3" />
-                    </svg>
+                <button type="button" (click)="changeIf()" 
+                    class="text-gray-400 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100  rounded-lg text-sm px-3 py-1 me-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 h-[35px]">
+                   <i class="pi pi-file-pdf text-red-500 text-2xl "></i>
                 </button>
 
             </div>
@@ -41,6 +41,10 @@
                 </p-calendar>
             </div>
             <div class="mr-2">
+                <p-dropdown [options]="issueName" [(ngModel)]="allProjectName" optionLabel="name"
+                    placeholder="Select a Project"></p-dropdown>
+            </div>
+            <div class="mr-2">
                 <p-dropdown [options]="employeeDropdown" [(ngModel)]="employeeName" optionLabel="name"
                     placeholder="Select a Employee"></p-dropdown>
             </div>
@@ -48,6 +52,10 @@
                 class="focus:outline-none text-white bg-[#1c4c74] rounded-lg text-sm px-3 me-2 h-[35px]">
                 Search
             </button>
+            <button type="button" (click)="clear()" 
+            class="focus:outline-none  bg-white rounded-lg text-sm px-3 me-2 h-[35px] shadow-sm">
+            Clear
+        </button>
         </div>
     </div>
 
@@ -89,7 +97,7 @@
         }  
     </div> -->
 
-    <p-table scrollHeight="flex" [value]="allData" class="p-datatable-gridlines p-datatable-striped">
+    <p-table scrollHeight="flex" [value]="filterdata" class="p-datatable-gridlines p-datatable-striped">
         <ng-template pTemplate="header">
             <tr class="p-2 bg-[#349ce4]">
                 <th class="bg-[#1c4c74] p-3 text-white w-[250px]">
@@ -119,9 +127,8 @@
                     {{log?.date}}
                 </td>
                 <td class="p-3">
-                    <div>
-                        <!-- {{time.spentTame}} {{time | json}} -->
-                        {{ calculateTotalTime(log.data) }}
+                    <div >
+                        {{ filterlogdata(log.data) }}
                     </div>
                 </td>
 
@@ -129,7 +136,7 @@
                     <div>
                         <ng-container *ngFor="let entry of log?.data; let i = index">
                             <div class="bg-slate-100 mb-2 p-2 rounded-md hover:bg-slate-50 cursor-pointer"
-                                (click)="showingDialog(log ,entry, i)">
+                                (click)="showingDialog(log ,entry, i)" *ngIf="entry.issueName === filterproject">
                                 <div>
                                     <span class="font-bold text-sm">Spent Time :</span> {{ entry.spentTame }}
                                 </div>
@@ -154,6 +161,32 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="bg-slate-100 mb-2 p-2 rounded-md hover:bg-slate-50 cursor-pointer"
+                            (click)="showingDialog(log ,entry, i)" *ngIf="!filterproject">
+                            <div>
+                                <span class="font-bold text-sm">Spent Time :</span> {{ entry.spentTame }}
+                            </div>
+                            <div>
+                                <span class="font-bold text-sm">Project Name :</span> {{ entry.issueName }}
+                                <span class="text-red-500">
+                                    ({{entry?.projectCode ? entry?.projectCode:'No Project Id'}})
+                                </span>
+                            </div>
+                            <div>
+                                <span class="font-bold text-sm">Description :</span> {{ entry.description }}
+                            </div>
+                            <div class="flex justify-end">
+                                
+                                <div class="ml-2 cursor-pointer" (click)="update(entry,i)">
+                                    <svg class="h-[15px] w-[15px] text-red-500" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
                         </ng-container>
                     </div>
                 </td>
@@ -281,7 +314,7 @@
                                             </div>
                                             <span class="text-color text-sm">
                                                 <!-- {{allData | json}} -->
-                                                {{ calculateTotalSpentTime(allData) }}
+                                                {{ calculateTotalSpentTime(filterdata) }}
                                             </span>
                                         </div>
                                         <div class="flex align-items-center mb-1">
@@ -304,7 +337,7 @@
             </ng-container>
             <div>
             </div>
-            <p-table scrollHeight="flex" [value]="allData" class="p-datatable-gridlines p-datatable-striped">
+            <p-table scrollHeight="flex" [value]="filterdata" class="p-datatable-gridlines p-datatable-striped">
                 <ng-template pTemplate="header">
                     <tr class="p-2 bg-[#349ce4]">
                         <th class="bg-[#1c4c74] p-3 text-white w-[15%]">
@@ -334,7 +367,7 @@
                         </td>
                         <td class="p-3">
                             <div>
-                                {{ calculateTotalTime(log.data) }}
+                                {{ filterlogdata(log.data) }}
                             </div>
                         </td>
 
@@ -342,7 +375,25 @@
                             <div>
                                 <ng-container *ngFor="let entry of log?.data; let i = index">
                                     <div class="bg-slate-100 mb-2 p-2 rounded-md hover:bg-slate-50 cursor-pointer"
-                                        (click)="showingDialog(log ,entry, i)">
+                                        (click)="showingDialog(log ,entry, i)" *ngIf="entry.issueName === filterproject">
+                                        <div>
+                                            <span class="font-bold text-sm">Spent Time :</span> {{ entry.spentTame
+                                            }}
+                                        </div>
+                                        <div>
+                                            <span class="font-bold text-sm">Project Name :</span> {{ entry.issueName
+                                            }}
+                                            <span class="text-red-500">
+                                                ({{entry?.projectCode ? entry?.projectCode:'No Project Id'}})
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <span class="font-bold text-sm">Description :</span> {{
+                                            entry.description }}
+                                        </div>
+                                    </div>
+                                    <div class="bg-slate-100 mb-2 p-2 rounded-md hover:bg-slate-50 cursor-pointer"
+                                        (click)="showingDialog(log ,entry, i)" *ngIf="!filterproject">
                                         <div>
                                             <span class="font-bold text-sm">Spent Time :</span> {{ entry.spentTame
                                             }}

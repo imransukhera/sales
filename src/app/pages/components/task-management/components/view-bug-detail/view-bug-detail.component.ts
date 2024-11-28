@@ -4,12 +4,16 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { DomSanitizer } from '@angular/platform-browser';
 import { DropdownModule } from 'primeng/dropdown';
 import { EditorModule } from 'primeng/editor';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { AvatarModule } from 'primeng/avatar';
+import { AvatarGroupModule } from 'primeng/avatargroup';
+
 
 @Component({
   selector: 'app-view-bug-detail',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, EditorModule, FormsModule,
-    DropdownModule
+    DropdownModule ,  InputTextareaModule , AvatarModule
     ],
   templateUrl: './view-bug-detail.component.html',
   styleUrl: './view-bug-detail.component.scss'
