@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CalendarModule } from 'primeng/calendar';
 import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
@@ -13,7 +13,8 @@ import jsPDF from 'jspdf';
 import { CarouselModule } from 'primeng/carousel';
 import { RouterLink } from '@angular/router';
 import { retry } from 'rxjs';
-
+import { MenubarModule } from 'primeng/menubar';
+import { MenuItem } from 'primeng/api';
 
 interface Attendance {
   [key: string]: {
@@ -41,7 +42,8 @@ interface Attendance {
     CarouselModule,
     CalendarModule,
     ReactiveFormsModule,
-    RouterLink
+    RouterLink,
+    MenubarModule
   ],
   templateUrl: './admin-time-sheet.component.html',
   styleUrl: './admin-time-sheet.component.scss'
@@ -74,10 +76,32 @@ export class AdminTimeSheetComponent {
   requestdataid: any;
   ontime: any;
   middletime: any;
+  accept: boolean = false;
+  items: MenuItem[] | undefined;
   constructor(private firestoreService: FirestoreService, private firestore: Firestore, private toaster: ToastrService, private fb: FormBuilder) {
 
   }
   ngOnInit() {
+    this.items = [
+      { label: 'Attendance Report', 
+        styleClass: 'rounded-md',
+        
+         items:[
+        {
+          label:'with Location',
+          command: () => {
+            this.changeIf2();
+          }
+
+        },
+        {label:'without location',
+         
+          command: () => {
+            this.changeIf();
+          }
+        }
+      ] },
+  ];
     this.locathostData = localStorage.getItem('userProfile');
     this.profileData = JSON.parse(this.locathostData);
     this.checking;
@@ -129,6 +153,23 @@ export class AdminTimeSheetComponent {
         this.employeeDropdown = data;
       });
   }
+
+
+
+// onOptionChange(event: any) {
+//   const selectedValue = event.value;
+//   if (selectedValue.name === 'With Location') {
+//     console.log('seleted', selectedValue.name)
+//     this.downloadfile = [''];
+//     this.changeIf2();
+//   }
+//   if (selectedValue.name === 'Without Location') {
+//     console.log('seleted', selectedValue.name)
+//     this.downloadfile = [''];
+//     this.changeIf();
+
+//   }
+// }
 
   getlocation() {
     if (navigator.geolocation) {
@@ -323,6 +364,8 @@ console.log("index", index)
   }
 
   // Method to be called on input change
+
+  //without location pdf report
   changeIf() {
     const pdf = new jsPDF({
       orientation: 'portrait',
@@ -341,6 +384,27 @@ console.log("index", index)
       });
     }
 
+  }
+
+  //with location pdf report
+
+  changeIf2() {
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'pt',
+      format: 'a3',
+    });
+    const htmlData = document.getElementById('htmlData2');
+    // console.log("Pdf Image:", htmlData);
+    if (htmlData) {
+      pdf.html(htmlData, {
+        margin: [23, 0, 50, 0],
+        callback: (pdf: any) => {
+          pdf.save('timelogssheet.pdf');
+
+        }
+      });
+    }
   }
 
   searchRecord() {
@@ -486,6 +550,7 @@ if(index.status == 'Check In' || index.status == 'Both' ){
   .then(() => {
     this.toaster.showSuccess('Successfully Accept Request');
     this.loading = false;
+    this.accept = true;
     this.closeedit();
     this.requestdelete(index);
     this.fetchTimelogData(this.profileData.username);
@@ -501,6 +566,7 @@ if(index.status == 'Check In' || index.status == 'Both' ){
   .then(() => {
     this.toaster.showSuccess('Successfully Accept Request');
     this.loading = false;
+    this.accept = true;
     this.closeedit();
     this.requestdelete(index);
     this.fetchTimelogData(this.profileData.username);
@@ -530,8 +596,10 @@ const name = index.username;
 console.log("delete",name , date , data , requestindex)
 
 this.firestoreService.daleterequest( name, date, data , requestindex ).then(() => {
-  this.toaster.showError('Successfully Delete Request');
-  this.cancelFrom();
+  this.loading = false;
+  if(!this.accept){
+    this.toaster.showError('Successfully Delete Request');
+  }
   this.fetchTimelogData(this.profileData.username);
 }).catch((error) => {
   console.error('Error Request Delete:', error);

@@ -44,7 +44,7 @@ export class DashboardPageComponent implements OnInit  {
   TodayHours: any;
   totaltodayValue: any;
   timedata: any;
-  ontime: any;
+  ontime: any ;
   ontimecount: any;
   middletime: any;
   middletimecount: any;
@@ -385,6 +385,7 @@ this.loading = true;
         this.aftertimecount = monthydata.filter((product: any) => product.checkInTime > this.middletime  ).length;
         
 this.timechart(this.ontimecount,this.middletimecount, this.aftertimecount)
+console.log('timechart', this.ontimecount,this.middletimecount, this.aftertimecount)
 
   }
   

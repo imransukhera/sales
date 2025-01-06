@@ -39,6 +39,8 @@ export class AddUsersComponent {
   visible = false;
   update = false;
   allData: any;
+  ontime: any;
+  allowtime: any;
   username: any;
   gender: any[] = [
     {
