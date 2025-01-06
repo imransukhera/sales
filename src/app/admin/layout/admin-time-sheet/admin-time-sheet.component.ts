@@ -155,22 +155,6 @@ export class AdminTimeSheetComponent {
   }
 
 
-
-// onOptionChange(event: any) {
-//   const selectedValue = event.value;
-//   if (selectedValue.name === 'With Location') {
-//     console.log('seleted', selectedValue.name)
-//     this.downloadfile = [''];
-//     this.changeIf2();
-//   }
-//   if (selectedValue.name === 'Without Location') {
-//     console.log('seleted', selectedValue.name)
-//     this.downloadfile = [''];
-//     this.changeIf();
-
-//   }
-// }
-
   getlocation() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -367,6 +351,8 @@ console.log("index", index)
 
   //without location pdf report
   changeIf() {
+    const date = new Date();
+    this.loading = true;
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'pt',
@@ -378,8 +364,8 @@ console.log("index", index)
       pdf.html(htmlData, {
         margin: [23, 0, 50, 0],
         callback: (pdf: any) => {
-          pdf.save('timelogssheet.pdf');
-
+          pdf.save(`timelogssheet${date.toISOString()}.pdf`);
+          this.loading = false;
         }
       });
     }
@@ -389,6 +375,8 @@ console.log("index", index)
   //with location pdf report
 
   changeIf2() {
+    const date = new Date();
+    this.loading = true;
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'pt',
@@ -400,8 +388,8 @@ console.log("index", index)
       pdf.html(htmlData, {
         margin: [23, 0, 50, 0],
         callback: (pdf: any) => {
-          pdf.save('timelogssheet.pdf');
-
+          pdf.save(`timelogssheet${date.toISOString()}.pdf`);
+          this.loading = false;
         }
       });
     }
