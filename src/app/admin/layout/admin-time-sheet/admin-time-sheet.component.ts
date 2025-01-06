@@ -364,7 +364,7 @@ console.log("index", index)
       pdf.html(htmlData, {
         margin: [23, 0, 50, 0],
         callback: (pdf: any) => {
-          pdf.save(`timelogssheet${date.toISOString()}.pdf`);
+          pdf.save(`Attendancereport${date.toISOString()}.pdf`);
           this.loading = false;
         }
       });
@@ -388,7 +388,7 @@ console.log("index", index)
       pdf.html(htmlData, {
         margin: [23, 0, 50, 0],
         callback: (pdf: any) => {
-          pdf.save(`timelogssheet${date.toISOString()}.pdf`);
+          pdf.save(`Attendancereport${date.toISOString()}.pdf`);
           this.loading = false;
         }
       });
