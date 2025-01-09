@@ -9,6 +9,7 @@ import { range } from 'rxjs';
 import { push } from 'firebase/database';
 import { ChartModule } from 'primeng/chart';
 import { AnylogClockComponent } from "./compound/anylog-clock/anylog-clock.component";
+import { UserSerivceService } from '@services/user-service/user-serivce.service';
 
 
 
@@ -50,6 +51,7 @@ export class DashboardPageComponent implements OnInit  {
   middletimecount: any;
   aftertimecount: any;
   userdataleave: any;
+  userremainingleaves: any;
   leavedata: any;
   totalleave: any;
   leavesstatus : any;
@@ -60,7 +62,7 @@ export class DashboardPageComponent implements OnInit  {
   leavechartdata: any;
   leavechartoptions: any;
 
-  constructor(private firestoreService: FirestoreService ) {
+  constructor(private firestoreService: FirestoreService,  private userService: UserSerivceService) {
     
 const date = new Date();
     const dateString = date.toString();
@@ -88,7 +90,7 @@ const date = new Date();
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue('--text-color');
    
-
+if(ontime != 0 || alowtimecount != 0 || aftertimecount != 0){
     this.timechartdata = {
         labels: ['On Time', 'Allow Time', 'Late'],
         datasets: [
@@ -99,6 +101,19 @@ const date = new Date();
             }
         ]
     };
+  }else{
+    this.timechartdata = {
+      labels: ['On Time', 'Allow Time', 'Late'],
+      datasets: [
+          {
+              data: [0.1, alowtimecount, aftertimecount],
+              backgroundColor: [documentStyle.getPropertyValue('--green-500'), documentStyle.getPropertyValue('--yellow-500'),  documentStyle.getPropertyValue('--red-500')],
+              hoverBackgroundColor: [documentStyle.getPropertyValue('--green-400'), documentStyle.getPropertyValue('--yellow-400'), documentStyle.getPropertyValue('--red-400')]
+          }
+      ]
+  };
+  }
+    console.log('addent chart data', this.timechartdata)
     this.timechartoptions = {
       plugins: {
           legend: {
@@ -118,7 +133,7 @@ const date = new Date();
    
 console.log('apply leaves chart ', Remainings , 'totle', totalleave)
     this.leavechartdata = {
-        labels: ['Compensatory Leave', 'Total Leaves'],
+        labels: ['Remainings Leave', 'Total Leaves'],
         datasets: [
             {
                 data: [Remainings, totalleave],
@@ -127,6 +142,7 @@ console.log('apply leaves chart ', Remainings , 'totle', totalleave)
             }
         ]
     };
+    console.log("leaves cahrt", this.leavechartdata)
     this.leavechartoptions = {
       cutout: '40%',
       plugins: {
@@ -147,7 +163,8 @@ console.log('apply leaves chart ', Remainings , 'totle', totalleave)
     if(locathostData){
       const profileData =  JSON.parse(locathostData);
       this.username = profileData.username
-      this.userdataleave = profileData.leaves;
+      this.userdataleave = profileData.totalLeaves;
+      this.userremainingleaves = profileData.remainingLeaves;
       console.log('username', this.username)
       console.log('leave', this.userdataleave)
 
@@ -391,46 +408,10 @@ console.log('timechart', this.ontimecount,this.middletimecount, this.aftertimeco
   
 
   getuserleave() {
-
-    const date = new Date().toDateString();
-    this.firestoreService.getleave().subscribe((req) => {
-      console.log("date", date)
-      console.log("all request data", req)
-      const data = req.filter((item:any) => item.id == this.username)
-      console.log("date76237167", data)
-      this.leavedata = [];
-
-      for(let key in data){
-        // console.log("leavessss", data[key])
-        if (data[key] && typeof data[key] === 'object') {
-        for(let key2 in data[key]){
-          if (data[key][key2] && data[key][key2].data && Array.isArray(data[key][key2].data)) {
-            this.leavedata.push(...data[key][key2].data );
-            this.leavedata.sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
-
-          }
-        }
-      }
-      }
-
-      this.leavesstatus = this.leavedata[0].status;
-
-      const filter= this.leavedata.filter((item: any) => item.status === 'Approved');
-      const total = filter.length;
-      console.log("filter ", filter);
-
-    this.totalleave = 0;  // Initialize the leave counter
-
-    filter.forEach((item: any) => {
-      if (item.leavetype === 'Half Leave') {
-        this.totalleave =  this.totalleave + 0.5;
-      } else if (item.leavetype === 'Full Leave') {
-        this.totalleave =  this.totalleave + 1;
-      }
-    });
-      console.log("Processed leave data", this.leavedata);
-      this.leaveschart(this.userdataleave, this.totalleave )
-
+    this.firestoreService.getuserProfile(this.username)
+    .then((data) => {
+      console.log('usr data leave leaves ' , data)
+      this.leaveschart(data.totalLeaves, data.remainingLeaves )
     });
   }
 

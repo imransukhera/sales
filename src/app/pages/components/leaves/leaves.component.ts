@@ -27,7 +27,7 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './leaves.component.scss'
 })
 export class LeavesComponent implements OnInit {
-  loading: boolean = true;
+  loading: boolean = false;
   visible: boolean = false;
   userdata: any;
   leavedata: any;
@@ -39,6 +39,8 @@ export class LeavesComponent implements OnInit {
   
   leaveduration: any;
   totalleave: any;
+  remainingleaves: any
+  totalapprovedleave: any;
 
   constructor(    
     private fb: FormBuilder, 
@@ -75,8 +77,7 @@ if(profile){
   createForm() {
     this.leaveForm = this.fb.group({
       leavetype: [undefined, [Validators.required]],
-      startDate: [undefined, [Validators.required]],
-      endDate: [undefined, [Validators.required]],
+      Date: [undefined, [Validators.required]],
       description: [undefined]
     });
   }
@@ -149,31 +150,36 @@ if(profile){
       // }
       const filter= this.leavedata.filter((item: any) => item.status === 'Approved');
       const total = filter.length;
-      console.log("filter ", filter);
+     
 
-    this.totalleave = 0;  
+      console.log('total approved leaves count', this.totalapprovedleave)
+      this.firestoreService.getuserProfile(this.userdata.username)
+      .then((data) => {
+        console.log('usr data leave leaves ' , data)
+        this.totalleave = data.totalLeaves; 
+        this.remainingleaves = data.remainingLeaves;
+      });
 
-    filter.forEach((item: any) => {
-      if (item.leavetype === 'Half Leave') {
-        this.totalleave =  this.totalleave + 0.5;
-      } else if (item.leavetype === 'Full Leave') {
-        this.totalleave =  this.totalleave + 1;
-      }
-    });
-      console.log("Processed leave data", this.leavedata);
+    
     });
   }
 
   leavesubmit(){
     const value = this.leaveForm.value;
     console.log('data',value)
-    const date = value.startDate.toDateString();
+    const date = value.Date.toDateString();
     const username = this.userdata.username
+    let leavescount = 0;
+    if(value.leavetype == 'Half Leave'){
+      leavescount = 0.5;
+    }if(value.leavetype == 'Full Leave'){
+      leavescount = 1;
+    }
     const data = {
      name: this.userdata.name,
      leavetype:  value.leavetype,
-     startDate: value.startDate.toDateString(),
-     endDate: value.endDate.toDateString(),
+     Date: value.Date.toDateString(),
+     totalLeaveCount: leavescount,
      description: value.description,
      username: this.userdata.username,
      status: 'Pending...' 

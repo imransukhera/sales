@@ -14,7 +14,7 @@
             <div class="flex justify-between gap-2 mt-2">
                 <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1 ">
                     Total Leaves 
-                    <span class="text-lg text-black"> <span class="text-red-500">{{totalleave}}</span><span class="text-green-500">/{{userdata.leaves}}</span>
+                    <span class="text-lg text-black"> <span class="text-red-500">{{totalleave - remainingleaves}}</span><span class="text-green-500">/{{totalleave}}</span>
                         </span></span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-30 -30 178 178" fill="#df0044" class="bg-red-200 rounded-lg">
                             <path
@@ -22,7 +22,7 @@
                         </svg>
             </div>
             <div class="text-xs font-medium mb-1">
-                <span>Remaining: </span><span class="text-green-500">{{userdata.leaves - totalleave }}</span>
+                <span>Remaining: </span><span class="text-green-500">{{remainingleaves}}</span>
             </div>
         </div>
         <div class="shadow-md flex flex-col justify-between gap-2 p-3 bg-white rounded-lg ">     
@@ -55,10 +55,7 @@
                     <span class="font-semibold text-md">Leave Type</span>
                 </th>
                 <th class="bg-[#1c4c74] p-3 text-white w-[250px]">
-                    <span class="font-semibold text-md">Start Date</span>
-                </th>
-                <th class="bg-[#1c4c74] p-3 text-white w-[250px]">
-                    <span class="font-semibold text-md">End Date</span>
+                    <span class="font-semibold text-md"> Date</span>
                 </th>
                 <th class="bg-[#1c4c74] p-3 text-white w-[250px]">
                     <span class="font-semibold text-md">Status</span>
@@ -79,12 +76,7 @@
                 </td>
                 <td class="p-3">
                     <div class=" min-w-32	">
-                        {{item.startDate}}
-                    </div>
-                </td>
-                <td class="p-3">
-                    <div class=" min-w-32	">
-                        {{item.endDate}}
+                        {{item.Date}}
                     </div>
                 </td>
                 <td class="p-3">
@@ -146,10 +138,17 @@
     <span class="text-lg font-semibold block pb-3 border-b-2 p-2">Leave Request</span>
     <form [formGroup]="leaveForm">
     <div class="flex flex-col items-center justify-center p-3 gap-3">
+        <div class="w-full  ">
+            <label class="text-sm ">Leaves Type <span class="text-red-500">*</span></label>
+            <div class="mt-1 ">
+                <p-dropdown [options]="leaveduration"  formControlName="leavetype" optionValue="name" optionLabel="name"
+                    placeholder="Select a leave duration"  />
+            </div>
+        </div>
         <div class="align-items-center mt-3 w-full">
-            <label class="text-sm ">Start Date <span class="text-red-500">*</span></label>
+            <label class="text-sm ">Date <span class="text-red-500">*</span></label>
             <div class="mt-1 border-[0.5px] rounded-md mb-1 w-full">
-                <p-calendar [ngModel]="startDate" formControlName="startDate" appendTo="body" [readonlyInput]="true" inputId="range" class="w-full">
+                <p-calendar [ngModel]="startDate" formControlName="Date" appendTo="body" [readonlyInput]="true" inputId="range" class="w-full">
                 </p-calendar>
             </div>
             <!-- <div *ngIf="submitted && f['date'].errors" class="invalid-feedback">
@@ -158,25 +157,6 @@
                 </div>
             </div> -->
         </div>
-        <div class="align-items-center mt-3 w-full">
-            <label class="text-sm ">End Date <span class="text-red-500">*</span></label>
-            <div class="mt-1 border-[0.5px] rounded-md mb-1 w-full">
-                <p-calendar [ngModel]="endDate" formControlName="endDate" appendTo="body" [readonlyInput]="true" inputId="range" class="w-full">
-                </p-calendar>
-            </div>
-            <!-- <div *ngIf="submitted && f['date'].errors" class="invalid-feedback">
-                <div *ngIf="!f['date'].value" class="error text-sm text-red-500">
-                    Field is required
-                </div>
-            </div> -->
-        </div>
-    <div class="w-full  ">
-        <label class="text-sm ">Project <span class="text-red-500">*</span></label>
-        <div class="mt-1 ">
-            <p-dropdown [options]="leaveduration"  formControlName="leavetype" optionValue="name" optionLabel="name"
-                placeholder="Select a leave duration"  />
-        </div>
-    </div>
     <div class="align-items-center w-full ">
         <label class="text-sm ">Description <span class="text-red-500">*</span></label>
         <div class="mt-1">

@@ -9,6 +9,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
+import { UserSerivceService } from '@services/user-service/user-serivce.service';
 
 @Component({
   selector: 'app-leaves-logs',
@@ -39,6 +40,7 @@ export class LeavesLogsComponent implements OnInit{
 constructor(
   private firestoreService: FirestoreService
   , private firestore: Firestore
+      , private userService: UserSerivceService
   , private toaster: ToastrService
 ){}
   ngOnInit(): void {
@@ -59,6 +61,7 @@ constructor(
     this.firestoreService.getAllUser().subscribe(
       (data) => {
         this.employeeDropdown = data;
+        console.log('user datas', this.employeeDropdown)
       });
   }
 
@@ -66,11 +69,11 @@ constructor(
     const startDate = new Date(this.rangeDates[0]);
     const endDate = new Date(this.rangeDates[1]);
     const filteredData = this.getAllData.filter((data: any) => {
-      const recordDate = new Date(data?.date);
+      const recordDate = new Date(data?.Date);
       return recordDate >= startDate && recordDate <= endDate;
     });
     if (this.employeeName?.name) {
-      this.allData = filteredData.filter((data: any) => data?.name === this.employeeName?.name);
+      this.allData = filteredData.filter((data: any) => data.name === this.employeeName?.name);
     } else {
       this.allData = filteredData;
     }
@@ -114,38 +117,65 @@ constructor(
 
   acceptleave(index: any){
     const value = index;
-    const date = value.date;
+    const date = value.Date;
     const username = index.username
     const data = {
      name: value.name,
      leavetype:  value.leavetype,
-     date: value.date,
+     Date: value.Date,
      description: value.description,
      username: index.username,
-     status: 'Approved' 
+     status: 'Approved',
+     totalLeaveCount: value.totalLeaveCount 
     }
     console.log('data',username,  date,data)
     this.firestoreService.leaveupdate(username, date, data)
     .then(() => {
       this.toaster.success('Successfully Leave Approved');
       this.loading = false;
-      this.visible= false;
 
     })
     .catch(error => {
       this.loading = false;
       console.error('Error adding data: ', error);
     });
+
+    const userleavesdata = this.employeeDropdown.find((item: any)=> item.username == username)
+    console.log('leaves and user data find',userleavesdata.remainingLeaves)
+    const totalLeaveCount = value.totalLeaveCount;
+    const updateremaining = userleavesdata.remainingLeaves - totalLeaveCount;
+
+    const userupdate = {
+      name: userleavesdata.name,
+      gender: userleavesdata.gender,
+      email: userleavesdata.email,
+      role: userleavesdata.role,
+      phoneNo: userleavesdata.phoneNo,
+      totalLeaves: userleavesdata.totalLeaves,
+      remainingLeaves: updateremaining,
+      password: userleavesdata.password,
+      department: userleavesdata.department,
+      designation: userleavesdata.designation,
+      username: userleavesdata.username,
+    }
+console.log ('userupdate data ', userupdate)
+
+this.userService.updateProjectData(username, userupdate)
+.then((data) => {
+  this.visible = false;
+})
+.catch((error) => console.error('Error posting project: ', error));
+
   }
 
   rejectleave(index: any){
     const value = index;
-    const date = value.date;
+    const date = value.Date;
     const username = index.username
     const data = {
      name: value.name,
      leavetype:  value.leavetype,
-     date: value.date,
+     Date: value.Date,
      description: value.description,
      username: index.username,
      status: 'Approved' 
@@ -155,7 +185,7 @@ constructor(
     .then(() => {
       this.toaster.success('Successfully delete');
       this.loading = false;
-      this.visible= false;
+      // this.visible= false;
 
     })
     .catch(error => {

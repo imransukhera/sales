@@ -134,7 +134,7 @@ export class AdminTimeSheetComponent {
 
    
    ontime.setHours(10, 40, 0); // Set cutoff time to 10:30 am
-   middletime.setHours(10, 59, 59); // Set cutoff time to 10:30 am
+   middletime.setHours(11, 0, 59); // Set cutoff time to 10:30 am
    this.ontime = ontime.toLocaleTimeString();
    this.middletime= middletime.toLocaleTimeString();
    

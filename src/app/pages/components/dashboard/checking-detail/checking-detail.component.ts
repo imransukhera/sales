@@ -116,9 +116,9 @@ export class CheckingDetailComponent implements OnInit {
     const ontime = new Date();
     const middletime = new Date();
 
-    cutoffTime.setHours(10, 31, 0); // Set cutoff time to 10:30 am
+    cutoffTime.setHours(11, 0, 59); // Set cutoff time to 10:30 am
    ontime.setHours(10, 40, 0); // Set cutoff time to 10:30 am
-   middletime.setHours(10, 59, 59); // Set cutoff time to 10:30 am
+   middletime.setHours(11, 0, 59); // Set cutoff time to 10:30 am
    this.ontime = ontime.toLocaleTimeString();
    this.middletime= middletime.toLocaleTimeString();
     this.canCheckIn = currentTime < cutoffTime;
