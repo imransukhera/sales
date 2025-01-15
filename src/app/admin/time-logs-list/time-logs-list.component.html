@@ -101,6 +101,9 @@
         <ng-template pTemplate="header">
             <tr class="p-2 bg-[#349ce4]">
                 <th class="bg-[#1c4c74] p-3 text-white w-[250px]">
+                    <span class="font-normal text-md">Employee ID</span>
+                </th>
+                <th class="bg-[#1c4c74] p-3 text-white w-[250px]">
                     <span class="font-normal text-md">Name</span>
                 </th>
                 <th class="bg-[#1c4c74] p-3 text-white w-[200px]">
@@ -119,6 +122,9 @@
         </ng-template>
         <ng-template pTemplate="body" let-log>
             <tr *ngIf="!searchValue">
+                <td class="p-3">
+                    {{log?.data[0]?.employeeid}}
+                </td>
                 <td class="p-3">
                     {{log?.name}}
                     <!-- {{getUserName(log.id)}} -->
@@ -341,6 +347,9 @@
                 <ng-template pTemplate="header">
                     <tr class="p-2 bg-[#349ce4]">
                         <th class="bg-[#1c4c74] p-3 text-white w-[15%]">
+                            <span class="font-normal text-md">Employee ID</span>
+                        </th>
+                        <th class="bg-[#1c4c74] p-3 text-white w-[15%]">
                             <span class="font-normal text-md">Name</span>
                         </th>
                         <th class="bg-[#1c4c74] p-3 text-white w-[15%]">
@@ -359,6 +368,9 @@
                 </ng-template>
                 <ng-template pTemplate="body" let-log>
                     <tr *ngIf="!searchValue">
+                        <td class="p-3">
+                            {{log?.data[0]?.employeeid}}
+                        </td>
                         <td class="p-3">
                             {{log?.name}}
                         </td>

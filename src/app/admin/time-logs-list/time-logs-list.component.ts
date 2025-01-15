@@ -378,6 +378,7 @@ if(this.filterproject){
       // worksheet.columns = columns;
       // console.log('name', columns)
       worksheet.columns = [
+        {header: 'Employee ID', key: 'employeeid', width: 20},
         {header: 'Date', key: 'date', width: 20},
         {header: 'Project Code', key: 'projectCode', width: 15},
         {header: 'Project Name', key: 'issueName', width: 30, style:{alignment: { horizontal: 'left' }}},
@@ -412,6 +413,7 @@ if(this.filterproject){
         const minutes = parseTime(time); // Convert time to minutes
         
         worksheet.addRow({
+        employeeid: item.employeeid,
         date: item.date,
         projectCode: item.projectCode,
         issueName: item.issueName,
@@ -430,6 +432,7 @@ if(this.filterproject){
  
    // Add total hours row at the bottom
    const totalRow = worksheet.addRow({
+    employeeid: '',
     date: 'Total',
         projectCode: '',
         issueName: '',

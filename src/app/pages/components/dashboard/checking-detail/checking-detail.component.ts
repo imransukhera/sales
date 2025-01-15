@@ -116,7 +116,7 @@ export class CheckingDetailComponent implements OnInit {
     const ontime = new Date();
     const middletime = new Date();
 
-    cutoffTime.setHours(11, 0, 59); // Set cutoff time to 10:30 am
+    cutoffTime.setHours(12, 50, 59); // Set cutoff time to 10:30 am
    ontime.setHours(10, 40, 0); // Set cutoff time to 10:30 am
    middletime.setHours(11, 0, 59); // Set cutoff time to 10:30 am
    this.ontime = ontime.toLocaleTimeString();
@@ -254,6 +254,7 @@ console.log("middle time ", this.middletime)
     const date = currentDate.toDateString();
 
     const data = {
+      employeeid: this.profileData.employeeid,
       checkInTime: time,
       name: this.profileData.name,
       checkOutTime: '',
@@ -262,6 +263,7 @@ console.log("middle time ", this.middletime)
     }
 
     console.log("HYT:", this.currentAddress);
+    console.log('data check attendance hansdga', data)
     // return
     if (this.currentAddress) {
       this.firestoreService.checkin(this.profileData.username, date, data)
@@ -299,6 +301,7 @@ console.log("middle time ", this.middletime)
       return;
     }
     const data = {
+      employeeid: this.profileData.employeeid,
       checkInTime: choutTime?.checkInTime,
       name: this.profileData.name,
       checkOutTime: time,
@@ -362,6 +365,7 @@ console.log("middle time ", this.middletime)
 
       dayData.forEach((entry: any) => {
         result.push({
+          employeeid: entry.employeeid,
           name: entry.name,
           date: entry.date,
           checkInTime: entry.checkInTime,
@@ -391,6 +395,7 @@ console.log("middle time ", this.middletime)
     if (value.name == 'Check In') {
       if(!choutTime?.checkInTime){
       data = {
+        employeeid: this.profileData.employeeid,
         checkInTime: value.checkInTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
         name: this.profileData.name,
         checkOutTime:  choutTime?.checkOutTime ? choutTime?.checkOutTime: '' ,
@@ -405,6 +410,7 @@ console.log("middle time ", this.middletime)
      if (value.name == 'Check Out') {
       if(choutTime?.checkInTime){
       data = {
+        employeeid: this.profileData.employeeid,
         checkInTime: choutTime?.checkInTime,
         name: this.profileData.name,
         checkOutTime: value.checkOutTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
@@ -419,6 +425,7 @@ console.log("middle time ", this.middletime)
     if (value.name == 'Both'){
       if(!choutTime?.checkInTime){
       data = {
+        employeeid: this.profileData.employeeid,
         checkInTime: value.checkInTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
         name: this.profileData.name,
         checkOutTime: value.checkOutTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),

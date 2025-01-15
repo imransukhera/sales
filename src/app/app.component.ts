@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Firestore, collection, getDocs } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -13,11 +14,22 @@ import { Observable } from 'rxjs';
 export class AppComponent {
   title = 'workasio';
   data!: any;
+  loading: boolean = false;
 
-  constructor(private firestore: Firestore) { }
+  constructor(private firestore: Firestore, private toaster: ToastrService,) { }
 
   ngOnInit(): void {
     this.loadData();
+
+    setInterval(() => {
+      if (!navigator.onLine) {
+        this.toaster.error('No Internet Connection')
+        this.loading = true;
+
+      }else{
+        this.loading = false;
+      }
+    }, 5000); 
   }
 
   async loadData(): Promise<void> {

@@ -108,6 +108,7 @@ export class AddUsersComponent {
 
   createForm() {
     this.profileForm = this.fb.group({
+      employeeid: [undefined, [Validators.required]],
       name: [undefined, [Validators.required]],
       gender: [undefined, [Validators.required]],
       designation: [undefined, [Validators.required]],
@@ -161,6 +162,7 @@ export class AddUsersComponent {
 
     const projectId = this.profileForm.value['username'];
     const projectData = {
+      employeeid: this.profileForm.value['employeeid'],
       name: this.profileForm.value['name'],
       gender: this.profileForm.value['gender'],
       email: this.profileForm.value['email'],
@@ -236,6 +238,7 @@ export class AddUsersComponent {
 
     const projectId = value;
     const projectData = {
+      employeeid: this.profileForm.value['employeeid'],
       name: this.profileForm.value['name'],
       gender: this.profileForm.value['gender'],
       email: this.profileForm.value['email'],

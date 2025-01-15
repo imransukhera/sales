@@ -112,43 +112,59 @@
         </div>
 
         <!-- Weekly Data Table -->
-        <div class="data-table h-full">
+        <div class="data-table h-full hidden">
             <p-table scrollHeight="flex" [value]="[days]" class="p-datatable-gridlines p-datatable-striped">
                 <ng-template pTemplate="header">
-                    <tr class="p-2 ">
-                        <th class="bg-[#1c4c74] p-3 text-white w-[200px]" style="min-width: 200px !important;">
+                    <tr class="p-2 text-sm">
+                        <th class="bg-[#1c4c74] p-3 text-white w-[80px]" style="min-width: 80px !important;">
+                            <span class="font-normal text-md">Employee ID</span>
+                        </th>
+                        <th class="bg-[#1c4c74] p-3 text-white w-[180px]" style="min-width: 180px !important;">
                             <span class="font-normal text-md">Name</span>
                         </th>
                         <th class="bg-[#1c4c74] p-3 text-white w-[150px]" style="min-width: 150px !important;">
+                            <span class="font-normal text-md">Department</span>
+                        </th>
+                        <th class="bg-[#1c4c74] p-3 text-white w-[120px]" style="min-width: 120px !important;">
                             <span class="font-normal text-md">Date</span>
 
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[120px]" style="min-width: 120px !important;">
+                        <th class="bg-[#1c4c74] p-3 text-white w-[90px]" style="min-width: 90px !important;">
                             <span class="font-normal text-md">Check-In</span>
 
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[120px]" style="min-width: 120px !important;">
+                        <th class="bg-[#1c4c74] p-3 text-white w-[90px]" style="min-width: 90px !important;">
                             <span class="font-normal text-md">Check-Out</span>
 
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[100px]  " style="min-width: 100px !important;">
+                        <th class="bg-[#1c4c74] p-3 text-white w-[70px]  " style="min-width: 70px !important;">
                             <span class="font-normal text-md flex justify-center">Status</span>
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[300px]" style="min-width: 300px !important;">
+                        <th class="bg-[#1c4c74] p-3 text-white w-[320px]" style="min-width: 320px !important;">
                             <span class="font-normal text-md">Location</span>
 
                         </th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body">
-                    <tr *ngFor="let day of days; let i = index" class="border-b-2 " >
+                    <tr *ngFor="let day of days; let i = index" class="border-b-2 text-sm" >
+                        <td class="w-[80px !important] p-2" >
+                                {{day.employeeid}}
+                        </td>
                         <td class="w-[300px !important] p-2">
                             {{day.name}}
                         </td>
-                        <td class="w-[300px !important] p-2">
+                        <td class="w-[200px !important] p-2">
+                            @for (item of employeeDropdown; track $index) {
+                                @if (item.name == day.name) {
+                                    {{item.department}}
+                                }
+                            }
+                        </td>
+                        <td class="w-[30px !important] p-2">
                             {{day.date}}
                         </td>
-                        <td class="w-[300px !important] p-2">
+                        <td class="w-[90px !important] p-2">
                                
                                 <form [formGroup]="profileForm" class="flex items-center gap-2 " *ngIf="edittime === i ">
                                     <svg class="h-[25px] w-[25px] text-red-500 " (click)="closeedit()" fill="none" viewBox="0 0 24 24"
@@ -171,7 +187,7 @@
                             </div>
 
                         </td>
-                        <td class="w-[300px !important] p-2">
+                        <td class="w-[90px !important] p-2">
                             <form [formGroup]="profileForm" class="flex items-center gap-2 " *ngIf="edittimeout === i ">
                                 <svg class="h-[25px] w-[25px] text-red-500" (click)="closeedit()" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
@@ -210,7 +226,7 @@
 </div>
 
 <!--without location pdf report-->
-<div class="container m-auto " style="display: none;">
+<div class="container m-auto " style="">
     <div class="row m-auto">
         <div class="col-12 px-4  m-auto" style="width:840px !important; " id="htmlData">
 
@@ -224,7 +240,7 @@
                 </div>
                 <div class="justify-end flex w-full m-auto pl-3">
                     <div>
-                        <img src="/assets/logo.png" alt="" width="230px" height="40px">
+                        <img src="/assets/logo.png" alt="" width="200px" height="40px">
                     </div>
                 </div>
             </div>
@@ -263,24 +279,36 @@
             </div>
             <table class="table table-bordered w-full">
                 <tr class="table-primary" class="header bg-[#1c4c74]" style=" border-radius: 5px;">
-                    <th style="width: 20%;" class="p-3 pt-0 text-white text-lg">Name</th>
-                    <th style="width: 20%;" class="p-3 pt-0 text-white text-lg">Date</th>
-                    <th class="p-3 pt-0 text-white text-lg" style="width: 15%;">Check-in</th>
-                    <th class="p-3 pt-0 text-white text-lg" style="width: 15%;">Check-Out</th>
+                    <th style="width: 11%;" class="p-3 pt-0 text-white text-[10px] text-left">Employee ID</th>
+                    <th style="width: 10%;" class="p-3 pt-0 text-white text-[10px] text-left">Name</th>
+                    <th style="width: 15%;" class="p-3 pt-0 text-white text-[10px] text-left">Department</th>
+                    <th style="width: 10%;" class="p-3 pt-0 text-white text-[10px]">Date</th>
+                    <th class="p-3 pt-0 text-white text-[10px]" style="width: 10%;">Check-in</th>
+                    <th class="p-3 pt-0 text-white text-[10px]" style="width: 11%;">Check-Out</th>
                     <!-- <th class="p-3 pt-0 text-white text-lg" style="width: 40%;">Location</th> -->
                 </tr>
                 <ng-container>
-                    <tr style="border-bottom: 1px solid #f0eeee !important;" *ngFor="let data of days">
-                        <th style="width: 20%;" class="p-3 pt-0">
+                    <tr style="border-bottom: 1px solid #f0eeee !important; " class="text-[10px]" *ngFor="let data of days">
+                        <th style="width: 10%;" class="p-3 pt-0 text-left">
+                            {{data?.employeeid}}
+                        </th>
+                        <th style="width: 20%;" class="p-3 pt-0 text-left">
                             {{data?.name}}
                         </th>
-                        <th style="width: 20%;" class="p-3 pt-0">
+                        <td style="width: 20%;" class="p-3 pt-0 text-left font-bold">
+                            @for (item of employeeDropdown; track $index) {
+                                @if (item.name == data.name) {
+                                    {{item.department}}
+                                }
+                            }
+                        </td>
+                        <th style="width: 16%;" class="p-3 pt-0">
                             {{data?.date}}
                         </th>
-                        <th style="width: 15%;" class="p-3 pt-0">
+                        <th style="width: 10%;" class="p-3 pt-0">
                             {{data?.checkInTime}}
                         </th>
-                        <th style="width: 15%;" class="p-3 pt-0">
+                        <th style="width: 11%;" class="p-3 pt-0">
                             {{data?.checkOutTime}}
                         </th>
                         <!-- <th style="width: 40%;" class="p-3 pt-0">
@@ -310,7 +338,7 @@
                 </div>
                 <div class="justify-end flex w-full m-auto pl-3">
                     <div>
-                        <img src="/assets/logo.png" alt="" width="230px" height="40px">
+                        <img src="/assets/logo.png" alt="" width="200px" height="40px">
                     </div>
                 </div>
             </div>
@@ -349,27 +377,39 @@
             </div>
             <table class="table table-bordered w-full">
                 <tr class="table-primary" class="header bg-[#1c4c74]" style=" border-radius: 5px;">
-                    <th style="width: 20%;" class="p-3 pt-0 text-white text-lg">Name</th>
-                    <th style="width: 20%;" class="p-3 pt-0 text-white text-lg">Date</th>
-                    <th class="p-3 pt-0 text-white text-lg" style="width: 15%;">Check-in</th>
-                    <th class="p-3 pt-0 text-white text-lg" style="width: 15%;">Check-Out</th>
-                    <th class="p-3 pt-0 text-white text-lg" style="width: 40%;">Location</th>
+                    <th style="width: 11%;" class="p-3 pt-0 text-white text-[10px] text-left">Employee ID</th>
+                    <th style="width: 10%;" class="p-3 pt-0 text-white text-[10px] text-left">Name</th>
+                    <th style="width: 15%;" class="p-3 pt-0 text-white text-[10px] text-left">Department</th>
+                    <th style="width: 10%;" class="p-3 pt-0 text-white text-[10px]">Date</th>
+                    <th class="p-3 pt-0 text-white text-[10px]" style="width: 10%;">Check-in</th>
+                    <th class="p-3 pt-0 text-white text-[10px]" style="width: 10%;">Check-Out</th>
+                    <th class="p-3 pt-0 text-white text-[10px] text-left" style="width: 30%; ">Location</th>
                 </tr>
                 <ng-container>
-                    <tr style="border-bottom: 1px solid #f0eeee !important;" *ngFor="let data of days">
-                        <th style="width: 20%;" class="p-3 pt-0">
+                    <tr style="border-bottom: 1px solid #f0eeee !important;" class="text-[10px] " *ngFor="let data of days">
+                        <th style="width: 10%;" class="p-3 pt-0 text-left">
+                            {{data?.employeeid}}
+                        </th>
+                        <th style="width: 20%;" class="p-3 pt-0 text-left">
                             {{data?.name}}
                         </th>
-                        <th style="width: 20%;" class="p-3 pt-0">
+                        <td style="width: 20%;" class="p-3 pt-0 text-left font-bold">
+                            @for (item of employeeDropdown; track $index) {
+                                @if (item.name == data.name) {
+                                    {{item.department}}
+                                }
+                            }
+                        </td>
+                        <th style="width: 16%;" class="p-3 pt-0">
                             {{data?.date}}
                         </th>
-                        <th style="width: 15%;" class="p-3 pt-0">
+                        <th style="width: 10%;" class="p-3 pt-0">
                             {{data?.checkInTime}}
                         </th>
-                        <th style="width: 15%;" class="p-3 pt-0">
+                        <th style="width: 11%;" class="p-3 pt-0">
                             {{data?.checkOutTime}}
                         </th>
-                        <th style="width: 40%;" class="p-3 pt-0">
+                        <th style="width: 40%;" class="p-3 pt-0 text-left">
                             {{data?.location}}
                         </th>
 

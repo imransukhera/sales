@@ -261,6 +261,7 @@ export class TimeLogsSheetComponent implements OnInit {
     const day = formattedDate;
     const name = this.profileData.username;
     const data = {
+      employeeid: this.profileData.employeeid,
       date: formattedDate,
       issueName: this.issueNameVlaue,
       spentTame: this.timeSpent,
@@ -371,6 +372,7 @@ export class TimeLogsSheetComponent implements OnInit {
     const day = formattedDate;
     const name = this.profileData.username;
     const data = {
+      employeeid: this.profileData.employeeid,
       date: formattedDate,
       issueName: this.issueNameVlaue,
       spentTame: this.timeSpent,

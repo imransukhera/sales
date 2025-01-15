@@ -133,7 +133,7 @@ if(ontime != 0 || alowtimecount != 0 || aftertimecount != 0){
    
 console.log('apply leaves chart ', Remainings , 'totle', totalleave)
     this.leavechartdata = {
-        labels: ['Remainings Leave', 'Total Leaves'],
+        labels: ['Remainings Leave', 'Apply Leaves'],
         datasets: [
             {
                 data: [Remainings, totalleave],
@@ -393,8 +393,8 @@ this.loading = true;
     console.log('time ka data', monthydata)
     const ontime = new Date();
     const middletime = new Date();
-   ontime.setHours(10, 20, 0); // Set cutoff time to 10:30 am
-   middletime.setHours(10, 30, 59); // Set cutoff time to 10:30 am
+   ontime.setHours(10, 40, 0); // Set cutoff time to 10:30 am
+   middletime.setHours(11, 0, 59); // Set cutoff time to 10:30 am
    this.ontime = ontime.toLocaleTimeString();
    this.middletime= middletime.toLocaleTimeString();
       this.ontimecount = monthydata.filter((product: any) => product.checkInTime < this.ontime).length;
@@ -411,7 +411,8 @@ console.log('timechart', this.ontimecount,this.middletimecount, this.aftertimeco
     this.firestoreService.getuserProfile(this.username)
     .then((data) => {
       console.log('usr data leave leaves ' , data)
-      this.leaveschart(data.totalLeaves, data.remainingLeaves )
+      const applyleaves = data.totalLeaves - data.remainingLeaves;
+      this.leaveschart(applyleaves, data.remainingLeaves )
     });
   }
 

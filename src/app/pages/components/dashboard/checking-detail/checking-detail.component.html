@@ -85,6 +85,9 @@
             <p-table  [scrollable]="true" scrollHeight="75vh"   [value]="[datarecord]" class="p-datatable-gridlines p-datatable-striped ">
                 <ng-template pTemplate="header" >
                     <tr class="p-2 bg-[#1c4c74] ">
+                        <th class="bg-[#1c4c74] p-3 text-white w-[200px]" style="min-width: 200px !important;">
+                            <span class="font-normal text-md">Employee ID</span>
+                        </th>
                         <th class="bg-[#1c4c74] p-2 text-white w-[300px]" style="min-width: 300px !important;">
                             <span class="font-normal text-md ">Name</span>
                         </th>
@@ -112,6 +115,9 @@
                 </ng-template>
                 <ng-template pTemplate="body">
                     <tr *ngFor="let day of datarecord" class="border-b-2 " >
+                        <td class="w-[300px !important] p-2">
+                            {{day.employeeid}}
+                        </td>
                         <td class="w-[300px !important] p-2">
                             {{day.name}}
                         </td>

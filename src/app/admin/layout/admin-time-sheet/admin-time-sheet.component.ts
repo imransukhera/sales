@@ -151,6 +151,7 @@ export class AdminTimeSheetComponent {
     this.firestoreService.getAllUser().subscribe(
       (data) => {
         this.employeeDropdown = data;
+        console.log("dhfgsjhagdh data usr", this.employeeDropdown)
       });
   }
 
@@ -194,6 +195,7 @@ console.log("index", index)
 
     this.checkingstatus = true;
     const data = {
+      employeeid: index.employeeid,
       checkInTime:  this.profileForm.value.check_in.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
       checkOutTime: index.checkOutTime,
       date: index.date,
@@ -225,6 +227,7 @@ console.log("index", index)
 
     this.checkingstatus = true;
     const data = {
+      employeeid: index.employeeid,
       checkInTime: index.checkInTime,
       checkOutTime: this.profileForm.value.check_out.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
       date: index.date,
@@ -298,6 +301,7 @@ console.log("index", index)
           return Object.keys(item).map((key: string) => {
             if (key !== 'id') {
               return item[key].data.map((record: any) => ({
+                employeeid: record.employeeid,
                 checkInTime: record.checkInTime,
                 checkOutTime: record.checkOutTime,
                 date: record.date,
@@ -334,6 +338,7 @@ console.log("index", index)
 
       dayData.forEach((entry: any) => {
         result.push({
+          employeeid: entry.employeeid,
           name: entry.name,
           date: entry.date,
           checkInTime: entry.checkInTime,
@@ -525,6 +530,7 @@ const name = index.username
 console.log("username", name)
  this.checkingstatus = true;
  const data = {
+  employeeid: index.employeeid,
    checkInTime: index.checkInTime,
    checkOutTime: index.checkOutTime,
    date: index.date,
@@ -574,6 +580,7 @@ const name = index.username;
 
  this.checkingstatus = true;
  const data = {
+  employeeid: index.employeeid,
    checkInTime: index.checkInTime,
    checkOutTime: index.checkOutTime,
    date: index.date,
