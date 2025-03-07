@@ -43,9 +43,6 @@
                     <span class="font-semibold text-md">Start Date</span>
                 </th>
                 <th class="bg-[#1c4c74] p-3 text-white w-[250px]">
-                    <span class="font-semibold text-md">End Date</span>
-                </th>
-                <th class="bg-[#1c4c74] p-3 text-white w-[250px]">
                     <span class="font-semibold text-md">Status</span>
                 </th>
                 <th class="bg-[#1c4c74] p-3 text-white w-[350px]">
@@ -56,7 +53,7 @@
         <ng-template pTemplate="body">
             <tr *ngFor="let item of allData">
                 
-                <td class="px-3 p-2">
+                <td class="px-3 p-2 border-2">
                     <div class="font-semibold min-w-16	">
                         {{item.name}}
                     </div>
@@ -68,12 +65,7 @@
                 </td>
                 <td class="px-3 py-2">
                     <div class="font-semibold min-w-32	">
-                        {{item.startDate}}
-                    </div>
-                </td>
-                <td class="px-3 py-2">
-                    <div class="font-semibold min-w-32	">
-                        {{item.endDate}}
+                        {{item.Date}}
                     </div>
                 </td>
                 <td class="px-3 py-2">
@@ -117,7 +109,7 @@
                           Apply Leaves</div>
                     </td>
                     <td class="w-full">
-                        <span class="px-2 text-sm"><span class="text-red-600 font-semibold">Name:</span> {{data.name}} -  <span class="text-red-600 font-semibold">Date:</span> {{data.date}} -
+                        <span class="px-2 text-sm"><span class="text-red-600 font-semibold">Name:</span> {{data.name}} -  <span class="text-red-600 font-semibold">Date:</span> {{data.Date}} -
                         <span class="text-red-600 font-semibold" >Leave Type:</span > {{data.leavetype}} - <span class="text-red-600 font-semibold">Status:</span>{{data.status}}  </span>
                     </td>
                     <td>

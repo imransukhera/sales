@@ -39,6 +39,8 @@ export class AddUsersComponent {
   visible = false;
   update = false;
   allData: any;
+  ontime: any;
+  allowtime: any;
   username: any;
   gender: any[] = [
     {
@@ -106,12 +108,14 @@ export class AddUsersComponent {
 
   createForm() {
     this.profileForm = this.fb.group({
+      employeeid: [undefined, [Validators.required]],
       name: [undefined, [Validators.required]],
       gender: [undefined, [Validators.required]],
       designation: [undefined, [Validators.required]],
       department: [undefined, [Validators.required]],
       phoneNo: [undefined, [Validators.required]],
-      leaves: [undefined, [Validators.required]],
+      totalLeaves: [undefined, [Validators.required]],
+      remainingLeaves:[undefined, [Validators.required]],
       email: [undefined, [Validators.required]],
       role: [undefined, [Validators.required]],
       username: [undefined, [Validators.required]],
@@ -158,12 +162,14 @@ export class AddUsersComponent {
 
     const projectId = this.profileForm.value['username'];
     const projectData = {
+      employeeid: this.profileForm.value['employeeid'],
       name: this.profileForm.value['name'],
       gender: this.profileForm.value['gender'],
       email: this.profileForm.value['email'],
       role: this.profileForm.value['role'],
       phoneNo: this.profileForm.value['phoneNo'],
-      leaves: this.profileForm.value['leaves'],
+      totalLeaves: this.profileForm.value['totalLeaves'],
+      remainingLeaves: this.profileForm.value['remainingLeaves'],
       password: this.profileForm.value['password'],
       department: this.profileForm.value['department'],
       designation: this.profileForm.value['designation'],
@@ -232,12 +238,14 @@ export class AddUsersComponent {
 
     const projectId = value;
     const projectData = {
+      employeeid: this.profileForm.value['employeeid'],
       name: this.profileForm.value['name'],
       gender: this.profileForm.value['gender'],
       email: this.profileForm.value['email'],
       role: this.profileForm.value['role'],
       phoneNo: this.profileForm.value['phoneNo'],
-      leaves: this.profileForm.value['leaves'],
+      totalLeaves: this.profileForm.value['totalLeaves'],
+      remainingLeaves: this.profileForm.value['remainingLeaves'],
       password: this.profileForm.value['password'],
       department: this.profileForm.value['department'],
       designation: this.profileForm.value['designation'],

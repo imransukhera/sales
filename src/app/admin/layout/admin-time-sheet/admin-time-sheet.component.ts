@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CalendarModule } from 'primeng/calendar';
 import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
@@ -13,7 +13,8 @@ import jsPDF from 'jspdf';
 import { CarouselModule } from 'primeng/carousel';
 import { RouterLink } from '@angular/router';
 import { retry } from 'rxjs';
-
+import { MenubarModule } from 'primeng/menubar';
+import { MenuItem } from 'primeng/api';
 
 interface Attendance {
   [key: string]: {
@@ -41,7 +42,8 @@ interface Attendance {
     CarouselModule,
     CalendarModule,
     ReactiveFormsModule,
-    RouterLink
+    RouterLink,
+    MenubarModule
   ],
   templateUrl: './admin-time-sheet.component.html',
   styleUrl: './admin-time-sheet.component.scss'
@@ -74,10 +76,32 @@ export class AdminTimeSheetComponent {
   requestdataid: any;
   ontime: any;
   middletime: any;
+  accept: boolean = false;
+  items: MenuItem[] | undefined;
   constructor(private firestoreService: FirestoreService, private firestore: Firestore, private toaster: ToastrService, private fb: FormBuilder) {
 
   }
   ngOnInit() {
+    this.items = [
+      { label: 'Attendance Report', 
+        styleClass: 'rounded-md',
+        
+         items:[
+        {
+          label:'with Location',
+          command: () => {
+            this.changeIf2();
+          }
+
+        },
+        {label:'without location',
+         
+          command: () => {
+            this.changeIf();
+          }
+        }
+      ] },
+  ];
     this.locathostData = localStorage.getItem('userProfile');
     this.profileData = JSON.parse(this.locathostData);
     this.checking;
@@ -109,8 +133,8 @@ export class AdminTimeSheetComponent {
     const middletime = new Date();
 
    
-   ontime.setHours(10, 20, 0); // Set cutoff time to 10:30 am
-   middletime.setHours(10, 30, 59); // Set cutoff time to 10:30 am
+   ontime.setHours(10, 40, 0); // Set cutoff time to 10:30 am
+   middletime.setHours(11, 0, 59); // Set cutoff time to 10:30 am
    this.ontime = ontime.toLocaleTimeString();
    this.middletime= middletime.toLocaleTimeString();
    
@@ -127,8 +151,10 @@ export class AdminTimeSheetComponent {
     this.firestoreService.getAllUser().subscribe(
       (data) => {
         this.employeeDropdown = data;
+        console.log("dhfgsjhagdh data usr", this.employeeDropdown)
       });
   }
+
 
   getlocation() {
     if (navigator.geolocation) {
@@ -169,6 +195,7 @@ console.log("index", index)
 
     this.checkingstatus = true;
     const data = {
+      employeeid: index.employeeid,
       checkInTime:  this.profileForm.value.check_in.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
       checkOutTime: index.checkOutTime,
       date: index.date,
@@ -200,6 +227,7 @@ console.log("index", index)
 
     this.checkingstatus = true;
     const data = {
+      employeeid: index.employeeid,
       checkInTime: index.checkInTime,
       checkOutTime: this.profileForm.value.check_out.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
       date: index.date,
@@ -273,6 +301,7 @@ console.log("index", index)
           return Object.keys(item).map((key: string) => {
             if (key !== 'id') {
               return item[key].data.map((record: any) => ({
+                employeeid: record.employeeid,
                 checkInTime: record.checkInTime,
                 checkOutTime: record.checkOutTime,
                 date: record.date,
@@ -309,6 +338,7 @@ console.log("index", index)
 
       dayData.forEach((entry: any) => {
         result.push({
+          employeeid: entry.employeeid,
           name: entry.name,
           date: entry.date,
           checkInTime: entry.checkInTime,
@@ -323,7 +353,11 @@ console.log("index", index)
   }
 
   // Method to be called on input change
+
+  //without location pdf report
   changeIf() {
+    const date = new Date();
+    this.loading = true;
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'pt',
@@ -335,12 +369,35 @@ console.log("index", index)
       pdf.html(htmlData, {
         margin: [23, 0, 50, 0],
         callback: (pdf: any) => {
-          pdf.save('timelogssheet.pdf');
-
+          pdf.save(`Attendancereport${date.toISOString()}.pdf`);
+          this.loading = false;
         }
       });
     }
 
+  }
+
+  //with location pdf report
+
+  changeIf2() {
+    const date = new Date();
+    this.loading = true;
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'pt',
+      format: 'a3',
+    });
+    const htmlData = document.getElementById('htmlData2');
+    // console.log("Pdf Image:", htmlData);
+    if (htmlData) {
+      pdf.html(htmlData, {
+        margin: [23, 0, 50, 0],
+        callback: (pdf: any) => {
+          pdf.save(`Attendancereport${date.toISOString()}.pdf`);
+          this.loading = false;
+        }
+      });
+    }
   }
 
   searchRecord() {
@@ -473,6 +530,7 @@ const name = index.username
 console.log("username", name)
  this.checkingstatus = true;
  const data = {
+  employeeid: index.employeeid,
    checkInTime: index.checkInTime,
    checkOutTime: index.checkOutTime,
    date: index.date,
@@ -486,6 +544,7 @@ if(index.status == 'Check In' || index.status == 'Both' ){
   .then(() => {
     this.toaster.showSuccess('Successfully Accept Request');
     this.loading = false;
+    this.accept = true;
     this.closeedit();
     this.requestdelete(index);
     this.fetchTimelogData(this.profileData.username);
@@ -501,6 +560,7 @@ if(index.status == 'Check In' || index.status == 'Both' ){
   .then(() => {
     this.toaster.showSuccess('Successfully Accept Request');
     this.loading = false;
+    this.accept = true;
     this.closeedit();
     this.requestdelete(index);
     this.fetchTimelogData(this.profileData.username);
@@ -520,6 +580,7 @@ const name = index.username;
 
  this.checkingstatus = true;
  const data = {
+  employeeid: index.employeeid,
    checkInTime: index.checkInTime,
    checkOutTime: index.checkOutTime,
    date: index.date,
@@ -530,8 +591,10 @@ const name = index.username;
 console.log("delete",name , date , data , requestindex)
 
 this.firestoreService.daleterequest( name, date, data , requestindex ).then(() => {
-  this.toaster.showError('Successfully Delete Request');
-  this.cancelFrom();
+  this.loading = false;
+  if(!this.accept){
+    this.toaster.showError('Successfully Delete Request');
+  }
   this.fetchTimelogData(this.profileData.username);
 }).catch((error) => {
   console.error('Error Request Delete:', error);

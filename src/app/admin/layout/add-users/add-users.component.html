@@ -99,6 +99,10 @@
                         class="text-red-500">*</span></label>
             </div>
             <div class="mt-2">
+                <label class="text-sm ">Employee ID <span class="text-red-500">*</span></label>
+                <input type="text" placeholder="Enter your name" formControlName="employeeid">
+            </div>
+            <div class="mt-2">
                 <label class="text-sm ">Name <span class="text-red-500">*</span></label>
                 <input type="text" placeholder="Enter your name" formControlName="name">
             </div>
@@ -112,7 +116,6 @@
                 <p-dropdown [options]="role" formControlName="role" optionValue="role" optionLabel="role"
                     placeholder="Select a Role"></p-dropdown>
             </div>
-
             <div class="mt-2">
                 <label class="text-sm ">Designation<span class="text-red-500">*</span></label>
                 <input type="text" placeholder="Enter the office role" formControlName="designation">
@@ -130,9 +133,22 @@
             </div>
             <div class="mt-2" >
                 <label class="text-sm ">Total leaves <span class="text-red-500">*</span></label>
-                <input type="text" placeholder="Enter total no of leaves" formControlName="leaves">
+                <input type="text" placeholder="Enter total no of leaves" formControlName="totalLeaves">
             </div>
-           
+            <div class="mt-2" >
+                <label class="text-sm ">Remaining Leaves <span class="text-red-500">*</span></label>
+                <input type="text" placeholder="Enter total no of leaves" formControlName="remainingLeaves">
+            </div>
+            <div class="mt-2" >
+                <label class="text-sm ">On Time <span class="text-red-500">*</span></label>
+                <p-calendar inputId="calendar-timeonly" [(ngModel)]="ontime" hourFormat="12" class="w-[100%]"
+                placeholder="Enter your start time" [timeOnly]="true"></p-calendar>
+            </div>
+            <div class="mt-2" >
+                <label class="text-sm ">Allow Time <span class="text-red-500">*</span></label>
+                <p-calendar inputId="calendar-timeonly" [(ngModel)]="allowtime" hourFormat="12" class="w-[100%]"
+                placeholder="Enter your start time" [timeOnly]="true"></p-calendar>
+            </div>
 
             <div class="mt-2" *ngIf="!update">
                 <label class="text-sm ">Email <span class="text-red-500">*</span></label>
