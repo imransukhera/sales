@@ -135,7 +135,7 @@
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body">
-                    <tr *ngFor="let day of days; let i = index" class="border-b-2 " >
+                    <tr *ngFor="let day of days; let i = index" class="border-b-2 ">
                         <td class="w-[300px !important] p-2">
                             {{day.name}}
                         </td>
@@ -143,18 +143,20 @@
                             {{day.date}}
                         </td>
                         <td class="w-[300px !important] p-2">
-                               
-                                <form [formGroup]="profileForm" class="flex items-center gap-2 " *ngIf="edittime === i ">
-                                    <svg class="h-[25px] w-[25px] text-red-500 " (click)="closeedit()" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
+
+                            <form [formGroup]="profileForm" class="flex items-center gap-2 " *ngIf="edittime === i ">
+                                <svg class="h-[25px] w-[25px] text-red-500 " (click)="closeedit()" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M3 3h18v18H3zM15 9l-6 6m0-6l6 6" />
                                 </svg>
-                                <p-calendar inputId="calendar-timeonly" formControlName="check_in" [(ngModel)]="time"   hourFormat="12" class="w-[50%]" placeholder="Edit item" [timeOnly]="true"/>
+                                <p-calendar inputId="calendar-timeonly" formControlName="check_in" [(ngModel)]="time"
+                                    hourFormat="12" class="w-[50%]" placeholder="Edit item" [timeOnly]="true" />
                                 <button
-                                    class="focus:outline-none text-white bg-[#1c4c74] hover:bg-[#1c4c74] focus:ring-4 focus:bg-[#1c4c74] rounded-lg text-sm px-3 me-2 dark:bg-[#1c4c74] dark:hover:bg-[#1c4c74] dark:focus:bg-[#1c4c74] h-[35px]" (click)="checkin(day)">
+                                    class="focus:outline-none text-white bg-[#1c4c74] hover:bg-[#1c4c74] focus:ring-4 focus:bg-[#1c4c74] rounded-lg text-sm px-3 me-2 dark:bg-[#1c4c74] dark:hover:bg-[#1c4c74] dark:focus:bg-[#1c4c74] h-[35px]"
+                                    (click)="checkin(day)">
                                     Save</button>
-                                </form>
+                            </form>
                             <div class="flex items-center gap-1" *ngIf="edittime != i">
                                 <svg class="h-[15px] w-[15px] text-red-500" fill="none" (click)="timeedit(i)"
                                     viewBox="0 0 24 24" stroke="currentColor">
@@ -167,29 +169,34 @@
                         </td>
                         <td class="w-[300px !important] p-2">
                             <form [formGroup]="profileForm" class="flex items-center gap-2 " *ngIf="edittimeout === i ">
-                                <svg class="h-[25px] w-[25px] text-red-500" (click)="closeedit()" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 3h18v18H3zM15 9l-6 6m0-6l6 6" />
-                            </svg>
-                            <p-calendar inputId="calendar-timeonly" formControlName="check_out" [(ngModel)]="time"   hourFormat="12" class="w-[50%]" placeholder="Edit item" [timeOnly]="true"/>
-                            <button
-                                class="focus:outline-none text-white bg-[#1c4c74] hover:bg-[#1c4c74] focus:ring-4 focus:bg-[#1c4c74] rounded-lg text-sm px-3 me-2 dark:bg-[#1c4c74] dark:hover:bg-[#1c4c74] dark:focus:bg-[#1c4c74] h-[35px]" (click)="checkout(day)">
-                                Save</button>
+                                <svg class="h-[25px] w-[25px] text-red-500" (click)="closeedit()" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 3h18v18H3zM15 9l-6 6m0-6l6 6" />
+                                </svg>
+                                <p-calendar inputId="calendar-timeonly" formControlName="check_out" [(ngModel)]="time"
+                                    hourFormat="12" class="w-[50%]" placeholder="Edit item" [timeOnly]="true" />
+                                <button
+                                    class="focus:outline-none text-white bg-[#1c4c74] hover:bg-[#1c4c74] focus:ring-4 focus:bg-[#1c4c74] rounded-lg text-sm px-3 me-2 dark:bg-[#1c4c74] dark:hover:bg-[#1c4c74] dark:focus:bg-[#1c4c74] h-[35px]"
+                                    (click)="checkout(day)">
+                                    Save</button>
                             </form>
-                        <div class="flex items-center gap-1" *ngIf="edittimeout != i">
-                            <svg class="h-[15px] w-[15px] text-red-500" fill="none" (click)="timeeditout(i)"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                            {{day.checkOutTime ? day.checkOutTime : '❌'}}
-                        </div>
+                            <div class="flex items-center gap-1" *ngIf="edittimeout != i">
+                                <svg class="h-[15px] w-[15px] text-red-500" fill="none" (click)="timeeditout(i)"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                {{day.checkOutTime ? day.checkOutTime : '❌'}}
+                            </div>
                         </td>
                         <td class="w-[300px !important] p-2 flex justify-center">
-                            <div class="text-xs bg-green-200 text-green-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center" *ngIf="ontime > day.checkInTime">On Time</div>
-                            <div class="text-xs bg-green-200 text-green-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center"  *ngIf=" middletime > day.checkInTime && ontime < day.checkInTime ">Allow Time</div>
-                            <div class="text-xs bg-red-200 text-red-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center" *ngIf="middletime< day.checkInTime">Late Time</div>
+                            <div class="text-xs bg-green-200 text-green-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center"
+                                *ngIf="ontime > day.checkInTime">On Time</div>
+                            <div class="text-xs bg-green-200 text-green-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center"
+                                *ngIf=" middletime > day.checkInTime && ontime < day.checkInTime ">Allow Time</div>
+                            <div class="text-xs bg-red-200 text-red-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center"
+                                *ngIf="middletime< day.checkInTime">Late Time</div>
                         </td>
                         <td class="w-[300px !important] p-2">
                             {{day.location}}
@@ -261,7 +268,7 @@
                     <th style="width: 20%;" class="p-3 pt-0 text-white text-lg">Date</th>
                     <th class="p-3 pt-0 text-white text-lg" style="width: 15%;">Check-in</th>
                     <th class="p-3 pt-0 text-white text-lg" style="width: 15%;">Check-Out</th>
-                    <th class="p-3 pt-0 text-white text-lg" style="width: 40%;">Location</th>
+                    <!-- <th class="p-3 pt-0 text-white text-lg" style="width: 40%;">Location</th> -->
                 </tr>
                 <ng-container>
                     <tr style="border-bottom: 1px solid #f0eeee !important;" *ngFor="let data of days">
@@ -277,9 +284,9 @@
                         <th style="width: 15%;" class="p-3 pt-0">
                             {{data?.checkOutTime}}
                         </th>
-                        <th style="width: 40%;" class="p-3 pt-0">
+                        <!-- <th style="width: 40%;" class="p-3 pt-0">
                             {{data?.location}}
-                        </th>
+                        </th> -->
 
 
                     </tr>
@@ -309,13 +316,22 @@
                             Missing Attendance</div>
                     </td>
                     <td class="w-full">
-                        <span class="px-2 text-sm"><span class="text-red-600 font-semibold">Name:</span> {{data.name}} -  <span class="text-red-600 font-semibold">Date:</span> {{data.date}} -
-                        <span class="text-red-600 font-semibold" *ngIf="data.status == 'Check In' || data.status == 'Both'">Check-in Time:</span > <span *ngIf="data.status == 'Check In'|| data.status == 'Both'">{{data.checkInTime ? data.checkInTime: '❌'}}</span> - <span class="text-red-600 font-semibold" *ngIf="data.status == 'Check Out'|| data.status == 'Both'">Check-out Time:</span> <span *ngIf="data.status == 'Check Out'|| data.status == 'Both'">{{data.checkOutTime ? data.checkOutTime : '❌'}}</span></span>
+                        <span class="px-2 text-sm"><span class="text-red-600 font-semibold">Name:</span> {{data.name}} -
+                            <span class="text-red-600 font-semibold">Date:</span> {{data.date}} -
+                            <span class="text-red-600 font-semibold"
+                                *ngIf="data.status == 'Check In' || data.status == 'Both'">Check-in Time:</span> <span
+                                *ngIf="data.status == 'Check In'|| data.status == 'Both'">{{data.checkInTime ?
+                                data.checkInTime: '❌'}}</span> - <span class="text-red-600 font-semibold"
+                                *ngIf="data.status == 'Check Out'|| data.status == 'Both'">Check-out Time:</span> <span
+                                *ngIf="data.status == 'Check Out'|| data.status == 'Both'">{{data.checkOutTime ?
+                                data.checkOutTime : '❌'}}</span></span>
                     </td>
                     <td>
                         <div class="flex gap-2 mx-2 justify-end">
-                            <button class="bg-emerald-500 text-sm text-white px-7 py-2 rounded-full" (click)="requestaccept(data)">Accept</button>
-                            <button class="bg-red-500 text-sm text-white px-8 py-2 rounded-full" (click)="requestdelete(data)">Reject</button>
+                            <button class="bg-emerald-500 text-sm text-white px-7 py-2 rounded-full"
+                                (click)="requestaccept(data)">Accept</button>
+                            <button class="bg-red-500 text-sm text-white px-8 py-2 rounded-full"
+                                (click)="requestdelete(data)">Reject</button>
                         </div>
 
                     </td>
