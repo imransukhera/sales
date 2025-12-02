@@ -83,25 +83,21 @@ export class AdminTimeSheetComponent {
   }
   ngOnInit() {
     this.items = [
-      { label: 'Attendance Report', 
+      {
+        label: 'Attendance Report',
         styleClass: 'rounded-md',
-        
-         items:[
-        {
-          label:'with Location',
-          command: () => {
-            this.changeIf2();
-          }
 
-        },
-        {label:'without location',
-         
-          command: () => {
-            this.changeIf();
+        items: [
+          {
+            label: 'Download Report',
+            command: () => {
+              this.changeIf2();
+            }
+
           }
-        }
-      ] },
-  ];
+        ]
+      },
+    ];
     this.locathostData = localStorage.getItem('userProfile');
     this.profileData = JSON.parse(this.locathostData);
     this.checking;
@@ -128,16 +124,16 @@ export class AdminTimeSheetComponent {
 
   checkCheckInTime() {
     const currentTime = new Date();
-   
+
     const ontime = new Date();
     const middletime = new Date();
 
-   
-   ontime.setHours(10, 40, 0); // Set cutoff time to 10:30 am
-   middletime.setHours(11, 0, 59); // Set cutoff time to 10:30 am
-   this.ontime = ontime.toLocaleTimeString();
-   this.middletime= middletime.toLocaleTimeString();
-   
+
+    ontime.setHours(10, 40, 0); // Set cutoff time to 10:30 am
+    middletime.setHours(11, 0, 59); // Set cutoff time to 10:30 am
+    this.ontime = ontime.toLocaleTimeString();
+    this.middletime = middletime.toLocaleTimeString();
+
 
   }
 
@@ -189,14 +185,14 @@ export class AdminTimeSheetComponent {
     const currentDate = new Date();
     const time = currentDate.toTimeString().split(' ')[0];
 
-        const date = index.date
-console.log("index", index)
-       let name = this.userdata.filter((data: any) => data.name === index.name)
+    const date = index.date
+    console.log("index", index)
+    let name = this.userdata.filter((data: any) => data.name === index.name)
 
     this.checkingstatus = true;
     const data = {
       employeeid: index.employeeid,
-      checkInTime:  this.profileForm.value.check_in.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
+      checkInTime: this.profileForm.value.check_in.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
       checkOutTime: index.checkOutTime,
       date: index.date,
       name: index.name,
@@ -221,9 +217,9 @@ console.log("index", index)
     const currentDate = new Date();
     const time = currentDate.toTimeString().split(' ')[0];
 
-        const date = index.date
+    const date = index.date
 
-       let name = this.userdata.filter((data: any) => data.name === index.name)
+    let name = this.userdata.filter((data: any) => data.name === index.name)
 
     this.checkingstatus = true;
     const data = {
@@ -306,6 +302,7 @@ console.log("index", index)
                 checkOutTime: record.checkOutTime,
                 date: record.date,
                 name: record.name,
+                qrCodeValue: record.qrCodeValue,
                 location: record.location || '',
                 id: item.id
               }));
@@ -503,102 +500,102 @@ console.log("index", index)
     this.firestoreService.getRequest().subscribe((req) => {
       console.log("date", date)
       console.log("all request data", req)
-      const data = req.map((item: any[])=> item)
+      const data = req.map((item: any[]) => item)
       console.log("date", data)
       this.requestdata = [];
 
       for (let key in req) {
         if (req[key] && typeof req[key] === 'object') {
-        
-        for(let key2 in req[key]){
-          console.log("in which", key2)
-          if (req[key][key2] && req[key][key2].data && Array.isArray(req[key][key2].data)) {
-            this.requestdata.push(...req[key][key2].data );
+
+          for (let key2 in req[key]) {
+            console.log("in which", key2)
+            if (req[key][key2] && req[key][key2].data && Array.isArray(req[key][key2].data)) {
+              this.requestdata.push(...req[key][key2].data);
+            }
           }
         }
-      }
-             
+
       }
       console.log("Processed request data", this.requestdata);
     });
   }
-   
-  requestaccept(index: any){
+
+  requestaccept(index: any) {
     console.log("accept", index)
     const date = index.date
-const name = index.username
-console.log("username", name)
- this.checkingstatus = true;
- const data = {
-  employeeid: index.employeeid,
-   checkInTime: index.checkInTime,
-   checkOutTime: index.checkOutTime,
-   date: index.date,
-   name: index.name,
-   location: index.location? index.location :''
- }
- console.log("checkout time check:",name, data);
+    const name = index.username
+    console.log("username", name)
+    this.checkingstatus = true;
+    const data = {
+      employeeid: index.employeeid,
+      checkInTime: index.checkInTime,
+      checkOutTime: index.checkOutTime,
+      date: index.date,
+      name: index.name,
+      location: index.location ? index.location : ''
+    }
+    console.log("checkout time check:", name, data);
 
-if(index.status == 'Check In' || index.status == 'Both' ){
-  this.firestoreService.AcceptRequest(name, date, data)
-  .then(() => {
-    this.toaster.showSuccess('Successfully Accept Request');
-    this.loading = false;
-    this.accept = true;
-    this.closeedit();
-    this.requestdelete(index);
-    this.fetchTimelogData(this.profileData.username);
-    return
-  })
-  .catch(error => {
-    this.loading = false;
-    console.error('Error adding data: ', error);
-    return
-  });
-}else if(index.status == 'Check Out'){
-  this.firestoreService.checkOut(name, date, data)
-  .then(() => {
-    this.toaster.showSuccess('Successfully Accept Request');
-    this.loading = false;
-    this.accept = true;
-    this.closeedit();
-    this.requestdelete(index);
-    this.fetchTimelogData(this.profileData.username);
-  })
-  .catch(error => {
-    this.loading = false;
-    console.error('Error adding data: ', error);
-  });
-}
+    if (index.status == 'Check In' || index.status == 'Both') {
+      this.firestoreService.AcceptRequest(name, date, data)
+        .then(() => {
+          this.toaster.showSuccess('Successfully Accept Request');
+          this.loading = false;
+          this.accept = true;
+          this.closeedit();
+          this.requestdelete(index);
+          this.fetchTimelogData(this.profileData.username);
+          return
+        })
+        .catch(error => {
+          this.loading = false;
+          console.error('Error adding data: ', error);
+          return
+        });
+    } else if (index.status == 'Check Out') {
+      this.firestoreService.checkOut(name, date, data)
+        .then(() => {
+          this.toaster.showSuccess('Successfully Accept Request');
+          this.loading = false;
+          this.accept = true;
+          this.closeedit();
+          this.requestdelete(index);
+          this.fetchTimelogData(this.profileData.username);
+        })
+        .catch(error => {
+          this.loading = false;
+          console.error('Error adding data: ', error);
+        });
+    }
 
   }
-  requestdelete(index: any){
+  requestdelete(index: any) {
     console.log("accept", index)
     const date = index.date
-const name = index.username;
+    const name = index.username;
     let requestindex = this.requestdata.findIndex((data: any) => data.name === index.name)
 
- this.checkingstatus = true;
- const data = {
-  employeeid: index.employeeid,
-   checkInTime: index.checkInTime,
-   checkOutTime: index.checkOutTime,
-   date: index.date,
-   name: index.name,
-   location: index.location
- }
+    this.checkingstatus = true;
+    const data = {
+      employeeid: index.employeeid,
+      checkInTime: index.checkInTime,
+      checkOutTime: index.checkOutTime,
+      date: index.date,
+      name: index.name,
+      location: index.location
+    }
 
-console.log("delete",name , date , data , requestindex)
+    console.log("delete", name, date, data, requestindex)
 
-this.firestoreService.daleterequest( name, date, data , requestindex ).then(() => {
-  this.loading = false;
-  if(!this.accept){
-    this.toaster.showError('Successfully Delete Request');
-  }
-  this.fetchTimelogData(this.profileData.username);
-}).catch((error) => {
-  console.error('Error Request Delete:', error);
-});
+    this.firestoreService.daleterequest(name, date, data, requestindex).then(() => {
+      this.loading = false;
+      if (!this.accept) {
+        this.toaster.showError('Successfully Delete Request');
+      }
+      this.fetchTimelogData(this.profileData.username);
+    }).catch((error) => {
+      console.error('Error Request Delete:', error);
+    });
   }
 
 
@@ -614,7 +611,7 @@ this.firestoreService.daleterequest( name, date, data , requestindex ).then(() =
       this.edittimeout = index;
       this.editmodeout = false
       console.log("status:", this.editmode)
-    }else{
+    } else {
       this.toaster.showError('Any Edit Field Open , First Close It');
     }
   }

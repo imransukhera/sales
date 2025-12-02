@@ -44,7 +44,7 @@ export class AnylogClockComponent implements OnInit{
     grad.addColorStop(1, 'white ');
     ctx.beginPath();
     ctx.arc(0, 0, radius, 0, 2 * Math.PI);
-    ctx.fillStyle = '#1c4c74';
+    ctx.fillStyle = '#3558BE';
     ctx.fill();
     ctx.strokeStyle = grad;
     ctx.lineWidth = radius * 0.09;

@@ -14,8 +14,12 @@
                 </div>
                 <div class="w-[50%] justify-end flex">
                     <div class=" justify-end flex">
+                        <button type="button" (click)="qrVisible = true"
+                            class="focus:outline-none text-white bg-[#3558BE] hover:bg-[#3558BE] rounded-lg text-sm px-3 me-2 h-[35px]">
+                            Generate QR Code
+                        </button>
                         <button type="button" (click)="visible = true"
-                            class="focus:outline-none text-white bg-[#1c4c74] hover:bg-[#1c4c74] rounded-lg text-sm px-3 me-2 h-[35px]">
+                            class="focus:outline-none text-white bg-[#3558BE] hover:bg-[#3558BE] rounded-lg text-sm px-3 me-2 h-[35px]">
                             Create User
                         </button>
 
@@ -37,7 +41,7 @@
                 </div>
                 <div class="pl-3">
                     <button type="button" (click)="search()"
-                        class="focus:outline-none text-white bg-[#1c4c74] hover:bg-[#1c4c74] focus:ring-4 focus:bg-[#1c4c74] rounded-lg text-sm px-3 me-2 dark:bg-[#1c4c74] dark:hover:bg-[#1c4c74] dark:focus:bg-[#1c4c74] h-[35px]">
+                        class="focus:outline-none text-white bg-[#3558BE] hover:bg-[#3558BE] focus:ring-4 focus:bg-[#3558BE] rounded-lg text-sm px-3 me-2 dark:bg-[#3558BE] dark:hover:bg-[#3558BE] dark:focus:bg-[#3558BE] h-[35px]">
                         Search
                     </button>
                 </div>
@@ -131,23 +135,23 @@
                 <label class="text-sm ">Phone No <span class="text-red-500">*</span></label>
                 <input type="text" placeholder="Enter the phone no" formControlName="phoneNo">
             </div>
-            <div class="mt-2" >
+            <div class="mt-2">
                 <label class="text-sm ">Total leaves <span class="text-red-500">*</span></label>
                 <input type="text" placeholder="Enter total no of leaves" formControlName="totalLeaves">
             </div>
-            <div class="mt-2" >
+            <div class="mt-2">
                 <label class="text-sm ">Remaining Leaves <span class="text-red-500">*</span></label>
                 <input type="text" placeholder="Enter total no of leaves" formControlName="remainingLeaves">
             </div>
-            <div class="mt-2" >
+            <div class="mt-2">
                 <label class="text-sm ">On Time <span class="text-red-500">*</span></label>
                 <p-calendar inputId="calendar-timeonly" [(ngModel)]="ontime" hourFormat="12" class="w-[100%]"
-                placeholder="Enter your start time" [timeOnly]="true"></p-calendar>
+                    placeholder="Enter your start time" [timeOnly]="true"></p-calendar>
             </div>
-            <div class="mt-2" >
+            <div class="mt-2">
                 <label class="text-sm ">Allow Time <span class="text-red-500">*</span></label>
                 <p-calendar inputId="calendar-timeonly" [(ngModel)]="allowtime" hourFormat="12" class="w-[100%]"
-                placeholder="Enter your start time" [timeOnly]="true"></p-calendar>
+                    placeholder="Enter your start time" [timeOnly]="true"></p-calendar>
             </div>
 
             <div class="mt-2" *ngIf="!update">
@@ -181,17 +185,17 @@
                     Cancel </button>
 
                 <button type="button" (click)="deleteProjectData()" *ngIf="update"
-                    class="focus:outline-none text-white bg-[#1c4c74]  rounded-lg text-sm px-3 me-2 dark:bg-green-600  h-[35px]">
+                    class="focus:outline-none text-white bg-[#3558BE]  rounded-lg text-sm px-3 me-2 dark:bg-green-600  h-[35px]">
                     Delete
                 </button>
 
                 <button type="button" (click)="postProjectData()" *ngIf="!update"
-                    class="focus:outline-none text-white bg-[#1c4c74]  rounded-lg text-sm px-3 me-2 dark:bg-green-600  h-[35px]">
+                    class="focus:outline-none text-white bg-[#3558BE]  rounded-lg text-sm px-3 me-2 dark:bg-green-600  h-[35px]">
                     Save
                 </button>
 
                 <button type="button" *ngIf="update" (click)="updateProjectData()"
-                    class="focus:outline-none text-white bg-[#1c4c74]  rounded-lg text-sm px-3 me-2 dark:bg-green-600  h-[35px]">
+                    class="focus:outline-none text-white bg-[#3558BE]  rounded-lg text-sm px-3 me-2 dark:bg-green-600  h-[35px]">
                     Update
                 </button>
 
@@ -200,4 +204,36 @@
         </div>
     </form>
 
+</p-dialog>
+<p-dialog [modal]="true" [(visible)]="qrVisible" [style]="{ width: '25rem' }" class="p-3">
+    <div class="container p-3" style="text-align:center; margin-top: 50px;">
+        <h2 class="text-900" style="color: black;">Company QR Code Generator</h2>
+        <input type="text" placeholder="Enter company name" [(ngModel)]="companyName"
+            style="padding: 10px; width: 250px;" />
+        <button (click)="generateQRCode()" style="margin-left: 10px; padding: 10px;">
+            <button (click)="downloadQR()"
+                style="margin-top: 15px; padding: 10px;background-color: #3558be;border-radius: 10px;color: white;">
+                Generate QR
+            </button>
+        </button>
+
+        <div *ngIf="showQRCode" style="margin-top: 30px;">
+            <p><strong>Company:</strong> {{ companyName }}</p>
+            <button (click)="downloadQR()"
+                style="margin-top: 15px; padding: 10px;background-color: #3558be;border-radius: 10px;color: white;">
+                Download QR Code
+            </button>
+        </div>
+        <div class="justify-center flex">
+            <qrcode [qrdata]="qrData" [width]="200" [errorCorrectionLevel]="'M'">
+            </qrcode>
+        </div>
+
+        <div class="justify-end flex">
+            <button type="button" (click)="dialogUpdate()"
+                class="focus:outline-none border-2 bg-white rounded-lg text-sm px-3 me-2  h-[35px]">
+                Cancel </button>
+        </div>
+
+    </div>
 </p-dialog>

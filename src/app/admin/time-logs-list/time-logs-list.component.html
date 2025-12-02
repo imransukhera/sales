@@ -49,7 +49,7 @@
                     placeholder="Select a Employee"></p-dropdown>
             </div>
             <button type="button" (click)="search()"
-                class="focus:outline-none text-white bg-[#1c4c74] rounded-lg text-sm px-3 me-2 h-[35px]">
+                class="focus:outline-none text-white bg-[#3558BE] rounded-lg text-sm px-3 me-2 h-[35px]">
                 Search
             </button>
             <button type="button" (click)="clear()" 
@@ -64,7 +64,7 @@
             [responsiveOptions]="responsiveOptions">
             <ng-template let-userdata pTemplate="item">
                 <div class="py-2 pb-7 rounded border-2 mx-2 my-7"
-                    [ngStyle]="isSelected(userdata) ? {'background-color': '#1c4c74', 'color': 'white'} : {'background-color': 'white'}">
+                    [ngStyle]="isSelected(userdata) ? {'background-color': '#3558BE', 'color': 'white'} : {'background-color': 'white'}">
                     <div class="flex flex-col justify-center items-center">
                         <img src="../../../assets/male-image.png" alt="" width="150" height="150"
                             *ngIf="userdata.gender === 'male'">
@@ -86,7 +86,7 @@
 
     <!-- <div class="grid grid-cols-5 gap-4 my-4">
         @for (data of userdata; track $index) {
-            <div class="shadow-md py-2 pb-7 rounded " [ngStyle]="isSelected(data) ? {'background-color': '#1c4c74', 'color': 'white'} : {}">
+            <div class="shadow-md py-2 pb-7 rounded " [ngStyle]="isSelected(data) ? {'background-color': '#3558BE', 'color': 'white'} : {}">
                 <div class="flex flex-col justify-center items-center">
                     <img src="../../../assets/male-image.png" alt="" width="150" height="150" >
                     <span class="text-lg font-medium">{{data.name}}</span>
@@ -100,22 +100,22 @@
     <p-table scrollHeight="flex" [value]="filterdata" class="p-datatable-gridlines p-datatable-striped">
         <ng-template pTemplate="header">
             <tr class="p-2 bg-[#349ce4]">
-                <th class="bg-[#1c4c74] p-3 text-white w-[250px]">
+                <th class="bg-[#3558BE] p-3 text-white w-[250px]">
                     <span class="font-normal text-md">Employee ID</span>
                 </th>
-                <th class="bg-[#1c4c74] p-3 text-white w-[250px]">
+                <th class="bg-[#3558BE] p-3 text-white w-[250px]">
                     <span class="font-normal text-md">Name</span>
                 </th>
-                <th class="bg-[#1c4c74] p-3 text-white w-[200px]">
+                <th class="bg-[#3558BE] p-3 text-white w-[200px]">
                     <span class="font-normal text-md">Date</span>
 
                 </th>
-                <th class="bg-[#1c4c74] p-3 text-white w-[120px]">
+                <th class="bg-[#3558BE] p-3 text-white w-[120px]">
                     <span class="font-normal text-md">Total time</span>
 
                 </th>
 
-                <th class="bg-[#1c4c74] p-3 text-white">
+                <th class="bg-[#3558BE] p-3 text-white">
                     <span class="font-normal text-md">Description</span>
                 </th>
             </tr>
@@ -260,12 +260,12 @@
                 class="focus:outline-none border-2 bg-white rounded-lg text-sm px-3 me-2  h-[35px]">
                 Cancel </button>
             <button type="button" (click)="deleteIndex()"
-                class="focus:outline-none text-white bg-[#1c4c74]  rounded-lg text-sm px-3 me-2 dark:bg-green-600 h-[35px]">
+                class="focus:outline-none text-white bg-[#3558BE]  rounded-lg text-sm px-3 me-2 dark:bg-green-600 h-[35px]">
                 Delete
             </button>
 
             <button type="button" (click)="updateUI()"
-                class="focus:outline-none text-white bg-[#1c4c74]  rounded-lg text-sm px-3 me-2 dark:bg-green-600  h-[35px]">
+                class="focus:outline-none text-white bg-[#3558BE]  rounded-lg text-sm px-3 me-2 dark:bg-green-600  h-[35px]">
                 Update
             </button>
 
@@ -346,22 +346,22 @@
             <p-table scrollHeight="flex" [value]="filterdata" class="p-datatable-gridlines p-datatable-striped">
                 <ng-template pTemplate="header">
                     <tr class="p-2 bg-[#349ce4]">
-                        <th class="bg-[#1c4c74] p-3 text-white w-[15%]">
+                        <th class="bg-[#3558BE] p-3 text-white w-[15%]">
                             <span class="font-normal text-md">Employee ID</span>
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[15%]">
+                        <th class="bg-[#3558BE] p-3 text-white w-[15%]">
                             <span class="font-normal text-md">Name</span>
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[15%]">
+                        <th class="bg-[#3558BE] p-3 text-white w-[15%]">
                             <span class="font-normal text-md">Date</span>
 
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[15%]">
+                        <th class="bg-[#3558BE] p-3 text-white w-[15%]">
                             <span class="font-normal text-md">Total time</span>
 
                         </th>
 
-                        <th class="bg-[#1c4c74] p-3 text-white">
+                        <th class="bg-[#3558BE] p-3 text-white">
                             <span class="font-normal text-md">Description</span>
                         </th>
                     </tr>

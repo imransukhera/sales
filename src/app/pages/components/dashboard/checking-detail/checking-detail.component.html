@@ -1,23 +1,21 @@
 <div class="w-full relative h-auto" [ngClass]="{'dull-bg': loading}">
     <div class="h-full">
         <!-- Table Header -->
-         <app-dashboard>
-                <button type="button" (click)="visible = true"
-                    class="focus:outline-none w-full md:w-auto text-white bg-[#1c4c74] hover:bg-green-800 focus:ring-4 focus:ring-green-300 rounded-lg text-sm px-3 me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 h-[35px]">
-                    Request
-                </button>
-                <button type="button" *ngIf="!checkingstatus && canCheckIn" (click)="checkin()" 
-                    class="focus:outline-none w-full md:w-auto text-white bg-[#1c4c74] hover:bg-green-800 focus:ring-4 focus:ring-green-300 rounded-lg text-sm px-3 me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 h-[35px]">Check
-                    In
-                </button>
-                <button type="button" *ngIf="checkingstatus" (click)="checkout()"
-                    class="focus:outline-none w-full md:w-auto text-white bg-[#1c4c74] hover:bg-green-800 focus:ring-4 focus:ring-green-300 rounded-lg text-sm px-3 me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 h-[35px]">Check
-                    Out
-                </button>
-         </app-dashboard>
+        <app-dashboard>
+            <button type="button" (click)="visible = true"
+                class="focus:outline-none w-full md:w-auto text-white bg-[#3558BE] hover:bg-green-800 focus:ring-4 focus:ring-green-300 rounded-lg text-sm px-3 me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 h-[35px]">
+                Request
+            </button>
+            <button type="button" (click)="checkInDialog()"
+                class="focus:outline-none w-full md:w-auto text-white bg-[#3558BE] hover:bg-green-800 focus:ring-4 focus:ring-green-300 rounded-lg text-sm px-3 me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 h-[35px]">Check
+                In
+            </button>
+            <button type="button" *ngIf="checkingstatus" (click)="checkOutDialog()"
+                class="focus:outline-none w-full md:w-auto text-white bg-[#3558BE] hover:bg-green-800 focus:ring-4 focus:ring-green-300 rounded-lg text-sm px-3 me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 h-[35px]">Check
+                Out
+            </button>
+        </app-dashboard>
 
-        
-      
         <div id="map"></div>
         <!-- Table Header -->
         <div class="header-section flex justify-content-between align-items-center py-2 md:p-2">
@@ -27,13 +25,13 @@
                 </div>
                 <div class="flex md:w-[50%] md:justify-end">
                     <div class="border-[0.5px] rounded-md">
-                        <p-calendar [(ngModel)]="rangeDates"  selectionMode="range" [readonlyInput]="true"
+                        <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true"
                             [showIcon]="true" inputId="range">
                         </p-calendar>
                     </div>
                     <div class="pl-3">
                         <button type="button" (click)="searchRecord()"
-                            class="focus:outline-none text-white bg-[#1c4c74] hover:bg-green-800 focus:ring-4 focus:ring-green-300 rounded-lg text-sm px-3 me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 h-[35px]">
+                            class="focus:outline-none text-white bg-[#3558BE] hover:bg-green-800 focus:ring-4 focus:ring-green-300 rounded-lg text-sm px-3 me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 h-[35px]">
                             Search
                         </button>
                     </div>
@@ -44,16 +42,16 @@
         </div>
 
         <div class="grid md:grid-cols-3  gap-3 my-5">
-          
             <div class="shadow-xl flex flex-col justify-between gap-3 p-3 bg-white rounded-lg">
                 <div class="flex justify-between gap-1 mt-2">
                     <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1">On Time
                         <span class="text-xl text-black">
                             {{ontimecount}} </span> </span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-5 -5 35 35" fill="#22ac00" class="bg-green-200 rounded-lg">
-                                <path
-                                    d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
-                            </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-5 -5 35 35" fill="#22ac00"
+                        class="bg-green-200 rounded-lg">
+                        <path
+                            d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
+                    </svg>
                 </div>
             </div>
             <div class="shadow-xl flex flex-col justify-between gap-3 p-3 bg-white rounded-lg">
@@ -61,10 +59,11 @@
                     <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1">Allow Time
                         <span class="text-xl text-black">
                             {{middletimecount}} </span> </span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-5 -5 35 35" fill="#dfd800" class="bg-yellow-100 rounded-lg">
-                                <path
-                                    d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
-                            </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-5 -5 35 35" fill="#dfd800"
+                        class="bg-yellow-100 rounded-lg">
+                        <path
+                            d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
+                    </svg>
                 </div>
             </div>
             <div class="shadow-xl flex flex-col justify-between gap-3 p-3 bg-white rounded-lg">
@@ -72,49 +71,52 @@
                     <span class="text-sm font-semibold text-gray-500 flex flex-col gap-1">After Allow Time
                         <span class="text-xl text-black">
                             {{aftertimecount}} </span> </span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-5 -5 35 35" fill="#df0044" class="bg-red-200 rounded-lg">
-                                <path
-                                    d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
-                            </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="-5 -5 35 35" fill="#df0044"
+                        class="bg-red-200 rounded-lg">
+                        <path
+                            d="M6 14h6v-6c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6zm16 0c0 5.523-4.478 10-10 10s-10-4.477-10-10 4.478-10 10-10 10 4.477 10 10zm-2 0c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8 8-3.589 8-8zm-6-11.819v-2.181h-4v2.181c1.408-.238 2.562-.243 4 0zm6.679 3.554l1.321-1.321-1.414-1.414-1.407 1.407c.536.402 1.038.844 1.5 1.328z" />
+                    </svg>
                 </div>
             </div>
         </div>
 
         <!-- Weekly Data Table -->
         <div class="data-table  mt-3  rounded-lg p-1  hidden md:block">
-            <p-table  [scrollable]="true" scrollHeight="75vh"   [value]="[datarecord]" class="p-datatable-gridlines p-datatable-striped ">
-                <ng-template pTemplate="header" >
-                    <tr class="p-2 bg-[#1c4c74] ">
-                        <th class="bg-[#1c4c74] p-3 text-white w-[200px]" style="min-width: 200px !important;">
+            <p-table [scrollable]="true" scrollHeight="75vh" [value]="[datarecord]"
+                class="p-datatable-gridlines p-datatable-striped ">
+                <ng-template pTemplate="header">
+                    <tr class="p-2 bg-[#3558BE] ">
+                        <th class="bg-[#3558BE] p-3 text-white w-[200px]" style="min-width: 200px !important;">
                             <span class="font-normal text-md">Employee ID</span>
                         </th>
-                        <th class="bg-[#1c4c74] p-2 text-white w-[300px]" style="min-width: 300px !important;">
+                        <th class="bg-[#3558BE] p-2 text-white w-[300px]" style="min-width: 300px !important;">
                             <span class="font-normal text-md ">Name</span>
                         </th>
-                        <th class="bg-[#1c4c74] p-2 text-white w-[300px]" style="min-width: 200px !important;">
+                        <th class="bg-[#3558BE] p-2 text-white w-[300px]" style="min-width: 200px !important;">
                             <span class="font-normal text-md">Date</span>
 
                         </th>
-                        <th class="bg-[#1c4c74] p-2 text-white w-[300px]" style="min-width: 150px !important;">
+                        <th class="bg-[#3558BE] p-2 text-white w-[300px]" style="min-width: 150px !important;">
                             <span class="font-normal text-md">Check-In</span>
 
                         </th>
-                        <th class="bg-[#1c4c74] p-2 text-white w-[300px]" style="min-width: 150px !important;">
+                        <th class="bg-[#3558BE] p-2 text-white w-[300px]" style="min-width: 150px !important;">
                             <span class="font-normal text-md">Check-Out</span>
 
                         </th>
-                        <th class="bg-[#1c4c74] p-2 text-white w-[300px] flex justify-center" style="min-width: 150px !important;">
+                        <th class="bg-[#3558BE] p-2 text-white w-[300px] flex justify-center"
+                            style="min-width: 150px !important;">
                             <span class="font-normal text-md">Status</span>
 
                         </th>
-                        <th class="bg-[#1c4c74] p-2 text-white w-[300px]" style="min-width: 463px !important;">
+                        <th class="bg-[#3558BE] p-2 text-white w-[300px]" style="min-width: 463px !important;">
                             <span class="font-normal text-md">Location</span>
 
                         </th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body">
-                    <tr *ngFor="let day of datarecord" class="border-b-2 " >
+                    <tr *ngFor="let day of datarecord" class="border-b-2 ">
                         <td class="w-[300px !important] p-2">
                             {{day.employeeid}}
                         </td>
@@ -124,19 +126,22 @@
                         <td class="w-[300px !important] p-2">
                             {{day.date}}
                         </td>
-                        <td class="w-[300px !important] p-2" >
+                        <td class="w-[300px !important] p-2">
                             {{day.checkInTime }}
                         </td>
                         <td class="w-[300px !important] p-2">
                             {{day.checkOutTime ? day.checkOutTime : '❌'}}
                         </td>
                         <td class="w-[300px !important] p-2 flex justify-center">
-                            <div class="text-xs bg-green-200 text-green-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center" *ngIf="ontime > day.checkInTime">On Time</div>
-                            <div class="text-xs bg-green-200 text-green-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center" *ngIf=" middletime > day.checkInTime && ontime < day.checkInTime ">Allow Time</div>
-                            <div class="text-xs bg-red-200 text-red-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center" *ngIf="middletime< day.checkInTime">Late Time</div>
+                            <div class="text-xs bg-green-200 text-green-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center"
+                                *ngIf="ontime > day.checkInTime">On Time</div>
+                            <div class="text-xs bg-green-200 text-green-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center"
+                                *ngIf=" middletime > day.checkInTime && ontime < day.checkInTime ">Allow Time</div>
+                            <div class="text-xs bg-red-200 text-red-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center"
+                                *ngIf="middletime< day.checkInTime">Late Time</div>
                         </td>
                         <td class="w-[100px !important] p-2 ">
-                           <p class="truncate w-[390px]">{{day.location ? day.location : '❌'}}</p> 
+                            <p class="truncate w-[390px]">{{day.location ? day.location : '❌'}}</p>
                         </td>
                     </tr>
                 </ng-template>
@@ -144,41 +149,66 @@
         </div>
 
         <!-- mobile view -->
-         <div class="my-5 border-2 border-gray-300 rounded-md p-3 md:hidden" *ngFor="let day of datarecord">
-           <div class="flex justify-between items-center">
-            <span class="text-lg">{{day.date}}</span>
-            <div>
-                <div class="text-xs bg-green-200 text-green-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center" *ngIf="ontime > day.checkInTime">On Time</div>
-                <div class="text-xs bg-green-200 text-green-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center" *ngIf=" middletime > day.checkInTime && ontime < day.checkInTime ">Allow Time</div>
-                <div class="text-xs bg-red-200 text-red-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center" *ngIf="middletime< day.checkInTime">Late Time</div>
+        <div class="my-5 border-2 border-gray-300 rounded-md p-3 md:hidden" *ngFor="let day of datarecord">
+            <div class="flex justify-between items-center">
+                <span class="text-lg">{{day.date}}</span>
+                <div>
+                    <div class="text-xs bg-green-200 text-green-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center"
+                        *ngIf="ontime > day.checkInTime">On Time</div>
+                    <div class="text-xs bg-green-200 text-green-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center"
+                        *ngIf=" middletime > day.checkInTime && ontime < day.checkInTime ">Allow Time</div>
+                    <div class="text-xs bg-red-200 text-red-800 rounded-md font-semibold p-2 shadow-sm w-[105px] flex justify-center"
+                        *ngIf="middletime< day.checkInTime">Late Time</div>
+                </div>
             </div>
-           </div> 
             <div class="bg-white p-2  shadow-md rounded-lg flex flex-col gap-2 my-2">
                 <span class=" font-medium text-lg">Name: {{day.name}}</span>
-<table>
-    <tr class="bg-gray-100" style="text-align: left;">
-        <th class="p-2">Check-In</th>
-        <th class="p-2">Check-Out</th>
-      </tr>
-      <tr>
-        <td class="p-2">{{day.checkInTime }}</td>
-        <td class="p-2">{{day.checkOutTime ? day.checkOutTime : '❌'}}</td>
-      </tr>
-</table>
-<table>
-    <tr class="bg-gray-100" style="text-align: left;">
-        <th class="p-2">Location</th>
-      </tr>
-      <tr>
-        <td class="p-2">{{day.location ? day.location : '❌'}}</td>
-      </tr>
-</table>
+                <table>
+                    <tr class="bg-gray-100" style="text-align: left;">
+                        <th class="p-2">Check-In</th>
+                        <th class="p-2">Check-Out</th>
+                    </tr>
+                    <tr>
+                        <td class="p-2">{{day.checkInTime }}</td>
+                        <td class="p-2">{{day.checkOutTime ? day.checkOutTime : '❌'}}</td>
+                    </tr>
+                </table>
+                <table>
+                    <tr class="bg-gray-100" style="text-align: left;">
+                        <th class="p-2">Location</th>
+                    </tr>
+                    <tr>
+                        <td class="p-2">{{day.location ? day.location : '❌'}}</td>
+                    </tr>
+                </table>
 
             </div>
 
-         </div>
+        </div>
     </div>
 </div>
+
+<p-dialog [modal]="true" [(visible)]="qrCodeVisible" [style]="{ width: '30rem', borderRadius: '12px', padding: '1rem' }"
+    [closable]="true" header="Scan QR Code">
+
+    <div class="scanner-container">
+        <zxing-scanner *ngIf="qrCodeVisible" (scanSuccess)="handleQrCodeResult($event)">
+        </zxing-scanner>
+    </div>
+
+</p-dialog>
+
+<p-dialog [modal]="true" [(visible)]="CodeVisible" [style]="{ width: '30rem', borderRadius: '12px', padding: '1rem' }"
+    [closable]="true" header="Scan QR Code">
+
+    <div class="scanner-container">
+        <!-- Only show scanner when dialog is open -->
+        <zxing-scanner *ngIf="CodeVisible" (scanSuccess)="heQrCodeResult($event)">
+        </zxing-scanner>
+    </div>
+
+</p-dialog>
+
 
 
 
@@ -195,7 +225,7 @@
                 <label class="text-sm ">Request Type <span class="text-red-500">*</span></label>
                 <div class="mt-1 mb-1">
                     <p-dropdown [options]="issueName" optionValue="name" formControlName="name" optionLabel="name"
-                        placeholder="Select a Type" (onChange)="onchange(profileForm.value.name)"/>
+                        placeholder="Select a Type" (onChange)="onchange(profileForm.value.name)" />
 
                 </div>
                 <div *ngIf="submitted && f['name'].errors" class="invalid-feedback">
@@ -208,7 +238,8 @@
             <div class="align-items-center mt-3">
                 <label class="text-sm ">Date <span class="text-red-500">*</span></label>
                 <div class="mt-1 border-[0.5px] rounded-md mb-1">
-                    <p-calendar [maxDate]="dateTime" formControlName="date" appendTo="body" [readonlyInput]="true" inputId="range">
+                    <p-calendar [maxDate]="dateTime" formControlName="date" appendTo="body" [readonlyInput]="true"
+                        inputId="range">
                     </p-calendar>
                 </div>
                 <div *ngIf="submitted && f['date'].errors" class="invalid-feedback">
@@ -220,25 +251,26 @@
             <div class="align-items-center mt-3" *ngIf="requestselected === 'Check In' || requestselected === 'Both'">
                 <label class="text-sm ">Check In <span class="text-red-500">*</span></label>
                 <div class="mt-1 border-[0.5px] rounded-md">
-                    <p-calendar inputId="calendar-timeonly" formControlName="checkInTime" hourFormat="12" class="w-[100%]"
-                        placeholder="Enter Check In Time" [timeOnly]="true"></p-calendar>
+                    <p-calendar inputId="calendar-timeonly" formControlName="checkInTime" hourFormat="12"
+                        class="w-[100%]" placeholder="Enter Check In Time" [timeOnly]="true"></p-calendar>
                 </div>
             </div>
 
             <div class="align-items-center mt-3" *ngIf="requestselected === 'Check Out' || requestselected === 'Both'">
                 <label class="text-sm ">Check Out <span class="text-red-500">*</span></label>
                 <div class="mt-1 border-[0.5px] rounded-md">
-                    <p-calendar inputId="calendar-timeonly" formControlName="checkOutTime" hourFormat="12" class="w-[100%]"
-                        placeholder="Enter Check Out Time"  [timeOnly]="true"></p-calendar>
+                    <p-calendar inputId="calendar-timeonly" formControlName="checkOutTime" hourFormat="12"
+                        class="w-[100%]" placeholder="Enter Check Out Time" [timeOnly]="true"></p-calendar>
                 </div>
             </div>
 
             <div class="align-items-center mt-3 " *ngIf="requestselected === 'Check In' || requestselected === 'Both'">
                 <label class="text-sm ">Location </label>
                 <div class="mt-1">
-                    <input 
+                    <input
                         class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300  focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="Write your location area name" formControlName="location" [attr.disabled]="requestselected === 'Check Out' ? true : null"/>
+                        placeholder="Write your location area name" formControlName="location"
+                        [attr.disabled]="requestselected === 'Check Out' ? true : null" />
                 </div>
             </div>
 
@@ -256,7 +288,7 @@
                     class="focus:outline-none border-1 bg-white rounded-lg text-sm px-3 me-2  h-[35px]">
                     Cancel </button>
                 <button type="button" (click)="onsubmit()"
-                    class="focus:outline-none text-white bg-[#1c4c74] rounded-lg text-sm px-3 me-2 dark:bg-green-600 h-[35px]">
+                    class="focus:outline-none text-white bg-[#3558BE] rounded-lg text-sm px-3 me-2 dark:bg-green-600 h-[35px]">
                     Create
                 </button>
 

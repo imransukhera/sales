@@ -11,15 +11,15 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getDatabase, provideDatabase } from '@angular/fire/database';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 const firebaseConfig = {
-  apiKey: "AIzaSyCfA98PJoMHAc8jmzocSy6z9eY57cmZqPM",
-  authDomain: "tempo-28dab.firebaseapp.com",
-  databaseURL: "https://tempo-28dab-default-rtdb.firebaseio.com",
-  projectId: "tempo-28dab",
-  storageBucket: "tempo-28dab.appspot.com",
-  messagingSenderId: "345249527520",
-  appId: "1:345249527520:web:e538f94c4bc6121c45c285",
-  measurementId: "G-SXWQVZDTT0"
+  apiKey: "AIzaSyBZu1G6AOmZbVE_E9vYI6JGIjWcNtL-fMc",
+  authDomain: "tecklog-f1ffd.firebaseapp.com",
+  projectId: "tecklog-f1ffd",
+  storageBucket: "tecklog-f1ffd.firebasestorage.app",
+  messagingSenderId: "660832365625",
+  appId: "1:660832365625:web:134038c6bf35007a49b1e8",
+  measurementId: "G-WT9ZHB4M5Z"
 };
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
@@ -35,6 +35,6 @@ export const appConfig: ApplicationConfig = {
       timeOut: 3000,
       easeTime: 400,
       positionClass: 'toast-top-right',
-    }), provideAnimationsAsync(), provideFirebaseApp(() => initializeApp({ "projectId": "tempo-28dab", "appId": "1:345249527520:web:e538f94c4bc6121c45c285", "databaseURL": "https://tempo-28dab-default-rtdb.firebaseio.com", "storageBucket": "tempo-28dab.appspot.com", "apiKey": "AIzaSyCfA98PJoMHAc8jmzocSy6z9eY57cmZqPM", "authDomain": "tempo-28dab.firebaseapp.com", "messagingSenderId": "345249527520", "measurementId": "G-SXWQVZDTT0" })), provideAuth(() => getAuth()), provideFirestore(() => getFirestore()), provideDatabase(() => getDatabase()), provideStorage(() => getStorage())
+    }), provideAnimationsAsync(), provideAuth(() => getAuth()), provideFirestore(() => getFirestore()), provideDatabase(() => getDatabase()), provideStorage(() => getStorage())
   ]
 };

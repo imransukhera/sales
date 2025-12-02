@@ -14,6 +14,8 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { catchError, map, of, tap } from 'rxjs';
 import { DashboardComponent } from "../dashboard/dashboard.component";
 declare var google: any;
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
+import { ThisReceiver } from '@angular/compiler';
 @Component({
   selector: 'app-checking-detail',
   standalone: true,
@@ -28,8 +30,9 @@ declare var google: any;
     ProgressBarModule,
     HttpClientModule,
     ReactiveFormsModule,
-    DashboardComponent
-],
+    DashboardComponent,
+    ZXingScannerModule
+  ],
   templateUrl: './checking-detail.component.html',
   styleUrl: './checking-detail.component.scss'
 })
@@ -37,7 +40,7 @@ export class CheckingDetailComponent implements OnInit {
   visible = false;
   submitted = false;
   profileForm!: FormGroup
-  apiKey = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDrY9pu8WvYAe78IxlHB4nG7QbHZzM8bMU&libraries=places&language=en'
+  apiKey = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAnuBRAYGIDge_YaZMUEzfXh68zxG6vGNI&callback=console.debug&libraries=maps,marker&v=beta'
   checking: any[] = [
     { date: 12 - 12 - 24, time: 12 - 50 }
   ];
@@ -45,8 +48,9 @@ export class CheckingDetailComponent implements OnInit {
   locathostData: any;
   checkingstatus: boolean = false;
   days: any[] = [];
-  datarecord: any[]=[]
+  datarecord: any[] = []
   rangeDates: any;
+  isProcessingScan: boolean = false;
 
   profileData: any;
   todayDate: any;
@@ -65,17 +69,19 @@ export class CheckingDetailComponent implements OnInit {
   employeeName: any;
   issueName: any[] = [
     {
-      name: 'Check In' , valuename: 'checkInTime'
+      name: 'Check In', valuename: 'checkInTime'
     },
     {
-      name: 'Check Out' , valuename: 'checkOutTime'
+      name: 'Check Out', valuename: 'checkOutTime'
     },
     {
-      name: 'Both' , valuename: 'Both'
+      name: 'Both', valuename: 'Both'
     }
   ]
   requestdata: any;
-
+  qrCodeVisible: boolean = false;
+  CodeVisible: boolean = false;
+  qrCodeValue: any;
   constructor(
     private http: HttpClient,
     private firestoreService: FirestoreService,
@@ -83,6 +89,7 @@ export class CheckingDetailComponent implements OnInit {
     private fb: FormBuilder,
     private toaster: ToastrService
   ) {
+    this.getCurrentLocationAndAddressd();
 
   }
   ngOnInit() {
@@ -98,10 +105,11 @@ export class CheckingDetailComponent implements OnInit {
     this.todayDate = currentDate.toDateString();
     this.fetchTimelogData(this.profileData.username);
     this.getCurrentLocationAndAddressd();
-    // this.getLocation();
+    this.getCurrentLocationAndAddressd();
+
     this.createForm();
     this.getrequest();
-    this. checkCheckInTime();
+    this.checkCheckInTime();
     this.searchRecord()
   }
   onchange(type: any) {
@@ -117,13 +125,13 @@ export class CheckingDetailComponent implements OnInit {
     const middletime = new Date();
 
     cutoffTime.setHours(12, 50, 59); // Set cutoff time to 10:30 am
-   ontime.setHours(10, 40, 0); // Set cutoff time to 10:30 am
-   middletime.setHours(11, 0, 59); // Set cutoff time to 10:30 am
-   this.ontime = ontime.toLocaleTimeString();
-   this.middletime= middletime.toLocaleTimeString();
+    ontime.setHours(10, 40, 0); // Set cutoff time to 10:30 am
+    middletime.setHours(11, 0, 59); // Set cutoff time to 10:30 am
+    this.ontime = ontime.toLocaleTimeString();
+    this.middletime = middletime.toLocaleTimeString();
     this.canCheckIn = currentTime < cutoffTime;
-console.log('ontime', this.ontime);
-console.log("middle time ", this.middletime)
+    console.log('ontime', this.ontime);
+    console.log("middle time ", this.middletime)
   }
 
   createForm() {
@@ -136,45 +144,22 @@ console.log("middle time ", this.middletime)
     });
   }
 
-  getCurrentLocationAndAddressd(): void {
-    const officeLatitude = 31.4185261;
-    const officeLongitude = 74.2666856;
-    const radius = 1600;
+  async getCurrentLocationAndAddressd() {
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position: GeolocationPosition) => {
           const latitude = position.coords.latitude;
           const longitude = position.coords.longitude;
-
-          const distance = this.getDistanceFromLatLonInMeters(
-            latitude,
-            longitude,
-            officeLatitude,
-            officeLongitude
-          );
-          if (distance <= radius) {
-            this.currentAddress = '106 3rd Avenue Northwest NFC Society Lahore';
-          }
-
-          // Call the method to get the address from latitude and longitude
-          // this.getLocation(latitude, longitude)
-          //   .then(locationName => {
-          //     this.locationName = this.locationName;
-          //     console.log("Current Location Address:", locationName);
-          //     // You can set this address to a variable if needed
-          //     this.currentAddress = locationName;
-          //   })
-          //   .catch(error => {
-          //     console.error("Error getting address:", error);
-          //   });
+          console.log("latitude", latitude, "longitude", longitude)
+          this.getLocation(latitude, longitude);
         },
         (error: GeolocationPositionError) => {
           console.error("Error getting location:", error.message);
         },
         {
-          enableHighAccuracy: true, // Request high accuracy
-          maximumAge: 0,  // Optional: Force the device to not use cached positions
+          enableHighAccuracy: true,
+          maximumAge: 1,
         }
       );
     } else {
@@ -202,16 +187,15 @@ console.log("middle time ", this.middletime)
 
 
   getLocation(latitude: number, longitude: number): Promise<string> {
+    console.log("This is Value:", latitude);
     return new Promise((resolve, reject) => {
       const geocoder = new google.maps.Geocoder();
-      const latlng = new google.maps.LatLng(31.4185261, 74.2666856);
+      const latlng = new google.maps.LatLng(latitude, longitude);
 
       geocoder.geocode({ location: latlng }, (results: any, status: any) => {
         if (status === google.maps.GeocoderStatus.OK) {
           if (results[0]) {
-            const locationName = results[0].formatted_address;
-            resolve(locationName);
-            console.log('Location Name:', results[0]);
+            this.currentAddress = results[0].formatted_address;
           } else {
             reject('No results found');
           }
@@ -235,6 +219,8 @@ console.log("middle time ", this.middletime)
             resolve(formattedAddress);
             console.log("Formatted Address:", formattedAddress);
           } else {
+            this.toaster.showError('No results found');
+
             reject('No results found');
           }
         } else {
@@ -244,6 +230,33 @@ console.log("middle time ", this.middletime)
     });
   }
 
+  checkInDialog() {
+    this.qrCodeVisible = true;
+    this.CodeVisible = false;
+  }
+
+  checkOutDialog() {
+    this.qrCodeVisible = false;
+    this.CodeVisible = true;
+  }
+
+  handleQrCodeResult(result: string) {
+    if (this.isProcessingScan) return;   // prevent repeat triggers
+    this.isProcessingScan = true;
+
+    this.qrCodeValue = result;
+    this.checkin();
+  }
+
+
+
+  heQrCodeResult(result: string) {
+    if (this.isProcessingScan) return;
+    this.isProcessingScan = true;
+
+    this.qrCodeValue = result;
+    this.checkout();
+  }
 
 
   checkin() {
@@ -257,13 +270,11 @@ console.log("middle time ", this.middletime)
       employeeid: this.profileData.employeeid,
       checkInTime: time,
       name: this.profileData.name,
+      qrCodeValue: this.qrCodeValue,
       checkOutTime: '',
       location: this.currentAddress,
       date: date,
     }
-
-    console.log("HYT:", this.currentAddress);
-    console.log('data check attendance hansdga', data)
     // return
     if (this.currentAddress) {
       this.firestoreService.checkin(this.profileData.username, date, data)
@@ -271,6 +282,9 @@ console.log("middle time ", this.middletime)
           this.toaster.showSuccess('Successfully Check-In');
           this.loading = false;
           this.checkingstatus = true;
+          this.qrCodeVisible = false;
+          this.isProcessingScan = false;
+          this.qrCodeValue = null
           this.fetchTimelogData(this.profileData.username);
         })
         .catch(error => {
@@ -304,6 +318,7 @@ console.log("middle time ", this.middletime)
       employeeid: this.profileData.employeeid,
       checkInTime: choutTime?.checkInTime,
       name: this.profileData.name,
+      qrCodeValue: this.qrCodeValue,
       checkOutTime: time,
       date: date,
       location: choutTime?.location,
@@ -314,7 +329,9 @@ console.log("middle time ", this.middletime)
         this.toaster.showSuccess('Successfully Checkout');
         this.checkingstatus = false;
         this.loading = false;
-
+        this.qrCodeValue = null;
+        this.CodeVisible = false;
+        this.isProcessingScan = false;
         this.fetchTimelogData(this.profileData.username);
       })
       .catch(error => {
@@ -323,7 +340,7 @@ console.log("middle time ", this.middletime)
         console.error('Error adding data: ', error);
       });
   }
-  
+
 
   fetchTimelogData(name: string) {
     this.loading = true;
@@ -334,9 +351,6 @@ console.log("middle time ", this.middletime)
         const transformedDatainsort = transformedData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
         this.days = transformedDatainsort;
         const choutTime = this.days.find(product => product.date == this.todayDate);
-        
-
-    
         if (choutTime) {
           this.checkingstatus = true;
         }
@@ -345,7 +359,7 @@ console.log("middle time ", this.middletime)
         }
         this.loading = false;
         this.searchRecord()
-        
+
       })
       .catch((error) => {
         this.loading = false;
@@ -353,7 +367,7 @@ console.log("middle time ", this.middletime)
         console.error('Error fetching timelog data:', error);
       });
 
-      
+
   }
 
   transformTimelogData(data: any): any[] {
@@ -390,55 +404,58 @@ console.log("middle time ", this.middletime)
     const index = this.days.findIndex(product => product.date == value.date.toDateString());
     const choutTime = this.days[index];
 
-   
+
     let data: any;
     if (value.name == 'Check In') {
-      if(!choutTime?.checkInTime){
-      data = {
-        employeeid: this.profileData.employeeid,
-        checkInTime: value.checkInTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
-        name: this.profileData.name,
-        checkOutTime:  choutTime?.checkOutTime ? choutTime?.checkOutTime: '' ,
-        location: this.profileForm.value.location ,
-        date: value.date.toDateString(),
-        username: this.profileData.username,
-        status: value.name
-      }}else{
+      if (!choutTime?.checkInTime) {
+        data = {
+          employeeid: this.profileData.employeeid,
+          checkInTime: value.checkInTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
+          name: this.profileData.name,
+          checkOutTime: choutTime?.checkOutTime ? choutTime?.checkOutTime : '',
+          location: this.profileForm.value.location,
+          date: value.date.toDateString(),
+          username: this.profileData.username,
+          status: value.name
+        }
+      } else {
         return this.toaster.showError('You are Already checkIn if any issue in checkIn connect HR');
-       }
-    } 
-     if (value.name == 'Check Out') {
-      if(choutTime?.checkInTime){
-      data = {
-        employeeid: this.profileData.employeeid,
-        checkInTime: choutTime?.checkInTime,
-        name: this.profileData.name,
-        checkOutTime: value.checkOutTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
-        location: choutTime?.location ,
-        date: value.date.toDateString(),
-        username: this.profileData.username,
-        status: value.name
-      }}else{
+      }
+    }
+    if (value.name == 'Check Out') {
+      if (choutTime?.checkInTime) {
+        data = {
+          employeeid: this.profileData.employeeid,
+          checkInTime: choutTime?.checkInTime,
+          name: this.profileData.name,
+          checkOutTime: value.checkOutTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
+          location: choutTime?.location,
+          date: value.date.toDateString(),
+          username: this.profileData.username,
+          status: value.name
+        }
+      } else {
         return this.toaster.showError('You are not CheckIn , first CheckIn then Apply CheckOut');
       }
     }
-    if (value.name == 'Both'){
-      if(!choutTime?.checkInTime){
-      data = {
-        employeeid: this.profileData.employeeid,
-        checkInTime: value.checkInTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
-        name: this.profileData.name,
-        checkOutTime: value.checkOutTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
-        location: this.profileForm.value.location ,
-        date: value.date.toDateString(),
-        username: this.profileData.username,
-        status: value.name
+    if (value.name == 'Both') {
+      if (!choutTime?.checkInTime) {
+        data = {
+          employeeid: this.profileData.employeeid,
+          checkInTime: value.checkInTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
+          name: this.profileData.name,
+          checkOutTime: value.checkOutTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
+          location: this.profileForm.value.location,
+          date: value.date.toDateString(),
+          username: this.profileData.username,
+          status: value.name
+        }
+      } else {
+        return this.toaster.showError('You are Already checkIn Apply checkout if any issue then contact to HR');
       }
-    }else{
-      return this.toaster.showError('You are Already checkIn Apply checkout if any issue then contact to HR');    }
     }
-    console.log("this is value:", this.profileData.username, value.date.toDateString(),  data);
-    
+    console.log("this is value:", this.profileData.username, value.date.toDateString(), data);
+
     this.firestoreService.SendRequest(this.profileData.username, value.date.toDateString(), data).then(() => {
       this.toaster.showSuccess('Successfully Submit Request');
       this.cancelFrom();
@@ -488,20 +505,22 @@ console.log("middle time ", this.middletime)
     } else {
       finalData = filteredData;
     }
-console.log("finaldatata:", finalData)
+    console.log("finaldatata:", finalData)
     // Sort the final data by date (ascending)
     this.datarecord = finalData.sort((a: any, b: any) => {
       const dateA = new Date(a?.date).getTime();
       const dateB = new Date(b?.date).getTime();
       return dateB - dateA;  // Ascending order (for descending, reverse the comparison)
     });
-    
+
     this.ontimecount = this.datarecord.filter(product => product.checkInTime < this.ontime).length;
-        this.middletimecount = this.datarecord.filter(product => product.checkInTime < this.middletime && product.checkInTime > this.ontime ).length;
-        this.aftertimecount = this.datarecord.filter(product => product.checkInTime > this.middletime  ).length;
-        console.log("ontimehhhh", this.ontimecount)
+    this.middletimecount = this.datarecord.filter(product => product.checkInTime < this.middletime && product.checkInTime > this.ontime).length;
+    this.aftertimecount = this.datarecord.filter(product => product.checkInTime > this.middletime).length;
+    console.log("ontimehhhh", this.ontimecount)
     console.log("Sorted Filtered Data:", this.datarecord, "Selected Date Range:", this.rangeDates);
   }
+
+
 
 
 }

@@ -16,16 +16,12 @@
                 <div class="w-[50%] justify-end flex">
                     <div class=" justify-end flex">
                         <button type="button" (click)="visible = true"
-                            class="focus:outline-none text-white bg-[#1c4c74] hover:bg-green-800 focus:ring-4 focus:ring-green-300 rounded-lg text-sm px-3 me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 h-[35px]">
+                            class="focus:outline-none text-white bg-[#3558BE] hover:bg-green-800 focus:ring-4 focus:ring-green-300 rounded-lg text-sm px-3 me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 h-[35px]">
                             Request View
                         </button>
-                     
-                         
-                                <p-menubar [model]="items"  />
 
 
-                       
-
+                        <p-menubar [model]="items" />
                         <!-- <button type="button" (click)="changeIf()"
                             class="text-gray-400 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100  rounded-lg text-sm px-3 me-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 h-[35px]">
                             <svg class="w-11 h-5 text-gray-400 dark:text-white" aria-hidden="true"
@@ -60,7 +56,7 @@
                 </div>
                 <div class="pl-3">
                     <button type="button" (click)="searchRecord()"
-                        class="focus:outline-none text-white bg-[#1c4c74] hover:bg-[#1c4c74] focus:ring-4 focus:bg-[#1c4c74] rounded-lg text-sm px-3 me-2 dark:bg-[#1c4c74] dark:hover:bg-[#1c4c74] dark:focus:bg-[#1c4c74] h-[35px]">
+                        class="focus:outline-none text-white bg-[#3558BE] hover:bg-[#3558BE] focus:ring-4 focus:bg-[#3558BE] rounded-lg text-sm px-3 me-2 dark:bg-[#3558BE] dark:hover:bg-[#3558BE] dark:focus:bg-[#3558BE] h-[35px]">
                         Search
                     </button>
                 </div>
@@ -72,7 +68,7 @@
                 [responsiveOptions]="responsiveOptions">
                 <ng-template let-userdata pTemplate="item">
                     <div class="py-2 pb-7 px-2 rounded border-2 mx-2 my-7" (click)="search(userdata?.name)"
-                        [ngStyle]="isSelected(userdata) ? {'background-color': '#1c4c74', 'color': 'white'} : {'background-color': 'white'}">
+                        [ngStyle]="isSelected(userdata) ? {'background-color': '#3558BE', 'color': 'white'} : {'background-color': 'white'}">
                         <div class="flex flex-col justify-center items-center ">
                             <img src="../../../assets/male-image.png" alt="" width="150" height="150"
                                 *ngIf="userdata.gender === 'male'">
@@ -101,7 +97,7 @@
                     </div>
                     <!-- <div class="pl-3">
                         <button type="button"
-                            class="focus:outline-none text-white bg-[#1c4c74] hover:bg-green-800 focus:ring-4 focus:ring-green-300 rounded-lg text-sm px-3 me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 h-[35px]">
+                            class="focus:outline-none text-white bg-[#3558BE] hover:bg-green-800 focus:ring-4 focus:ring-green-300 rounded-lg text-sm px-3 me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 h-[35px]">
                             Search
                         </button>
                     </div> -->
@@ -116,78 +112,71 @@
             <p-table scrollHeight="flex" [value]="[days]" class="p-datatable-gridlines p-datatable-striped">
                 <ng-template pTemplate="header">
                     <tr class="p-2 text-sm">
-                        <th class="bg-[#1c4c74] p-3 text-white w-[80px]" style="min-width: 80px !important;">
+                        <th class="bg-[#3558BE] p-3 text-white w-[80px]" style="min-width: 80px !important;">
                             <span class="font-normal text-md">Employee ID</span>
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[180px]" style="min-width: 180px !important;">
+                        <th class="bg-[#3558BE] p-3 text-white w-[180px]" style="min-width: 180px !important;">
                             <span class="font-normal text-md">Name</span>
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[150px]" style="min-width: 150px !important;">
+                        <th class="bg-[#3558BE] p-3 text-white w-[150px]" style="min-width: 150px !important;">
                             <span class="font-normal text-md">Department</span>
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[120px]" style="min-width: 120px !important;">
+                        <th class="bg-[#3558BE] p-3 text-white w-[120px]" style="min-width: 120px !important;">
                             <span class="font-normal text-md">Date</span>
 
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[90px]" style="min-width: 90px !important;">
+                        <th class="bg-[#3558BE] p-3 text-white w-[90px]" style="min-width: 90px !important;">
                             <span class="font-normal text-md">Check-In</span>
 
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[90px]" style="min-width: 90px !important;">
+                        <th class="bg-[#3558BE] p-3 text-white w-[90px]" style="min-width: 90px !important;">
                             <span class="font-normal text-md">Check-Out</span>
 
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[70px]  " style="min-width: 70px !important;">
+                        <th class="bg-[#3558BE] p-3 text-white w-[70px]  " style="min-width: 70px !important;">
                             <span class="font-normal text-md flex justify-center">Status</span>
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[320px]" style="min-width: 320px !important;">
+                        <th class="bg-[#3558BE] p-3 text-white w-[320px]" style="min-width: 320px !important;">
                             <span class="font-normal text-md">Location</span>
 
                         </th>
+                        <th class="bg-[#3558BE] p-3 text-white w-[320px]" style="min-width: 320px !important;">
+                            <span class="font-normal text-md">QR Code Name</span>
+
+                        </th>
+
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body">
-<<<<<<< HEAD
-                    <tr *ngFor="let day of days; let i = index" class="border-b-2 ">
-=======
-                    <tr *ngFor="let day of days; let i = index" class="border-b-2 text-sm" >
-                        <td class="w-[80px !important] p-2" >
-                                {{day.employeeid}}
+                    <tr *ngFor="let day of days; let i = index" class="border-b-2 text-sm">
+                        <td class="w-[80px !important] p-2">
+                            {{day.employeeid}}
                         </td>
->>>>>>> d0cc67ecf4a794b4897f7e7b1b4dd18da47ee8c1
                         <td class="w-[300px !important] p-2">
                             {{day.name}}
                         </td>
                         <td class="w-[200px !important] p-2">
                             @for (item of employeeDropdown; track $index) {
-                                @if (item.name == day.name) {
-                                    {{item.department}}
-                                }
+                            @if (item.name == day.name) {
+                            {{item.department}}
+                            }
                             }
                         </td>
                         <td class="w-[30px !important] p-2">
                             {{day.date}}
                         </td>
-<<<<<<< HEAD
-                        <td class="w-[300px !important] p-2">
+                        <td class="w-[90px !important] p-2">
 
                             <form [formGroup]="profileForm" class="flex items-center gap-2 " *ngIf="edittime === i ">
                                 <svg class="h-[25px] w-[25px] text-red-500 " (click)="closeedit()" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor">
-=======
-                        <td class="w-[90px !important] p-2">
-                               
-                                <form [formGroup]="profileForm" class="flex items-center gap-2 " *ngIf="edittime === i ">
-                                    <svg class="h-[25px] w-[25px] text-red-500 " (click)="closeedit()" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
->>>>>>> d0cc67ecf4a794b4897f7e7b1b4dd18da47ee8c1
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M3 3h18v18H3zM15 9l-6 6m0-6l6 6" />
                                 </svg>
                                 <p-calendar inputId="calendar-timeonly" formControlName="check_in" [(ngModel)]="time"
                                     hourFormat="12" class="w-[50%]" placeholder="Edit item" [timeOnly]="true" />
                                 <button
-                                    class="focus:outline-none text-white bg-[#1c4c74] hover:bg-[#1c4c74] focus:ring-4 focus:bg-[#1c4c74] rounded-lg text-sm px-3 me-2 dark:bg-[#1c4c74] dark:hover:bg-[#1c4c74] dark:focus:bg-[#1c4c74] h-[35px]"
+                                    class="focus:outline-none text-white bg-[#3558BE] hover:bg-[#3558BE] focus:ring-4 focus:bg-[#3558BE] rounded-lg text-sm px-3 me-2 dark:bg-[#3558BE] dark:hover:bg-[#3558BE] dark:focus:bg-[#3558BE] h-[35px]"
                                     (click)="checkin(day)">
                                     Save</button>
                             </form>
@@ -211,7 +200,7 @@
                                 <p-calendar inputId="calendar-timeonly" formControlName="check_out" [(ngModel)]="time"
                                     hourFormat="12" class="w-[50%]" placeholder="Edit item" [timeOnly]="true" />
                                 <button
-                                    class="focus:outline-none text-white bg-[#1c4c74] hover:bg-[#1c4c74] focus:ring-4 focus:bg-[#1c4c74] rounded-lg text-sm px-3 me-2 dark:bg-[#1c4c74] dark:hover:bg-[#1c4c74] dark:focus:bg-[#1c4c74] h-[35px]"
+                                    class="focus:outline-none text-white bg-[#3558BE] hover:bg-[#3558BE] focus:ring-4 focus:bg-[#3558BE] rounded-lg text-sm px-3 me-2 dark:bg-[#3558BE] dark:hover:bg-[#3558BE] dark:focus:bg-[#3558BE] h-[35px]"
                                     (click)="checkout(day)">
                                     Save</button>
                             </form>
@@ -235,12 +224,13 @@
                         <td class="w-[300px !important] p-2">
                             {{day.location}}
                         </td>
+                        <td class="w-[300px !important] p-2">
+                            {{day.qrCodeValue}}
+                        </td>
                     </tr>
                 </ng-template>
             </p-table>
         </div>
-
-
     </div>
 </div>
 
@@ -297,24 +287,18 @@
             <div>
             </div>
             <table class="table table-bordered w-full">
-                <tr class="table-primary" class="header bg-[#1c4c74]" style=" border-radius: 5px;">
-<<<<<<< HEAD
-                    <th style="width: 20%;" class="p-3 pt-0 text-white text-lg">Name</th>
-                    <th style="width: 20%;" class="p-3 pt-0 text-white text-lg">Date</th>
-                    <th class="p-3 pt-0 text-white text-lg" style="width: 15%;">Check-in</th>
-                    <th class="p-3 pt-0 text-white text-lg" style="width: 15%;">Check-Out</th>
-=======
+                <tr class="table-primary" class="header bg-[#3558BE]" style=" border-radius: 5px;">
                     <th style="width: 11%;" class="p-3 pt-0 text-white text-[10px] text-left">Employee ID</th>
                     <th style="width: 10%;" class="p-3 pt-0 text-white text-[10px] text-left">Name</th>
                     <th style="width: 15%;" class="p-3 pt-0 text-white text-[10px] text-left">Department</th>
                     <th style="width: 10%;" class="p-3 pt-0 text-white text-[10px]">Date</th>
                     <th class="p-3 pt-0 text-white text-[10px]" style="width: 10%;">Check-in</th>
                     <th class="p-3 pt-0 text-white text-[10px]" style="width: 11%;">Check-Out</th>
->>>>>>> d0cc67ecf4a794b4897f7e7b1b4dd18da47ee8c1
                     <!-- <th class="p-3 pt-0 text-white text-lg" style="width: 40%;">Location</th> -->
                 </tr>
                 <ng-container>
-                    <tr style="border-bottom: 1px solid #f0eeee !important; " class="text-[10px]" *ngFor="let data of days">
+                    <tr style="border-bottom: 1px solid #f0eeee !important; " class="text-[10px]"
+                        *ngFor="let data of days">
                         <th style="width: 10%;" class="p-3 pt-0 text-left">
                             {{data?.employeeid}}
                         </th>
@@ -323,9 +307,9 @@
                         </th>
                         <td style="width: 20%;" class="p-3 pt-0 text-left font-bold">
                             @for (item of employeeDropdown; track $index) {
-                                @if (item.name == data.name) {
-                                    {{item.department}}
-                                }
+                            @if (item.name == data.name) {
+                            {{item.department}}
+                            }
                             }
                         </td>
                         <th style="width: 16%;" class="p-3 pt-0">
@@ -338,8 +322,6 @@
                             {{data?.checkOutTime}}
                         </th>
                         <!-- <th style="width: 40%;" class="p-3 pt-0">
-<<<<<<< HEAD
-=======
                             {{data?.location}}
                         </th> -->
 
@@ -366,14 +348,14 @@
                 </div>
                 <div class="justify-end flex w-full m-auto pl-3">
                     <div>
-                        <img src="/assets/logo.png" alt="" width="200px" height="40px">
+                        <img src="../../../../assets/compay_logo.jpeg" alt="" width="60px" height="40px">
                     </div>
                 </div>
             </div>
             <!-- Report Details is Bellow -->
             <ng-container>
                 <!-- <ng-container *ngIf="report"> -->
-                <div class="report-detial shadow-1 mb-3 border-round-md bg-slate-100">
+                <div class="report-detial shadow-1 mb-3 border-round-md bg-slate-100 ">
                     <!-- Site Details & shift deatils -->
                     <div class="site-details">
                         <div class="col-12 flex justify-between p-3 border-round-md bg-slate-100">
@@ -401,10 +383,52 @@
                     </div>
                 </div>
             </ng-container>
-            <div>
+            <div class="mb-2" style="border: 1px solid rgb(185, 174, 174);">
             </div>
-            <table class="table table-bordered w-full">
-                <tr class="table-primary" class="header bg-[#1c4c74]" style=" border-radius: 5px;">
+            <div *ngFor="let data of days">
+                <span>
+                    {{data?.date}}
+                </span>
+                <div class="border-2 p-2 rounded-md shadow-1 bg-slate-100 my-2">
+                    <div class="justify-between flex text-[10px]">
+                        <div>
+                            <span style="font-weight: bold;">Employee ID : </span> <span>{{data?.employeeid}}</span>
+                        </div>
+                        <div>
+                        <span style="font-weight: bold;">Employee Name : </span> <span>{{data?.name}}</span>
+                        </div>
+                    </div>
+                    <div class="justify-between flex text-[10px]">
+                        <div>
+                            <span style="font-weight: bold;">Location : </span>
+                             <span>{{data?.location}}</span>
+                        </div>
+                        <div>
+                            <span style="font-weight: bold;">Department Name : </span>
+                             <span>@for (item of employeeDropdown; track $index) {
+                            @if (item.name == data.name) {
+                            {{item.department}}
+                            }
+                            }</span>
+                        </div>
+
+                    </div>
+                    <div class="justify-between flex text-[10px]">
+                        <div>
+                            <span style="font-weight: bold;">Check-in : </span>
+                             <span>{{data?.checkInTime}}</span>
+                        </div>
+                        <div>
+                            <span style="font-weight: bold;">Check-Out : </span>
+                            <span>{{data?.checkOutTime}}</span>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <!-- <table class="table table-bordered w-full">
+                <tr class="table-primary" class="header bg-[#3558BE]" style=" border-radius: 5px;">
                     <th style="width: 11%;" class="p-3 pt-0 text-white text-[10px] text-left">Employee ID</th>
                     <th style="width: 10%;" class="p-3 pt-0 text-white text-[10px] text-left">Name</th>
                     <th style="width: 15%;" class="p-3 pt-0 text-white text-[10px] text-left">Department</th>
@@ -414,7 +438,8 @@
                     <th class="p-3 pt-0 text-white text-[10px] text-left" style="width: 30%; ">Location</th>
                 </tr>
                 <ng-container>
-                    <tr style="border-bottom: 1px solid #f0eeee !important;" class="text-[10px] " *ngFor="let data of days">
+                    <tr style="border-bottom: 1px solid #f0eeee !important;" class="text-[10px] "
+                        *ngFor="let data of days">
                         <th style="width: 10%;" class="p-3 pt-0 text-left">
                             {{data?.employeeid}}
                         </th>
@@ -423,9 +448,9 @@
                         </th>
                         <td style="width: 20%;" class="p-3 pt-0 text-left font-bold">
                             @for (item of employeeDropdown; track $index) {
-                                @if (item.name == data.name) {
-                                    {{item.department}}
-                                }
+                            @if (item.name == data.name) {
+                            {{item.department}}
+                            }
                             }
                         </td>
                         <th style="width: 16%;" class="p-3 pt-0">
@@ -438,14 +463,13 @@
                             {{data?.checkOutTime}}
                         </th>
                         <th style="width: 40%;" class="p-3 pt-0 text-left">
->>>>>>> d0cc67ecf4a794b4897f7e7b1b4dd18da47ee8c1
                             {{data?.location}}
-                        </th> -->
+                        </th>
 
 
                     </tr>
                 </ng-container>
-            </table>
+            </table> -->
         </div>
     </div>
 </div>
@@ -495,7 +519,7 @@
 
         <div class="mt-3 justify-end flex">
             <button type="button" (click)="cancelFrom()"
-                class="focus:outline-none text-white bg-[#1c4c74] hover:bg-green-800 focus:ring-4 focus:ring-green-300 rounded-lg text-sm px-3 me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 h-[35px]">
+                class="focus:outline-none text-white bg-[#3558BE] hover:bg-green-800 focus:ring-4 focus:ring-green-300 rounded-lg text-sm px-3 me-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 h-[35px]">
                 Cancel </button>
         </div>
     </div>

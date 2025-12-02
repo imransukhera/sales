@@ -12,7 +12,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { UserSerivceService } from '@services/user-service/user-serivce.service';
 import { ToastrService } from '@services/toastr.service';
-
+import { QRCodeModule } from 'angularx-qrcode';
 @Component({
   selector: 'app-add-users',
   standalone: true,
@@ -24,7 +24,8 @@ import { ToastrService } from '@services/toastr.service';
     CalendarModule,
     CommonModule,
     ProgressSpinnerModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    QRCodeModule
   ],
   templateUrl: './add-users.component.html',
   styleUrl: './add-users.component.scss'
@@ -87,6 +88,14 @@ export class AddUsersComponent {
   ]
 
 
+
+
+  // Out C
+  qrVisible: boolean = false;
+  companyName: string = '';
+  qrData: string = '';
+  uniqueId: string = '';
+  showQRCode: boolean = false;
   ngOnInit() {
     this.locathostData = localStorage.getItem('userProfile');
     this.profileData = JSON.parse(this.locathostData);
@@ -115,12 +124,30 @@ export class AddUsersComponent {
       department: [undefined, [Validators.required]],
       phoneNo: [undefined, [Validators.required]],
       totalLeaves: [undefined, [Validators.required]],
-      remainingLeaves:[undefined, [Validators.required]],
+      remainingLeaves: [undefined, [Validators.required]],
       email: [undefined, [Validators.required]],
       role: [undefined, [Validators.required]],
       username: [undefined, [Validators.required]],
       password: [undefined, [Validators.required]],
     });
+  }
+
+  generateQRCode() {
+    if (this.companyName.trim()) {
+      this.qrData = this.companyName;
+      this.showQRCode = true;
+    }
+  }
+
+  downloadQR() {
+    const canvas = document.querySelector('canvas');
+    if (canvas) {
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = `${this.companyName}_QR.png`;
+      link.click();
+      this.dialogUpdate();
+    }
   }
 
   getAllUserProfiles() {
@@ -131,8 +158,6 @@ export class AddUsersComponent {
         this.allData = data;
       });
   }
-
-
 
   postProjectData() {
     console.log(this.profileForm.value['username']);
@@ -268,6 +293,14 @@ export class AddUsersComponent {
     this.profileForm.reset();
     this.visible = false;
     this.update = false;
+  }
+
+  dialogUpdate() {
+    this.qrVisible = false;
+    this.companyName = '';
+    this.qrData = '';
+    this.uniqueId = '';
+    this.showQRCode = false;
   }
 
   get f(): { [key: string]: AbstractControl } {

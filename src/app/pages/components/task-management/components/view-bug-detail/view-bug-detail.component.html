@@ -1,22 +1,22 @@
 <div class="overflow-auto">
     <div class="flex justify-between items-center mb-7">
-    <div class="flex items-center gap-2 text-[12px] text-gray-600">
-        <span>Project</span> <span>/</span> <span>Backlog </span><span>/</span><i class="pi pi-bullseye text-white bg-red-600 p-1 rounded-sm" style="font-size: 6px;"></i><span>212</span>
+        <div class="flex items-center gap-2 text-[12px] text-gray-600">
+            <span>Project</span> <span>/</span> <span>Backlog </span><span>/</span><i
+                class="pi pi-bullseye text-white bg-red-600 p-1 rounded-sm" style="font-size: 6px;"></i><span>212</span>
+        </div>
+        <div class="flex ">
+            <form>
+                <p-dropdown [options]="issuestatus" [(ngModel)]="issuestatus" optionLabel="name" placeholder="Accept" />
+            </form>
+        </div>
     </div>
-    <div class="flex ">
-        <form>
-            <p-dropdown [options]="issuestatus" [(ngModel)]="issuestatus" optionLabel="name"
-                placeholder="Accept"  />
-        </form>
-    </div>
-
-</div>
 
     <form [formGroup]="viewForm">
         <div>
             <div>
-                <h1 class="summary-text py-1 font-medium rounded-md" [attr.contenteditable]="isEditing" (click)="editSummary()"
-                    (blur)="saveSummary()" [style.border]="isEditing ? '1px solid #ccc' : 'none'">
+                <h1 class="summary-text py-1 font-medium rounded-md" [attr.contenteditable]="isEditing"
+                    (click)="editSummary()" (blur)="saveSummary()"
+                    [style.border]="isEditing ? '1px solid #ccc' : 'none'">
                     {{ summary }}
                 </h1>
             </div>
@@ -28,58 +28,54 @@
                 Description
             </span>
         </div>
-        <p-editor [(ngModel)]="text" id="content" [readonly]="true" [style]="{ height: 'auto' }" [ngModelOptions]="{standalone: true}"
-            placeholder="Enter your description." ></p-editor>
+        <p-editor [(ngModel)]="text" id="content" [readonly]="true" [style]="{ height: 'auto' }"
+            [ngModelOptions]="{standalone: true}" placeholder="Enter your description."></p-editor>
 
-                <div class="flex mt-8">
-                    <div class="flex flex-col gap-4 w-60 font-medium text-gray-600">
-                        <td>Assignee</td>
-                        <td>Priority</td>
-                        <td>Instance - HS</td>
-                        <td>Environment - HS</td>
-                        <td>URL Of Environment</td>
-                        <td>Reporter</td>
+        <div class="flex mt-8">
+            <div class="flex flex-col gap-4 w-60 font-medium text-gray-600">
+                <td>Assignee</td>
+                <td>Priority</td>
+                <td>Instance - HS</td>
+                <td>Environment - HS</td>
+                <td>URL Of Environment</td>
+                <td>Reporter</td>
 
-                    </div>
-                    <div class="flex flex-col gap-4 text-gray-600 ">
-                        <td>Muhammad Imran</td>
-                        <td>High</td>
-                        <td>QA</td>
-                        <td>Web Frontend</td>
-                        <td>None</td>
-                        <td>Muhammad Imran</td>
-                    </div>
-                     
-                </div>
+            </div>
+            <div class="flex flex-col gap-4 text-gray-600 ">
+                <td>Muhammad Imran</td>
+                <td>High</td>
+                <td>QA</td>
+                <td>Web Frontend</td>
+                <td>None</td>
+                <td>Muhammad Imran</td>
+            </div>
+
+        </div>
         <div>
             <div [innerHTML]="sanitizedDescription"></div>
         </div>
-<div class="my-7 flex flex-col p-0 gap-2">
-    <div class="flex gap-2">
-        <p-avatar 
-    label="V" 
-    styleClass="mr-2" 
-    size="large" 
-    [style]="{ 'background-color': '#ece9fc', color: '#2a1261' }" 
-    shape="circle" />
-        <textarea 
-        rows="5"
-        cols="30" 
-        pInputTextarea 
-        [autoResize]="true" class="border-2 border-gray-300 p-2 shadow-none" placeholder="Add a comment...">
-        
+        <div class="my-7 flex flex-col p-0 gap-2">
+            <div class="flex gap-2">
+                <p-avatar label="V" styleClass="mr-2" size="large"
+                    [style]="{ 'background-color': '#ece9fc', color: '#2a1261' }" shape="circle" />
+                <textarea rows="5" cols="30" pInputTextarea [autoResize]="true"
+                    class="border-2 border-gray-300 p-2 shadow-none" placeholder="Add a comment...">
+
     </textarea>
-    </div>
-<div>
-    <button class="bg-[#1c4c74] text-white py-2 px-3 rounded-md mt-1">Save</button>
-</div>
-   
-    <div class="flex flex-col my-5 gap-1">
-        <span class="text-lg font-semibold text-gray-600 ">Muhammad Imran <span class="ml-1 font-normal text-xs text-gray-400">Nov 13 , 2024</span></span>
-        <p class="text-sm text-gray-500 border-2 border-gray-300 rounded-md p-2">sjahadkjdlakjsdkjalkdjlkajdslkjalksdjlakjlkdjaljdlkjalkjdlkajsdlkjalkjdlkajlkdjalkjdlkajlkjdlakjdlja askjdhakh</p>
-        <span class="text-xs text-gray-400 px-2 -mt-3">Edit</span>
-    </div>
-</div>
+            </div>
+            <div>
+                <button class="bg-[#3558BE] text-white py-2 px-3 rounded-md mt-1">Save</button>
+            </div>
+
+            <div class="flex flex-col my-5 gap-1">
+                <span class="text-lg font-semibold text-gray-600 ">Muhammad Imran <span
+                        class="ml-1 font-normal text-xs text-gray-400">Nov 13 , 2024</span></span>
+                <p class="text-sm text-gray-500 border-2 border-gray-300 rounded-md p-2">
+                    sjahadkjdlakjsdkjalkdjlkajdslkjalksdjlakjlkdjaljdlkjalkjdlkajsdlkjalkjdlkajlkdjalkjdlkajlkjdlakjdlja
+                    askjdhakh</p>
+                <span class="text-xs text-gray-400 px-2 -mt-3">Edit</span>
+            </div>
+        </div>
 
     </form>
 </div>

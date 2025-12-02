@@ -3,7 +3,7 @@
     <div>
         <app-dashboard>
             <button type="button" (click)="showdialog()"
-                            class="focus:outline-none w-full md:w-auto text-white bg-[#1c4c74] hover:bg-[#1c4c74] focus:ring-4 focus:bg-[#1c4c74] rounded-lg text-sm px-3 me-2 dark:bg-[#1c4c74] dark:hover:bg-[#1c4c74] dark:focus:bg-[#1c4c74] h-[35px]">Time
+                            class="focus:outline-none w-full md:w-auto text-white bg-[#3558BE] hover:bg-[#3558BE] focus:ring-4 focus:bg-[#3558BE] rounded-lg text-sm px-3 me-2 dark:bg-[#3558BE] dark:hover:bg-[#3558BE] dark:focus:bg-[#3558BE] h-[35px]">Time
                             Log</button>
         </app-dashboard>
    
@@ -21,7 +21,7 @@
                     </div>
                     <div class="pl-3">
                         <button type="button" (click)="searchRecord()"
-                            class="focus:outline-none text-white bg-[#1c4c74] hover:bg-[#1c4c74] focus:ring-4 focus:bg-[#1c4c74] rounded-lg text-sm px-3 me-2 dark:bg-[#1c4c74] dark:hover:bg-[#1c4c74] dark:focus:bg-[#1c4c74] h-[35px]">
+                            class="focus:outline-none text-white bg-[#3558BE] hover:bg-[#3558BE] focus:ring-4 focus:bg-[#3558BE] rounded-lg text-sm px-3 me-2 dark:bg-[#3558BE] dark:hover:bg-[#3558BE] dark:focus:bg-[#3558BE] h-[35px]">
                             Search
                         </button>
                     </div>
@@ -95,22 +95,22 @@
             <p-table [value]="[days]" scrollHeight="flex" class="p-datatable-gridlines p-datatable-striped">
                 <ng-template pTemplate="header">
                     <tr class="p-2 bg-[#349ce4]">
-                        <th class="bg-[#1c4c74] p-3 text-white w-[250px]">
+                        <th class="bg-[#3558BE] p-3 text-white w-[250px]">
                             <span class="font-normal text-md">Employee ID</span>
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[250px]">
+                        <th class="bg-[#3558BE] p-3 text-white w-[250px]">
                             <span class="font-normal text-md">Name</span>
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[200px]">
+                        <th class="bg-[#3558BE] p-3 text-white w-[200px]">
                             <span class="font-normal text-md">Date</span>
 
                         </th>
-                        <th class="bg-[#1c4c74] p-3 text-white w-[120px]">
+                        <th class="bg-[#3558BE] p-3 text-white w-[120px]">
                             <span class="font-normal text-md">Total time</span>
 
                         </th>
 
-                        <th class="bg-[#1c4c74] p-3 text-white">
+                        <th class="bg-[#3558BE] p-3 text-white">
                             <span class="font-normal text-md">Data</span>
                         </th>
                     </tr>
@@ -295,12 +295,12 @@
                 class="focus:outline-none border-1 bg-white rounded-lg text-sm px-3 me-2  h-[35px]">
                 Cancel </button>
             <button type="button" *ngIf="!updateBtn" (click)="addTimelog()" [disabled]="isProcessing"
-                class="focus:outline-none text-white bg-[#1c4c74] rounded-lg text-sm px-3 me-2 dark:bg-green-600 h-[35px]">
+                class="focus:outline-none text-white bg-[#3558BE] rounded-lg text-sm px-3 me-2 dark:bg-green-600 h-[35px]">
                 Create
             </button>
 
             <button type="button" *ngIf="updateBtn" (click)="updateUI()"
-                class="focus:outline-none text-white bg-[#1c4c74]  rounded-lg text-sm px-3 me-2 dark:bg-green-600  h-[35px]">
+                class="focus:outline-none text-white bg-[#3558BE]  rounded-lg text-sm px-3 me-2 dark:bg-green-600  h-[35px]">
                 Update
             </button>
 
@@ -377,7 +377,7 @@
             <div>
             </div>
             <table class="table table-bordered w-full">
-                <tr class="table-primary" class="header bg-[#1c4c74]" style=" border-radius: 5px;">
+                <tr class="table-primary" class="header bg-[#3558BE]" style=" border-radius: 5px;">
                     <th style="width: 20%;" class="p-3 pt-0 text-white text-lg font-medium">Date</th>
                     <th style="width: 20%;" class="p-3 pt-0 text-white text-lg font-medium">Total Time</th>
                     <th class="p-3 pt-0 text-white text-lg font-medium" style="width: 60%;">Description</th>

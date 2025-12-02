@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
 
     // If user is already logged in, redirect to their respective dashboard
     if (currentRole === 'admin') {
-      this.router.navigate([this.routeService.admin]);
+      this.router.navigateByUrl('/01/admin/dashboard');
     } else if (currentRole === 'user') {
       this.router.navigate([this.routeService.dashboard]);
     }
@@ -57,15 +57,18 @@ export class LoginComponent implements OnInit {
 
         if (password === data.password) {
           this.toaster.showSuccess('Login Successful');
+
+          const companyId = data.companyID; // <--- Add this
+
           if (data.role === 'admin') {
-            this.router.navigate([this.routeService.admin]);
+            this.router.navigate([`${companyId}/admin/dashboard`]);
+          } else {
+            this.router.navigate([`${companyId}/dashboard`]);
           }
-          else {
-            this.router.navigate([this.routeService.dashboard]);
-          }
-          this.loading = false;
+
           localStorage.setItem('userProfile', JSON.stringify(data));
         }
+
         else {
           this.toaster.showError('Login Failed');
           this.loading = false;
