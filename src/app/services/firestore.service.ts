@@ -7,13 +7,14 @@ import { Observable } from 'rxjs';
 })
 export class FirestoreService {
 
-  private collectionName = 'timelog';
-  private userCollectionName = 'users'
-  userproducts = 'projects'
+  collectionName: any;
+  userCollectionName: any;
+  userproducts: any
 
   constructor(private firestore: Firestore) { }
 
-  async addTimelog(name: string, day: string, data: any): Promise<void> {
+  async addTimelog(companyID: any, name: string, day: string, data: any): Promise<void> {
+    this.collectionName = `${companyID}timelog`
     const docRef = doc(this.firestore, this.collectionName, name);
 
     try {
@@ -34,7 +35,9 @@ export class FirestoreService {
     }
   }
 
-  async daleteTimelog(name: string, day: string, data: any, indexToRemove?: number): Promise<void> {
+  async daleteTimelog(companyID: any, name: string, day: string, data: any, indexToRemove?: number): Promise<void> {
+    this.collectionName = `${companyID}timelog`
+
     const docRef = doc(this.firestore, this.collectionName, name);
 
     try {
@@ -61,11 +64,14 @@ export class FirestoreService {
 
 
   async updateTimelog(
+    companyID: any,
     name: string,
     day: string,
     data: any,
     indexToUpdate?: number
   ): Promise<void> {
+    this.collectionName = `${companyID}timelog`
+
     const docRef = doc(this.firestore, this.collectionName, name);
 
     try {
@@ -92,7 +98,9 @@ export class FirestoreService {
     }
   }
 
-  async getTimelog(name: string): Promise<any> {
+  async getTimelog(companyID: any, name: string): Promise<any> {
+    this.collectionName = `${companyID}timelog`
+
     const docRef = doc(this.firestore, this.collectionName, name);
 
     try {
@@ -108,7 +116,9 @@ export class FirestoreService {
     }
   }
 
-  async getallTimelog(): Promise<any> {
+  async getallTimelog(companyID: any): Promise<any> {
+    this.collectionName = `${companyID}timelog`
+
     const docRef = doc(this.firestore, this.collectionName);
 
     try {
@@ -124,7 +134,8 @@ export class FirestoreService {
     }
   }
 
-  async getuserProfile(name: string): Promise<any> {
+  async getuserProfile(companyID: any, name: string): Promise<any> {
+    this.userCollectionName = `${companyID}users`
     const docRef = doc(this.firestore, this.userCollectionName, name);
 
     try {
@@ -140,7 +151,25 @@ export class FirestoreService {
     }
   }
 
-  async getProducts(name: string): Promise<any> {
+  async getuserProfil(companyID: any, name: string): Promise<any> {
+    this.userCollectionName = 'users'
+    const docRef = doc(this.firestore, this.userCollectionName, name);
+
+    try {
+      const docSnapshot: DocumentSnapshot = await getDoc(docRef);
+      if (docSnapshot.exists()) {
+        return docSnapshot.data();
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error('Error getting document: ', error);
+      return null;
+    }
+  }
+
+  async getProducts(companyID: any, name: string): Promise<any> {
+    this.userproducts = `${companyID}projects`
     const docRef = doc(this.firestore, this.userproducts, name);
 
     try {
@@ -156,15 +185,15 @@ export class FirestoreService {
     }
   }
 
-  getAllUserProfiles(): Observable<any[]> {
-    const usersCollection = collection(this.firestore, 'products');
+  getAllUserProfiles(companyID: any): Observable<any[]> {
+    const usersCollection = collection(this.firestore, `${companyID}products`);
     console.log(usersCollection)
     return collectionData(usersCollection, { idField: 'id' });
   }
 
 
-  async checkin(name: string, day: string, data: any): Promise<void> {
-    const docRef = doc(this.firestore, "attendancePortal", name);
+  async checkin(companyID: any, name: string, day: string, data: any): Promise<void> {
+    const docRef = doc(this.firestore, `${companyID}attendancePortal`, name);
 
     try {
       const docSnapshot: DocumentSnapshot = await getDoc(docRef);
@@ -185,10 +214,10 @@ export class FirestoreService {
     }
 
   }
-  
 
-  async checkOut(name: string, day: string, data: any): Promise<void> {
-    const docRef = doc(this.firestore, "attendancePortal", name);
+
+  async checkOut(companyID: any, name: string, day: string, data: any): Promise<void> {
+    const docRef = doc(this.firestore, `${companyID}attendancePortal`, name);
 
     try {
       const docSnapshot: DocumentSnapshot = await getDoc(docRef);
@@ -216,8 +245,8 @@ export class FirestoreService {
     }
   }
 
-  async AcceptRequest(name: string, day: string, data: any): Promise<void> {
-    const docRef = doc(this.firestore, "attendancePortal", name);
+  async AcceptRequest(companyID: any, name: string, day: string, data: any): Promise<void> {
+    const docRef = doc(this.firestore, `${companyID}attendancePortal`, name);
 
     try {
       const docSnapshot: DocumentSnapshot = await getDoc(docRef);
@@ -255,8 +284,8 @@ export class FirestoreService {
   //   }
   // }
 
-  async SendRequest(name: any, day: any, data: any): Promise<void> {
-    const docRef = doc(this.firestore, "attendance_request", name);
+  async SendRequest(companyID: any, name: any, day: any, data: any): Promise<void> {
+    const docRef = doc(this.firestore, `${companyID}attendance_request`, name);
 
     try {
       const docSnapshot: DocumentSnapshot = await getDoc(docRef);
@@ -286,14 +315,14 @@ export class FirestoreService {
     }
 
   }
-  async daleterequest(name: string, day: string, data: any, indexToRemove?: number): Promise<void> {
-    const docRef = doc(this.firestore, "attendance_request", name);
+  async daleterequest(companyID: any, name: string, day: string, data: any, indexToRemove?: number): Promise<void> {
+    const docRef = doc(this.firestore, `${companyID}attendance_request`, name);
 
     try {
       const docSnapshot: DocumentSnapshot = await getDoc(docRef);
       let existingData = docSnapshot.exists() ? docSnapshot.data() : {};
 
-      
+
       console.log("Available keys:", Object.keys(existingData));
 
       const foundKey = Object.keys(existingData).find(key => key.includes(day));
@@ -303,10 +332,10 @@ export class FirestoreService {
         delete existingData[foundKey];
         await setDoc(docRef, existingData);
         console.log(`Successfully updated document after deleting ${foundKey}`);
-    } else {
+      } else {
         console.log(`Day ${day} not found in the document`);
-    }
-    
+      }
+
 
       // await setDoc(docRef, existingData, { merge: true });
     } catch (error) {
@@ -314,15 +343,15 @@ export class FirestoreService {
   }
 
 
-  getRequest(): Observable<any[]> {
-    const usersCollection = collection(this.firestore, 'attendance_request');
+  getRequest(companyID: any): Observable<any[]> {
+    const usersCollection = collection(this.firestore, `${companyID}attendance_request`);
     return collectionData(usersCollection, { idField: 'id' });
   }
 
-  
 
-  async getAttendanceRecord(name: string): Promise<any> {
-    const docRef = doc(this.firestore, 'attendancePortal', name);
+
+  async getAttendanceRecord(companyID: any, name: string): Promise<any> {
+    const docRef = doc(this.firestore, `${companyID}attendancePortal`, name);
 
     try {
       const docSnapshot: DocumentSnapshot = await getDoc(docRef);
@@ -337,7 +366,9 @@ export class FirestoreService {
     }
   }
 
-  async getallData(): Promise<any> {
+  async getallData(companyID: any): Promise<any> {
+    this.collectionName = `${companyID}timelog`
+
     const colRef = collection(this.firestore, this.collectionName);
 
     try {
@@ -354,20 +385,20 @@ export class FirestoreService {
     }
   }
 
-  getAllUser(): Observable<any[]> {
-    const usersCollection = collection(this.firestore, 'users');
+  getAllUser(companyID: any): Observable<any[]> {
+    const usersCollection = collection(this.firestore, `${companyID}users`);
     return collectionData(usersCollection, { idField: 'id' });
   }
 
-  getAttendance(): Observable<any[]> {
-    const usersCollection = collection(this.firestore, 'attendancePortal');
+  getAttendance(companyID: any): Observable<any[]> {
+    const usersCollection = collection(this.firestore, `${companyID}attendancePortal`);
     return collectionData(usersCollection, { idField: 'id' });
   }
 
 
-  
-  async submitleave(name: any, day: any, data: any): Promise<void> {
-    const docRef = doc(this.firestore, "leave_request", name);
+
+  async submitleave(companyID: any, name: any, day: any, data: any): Promise<void> {
+    const docRef = doc(this.firestore, `${companyID}leave_request`, name);
     try {
       const docSnapshot: DocumentSnapshot = await getDoc(docRef);
       let existingData = docSnapshot.exists() ? docSnapshot.data() : {};
@@ -388,8 +419,8 @@ export class FirestoreService {
 
   }
 
-  async leaveupdate(name: string, day: string, data: any): Promise<void> {
-    const docRef = doc(this.firestore, "leave_request", name);
+  async leaveupdate(companyID: any, name: string, day: string, data: any): Promise<void> {
+    const docRef = doc(this.firestore, `${companyID}leave_request`, name);
 
     try {
       const docSnapshot: DocumentSnapshot = await getDoc(docRef);
@@ -417,14 +448,14 @@ export class FirestoreService {
     }
   }
 
-  async leavedelete(name: string, day: string, data: any, indexToRemove?: number): Promise<void> {
-    const docRef = doc(this.firestore, "leave_request", name);
+  async leavedelete(companyID: any, name: string, day: string, data: any, indexToRemove?: number): Promise<void> {
+    const docRef = doc(this.firestore, `${companyID}leave_request`, name);
 
     try {
       const docSnapshot: DocumentSnapshot = await getDoc(docRef);
       let existingData = docSnapshot.exists() ? docSnapshot.data() : {};
 
-      
+
       console.log("Available keys:", Object.keys(existingData));
 
       const foundKey = Object.keys(existingData).find(key => key.includes(day));
@@ -434,18 +465,18 @@ export class FirestoreService {
         delete existingData[foundKey];
         await setDoc(docRef, existingData);
         console.log(`Successfully updated document after deleting ${foundKey}`);
-    } else {
+      } else {
         console.log(`Day ${day} not found in the document`);
-    }
-    
+      }
+
 
       // await setDoc(docRef, existingData, { merge: true });
     } catch (error) {
     }
   }
 
-  getleave(): Observable<any[]> {
-    const usersCollection = collection(this.firestore, 'leave_request');
+  getleave(companyID: any): Observable<any[]> {
+    const usersCollection = collection(this.firestore, `${companyID}leave_request`);
     return collectionData(usersCollection, { idField: 'id' });
   }
 

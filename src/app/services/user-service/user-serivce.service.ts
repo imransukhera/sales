@@ -20,6 +20,16 @@ export class UserSerivceService {
       console.error('Error writing document: ', error);
     }
   }
+  // Function to post data to Firestore
+  async addUserCompany(comapnyID: any, id: any, data: any): Promise<void> {
+    const projectDocRef = doc(this.firestore, `${comapnyID}${this.collectionName}/${id}`);
+    try {
+      await setDoc(projectDocRef, { ...data }, { merge: true });
+      console.log(`Document with ID ${id} successfully written!`);
+    } catch (error) {
+      console.error('Error writing document: ', error);
+    }
+  }
 
   // Function to post data to Firestore
   async updateProjectData(id: any, data: any): Promise<void> {

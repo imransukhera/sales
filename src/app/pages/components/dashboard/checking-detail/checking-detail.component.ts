@@ -16,6 +16,7 @@ import { DashboardComponent } from "../dashboard/dashboard.component";
 declare var google: any;
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { ThisReceiver } from '@angular/compiler';
+import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-checking-detail',
   standalone: true,
@@ -82,13 +83,23 @@ export class CheckingDetailComponent implements OnInit {
   qrCodeVisible: boolean = false;
   CodeVisible: boolean = false;
   qrCodeValue: any;
+  companyID: any;
+  value: any;
   constructor(
     private http: HttpClient,
     private firestoreService: FirestoreService,
     private firestore: Firestore,
     private fb: FormBuilder,
-    private toaster: ToastrService
+    private toaster: ToastrService,
+    private route: ActivatedRoute,
   ) {
+    const stored = localStorage.getItem('userProfile');
+
+    if (stored) {
+      const userObj = JSON.parse(stored);
+      console.log("companyID:", userObj.companyID);
+      this.companyID = userObj.companyID
+    }
     this.getCurrentLocationAndAddressd();
 
   }
@@ -277,7 +288,7 @@ export class CheckingDetailComponent implements OnInit {
     }
     // return
     if (this.currentAddress) {
-      this.firestoreService.checkin(this.profileData.username, date, data)
+      this.firestoreService.checkin(this.companyID, this.profileData.username, date, data)
         .then(() => {
           this.toaster.showSuccess('Successfully Check-In');
           this.loading = false;
@@ -324,7 +335,7 @@ export class CheckingDetailComponent implements OnInit {
       location: choutTime?.location,
     }
 
-    this.firestoreService.checkOut(this.profileData.username, date, data)
+    this.firestoreService.checkOut(this.companyID, this.profileData.username, date, data)
       .then(() => {
         this.toaster.showSuccess('Successfully Checkout');
         this.checkingstatus = false;
@@ -345,7 +356,7 @@ export class CheckingDetailComponent implements OnInit {
   fetchTimelogData(name: string) {
     this.loading = true;
 
-    this.firestoreService.getAttendanceRecord(name)
+    this.firestoreService.getAttendanceRecord(this.companyID, name)
       .then((data) => {
         const transformedData = this.transformTimelogData(data);
         const transformedDatainsort = transformedData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
@@ -456,7 +467,7 @@ export class CheckingDetailComponent implements OnInit {
     }
     console.log("this is value:", this.profileData.username, value.date.toDateString(), data);
 
-    this.firestoreService.SendRequest(this.profileData.username, value.date.toDateString(), data).then(() => {
+    this.firestoreService.SendRequest(this.companyID, this.profileData.username, value.date.toDateString(), data).then(() => {
       this.toaster.showSuccess('Successfully Submit Request');
       this.cancelFrom();
       this.fetchTimelogData(this.profileData.username);
@@ -469,7 +480,7 @@ export class CheckingDetailComponent implements OnInit {
 
 
   getrequest() {
-    this.firestoreService.getRequest().subscribe((req) => {
+    this.firestoreService.getRequest(this.companyID).subscribe((req) => {
       console.log("request", req)
       this.requestdata = req;
 

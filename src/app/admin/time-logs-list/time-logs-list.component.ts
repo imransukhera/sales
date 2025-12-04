@@ -12,7 +12,7 @@ import { TableModule } from 'primeng/table';
 import { Observable } from 'rxjs';
 import jsPDF from 'jspdf';
 import { CarouselModule } from 'primeng/carousel';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { TooltipModule } from 'primeng/tooltip';
@@ -61,18 +61,23 @@ export class TimeLogsListComponent implements OnInit {
   profileData: any;
   locathostData: any;
   grandTotalTime: any;
-filterdata: any;
+  filterdata: any;
   userdata: any[] = [];
   responsiveOptions: any[] | undefined;
   innerdata: any;
-
+  companyID: any
 
   constructor(
     private firestoreService: FirestoreService
     , private firestore: Firestore
-    , private toaster: ToastrService ,
-   
+    , private toaster: ToastrService
+    , private route: ActivatedRoute
+
   ) {
+    this.route.parent?.paramMap.subscribe(params => {
+      this.companyID = params.get('companyId');
+      console.log('Company ID:', this.companyID);
+    });
     const today = new Date();
     this.dateOf = today;
     const projectsCollection = collection(this.firestore, 'projects');
@@ -121,7 +126,7 @@ filterdata: any;
   }
 
   getAlldata() {
-    this.firestoreService.getallData().then((data) => {
+    this.firestoreService.getallData(this.companyID).then((data) => {
       const reorganizedData: any = [];
 
       for (const entry of data) {
@@ -144,7 +149,7 @@ filterdata: any;
       const dateDate = reorganizedData.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
       this.tableData(dateDate);
-this.search();
+      this.search();
     });
   }
 
@@ -172,7 +177,7 @@ this.search();
     const data = {
       date: this.entry.date,
     };
-    this.firestoreService.daleteTimelog(name, day, data, this.index)
+    this.firestoreService.daleteTimelog(this.companyID, name, day, data, this.index)
       .then(() => {
         this.toaster.showSuccess('Deleted successfully');
         this.getAlldata();
@@ -184,7 +189,7 @@ this.search();
       });
   }
 
-  
+
 
 
   updateUI() {
@@ -208,7 +213,7 @@ this.search();
 
     console.log("this data:", name, "value", day, "value 1", data, "index", this.index, "value:", filterName);
 
-    this.firestoreService.updateTimelog(name, day, data, this.index)
+    this.firestoreService.updateTimelog(this.companyID, name, day, data, this.index)
       .then(() => {
         this.toaster.showSuccess('Updated successfully');
         this.visible = false;
@@ -237,7 +242,7 @@ this.search();
   }
 
   getAllUserProfiles() {
-    this.firestoreService.getAllUser().subscribe(
+    this.firestoreService.getAllUser(this.companyID).subscribe(
       (data) => {
         this.employeeDropdown = data;
       });
@@ -265,9 +270,9 @@ this.search();
     return `${grandTotalHours}h ${grandTotalMinutes}m`;
   }
 
-  clear(){
+  clear() {
     this.employeeName = "";
-    this.allProjectName ="";
+    this.allProjectName = "";
     this.filterproject = null;
     this.search();
   }
@@ -280,20 +285,20 @@ this.search();
       return recordDate >= startDate && recordDate <= endDate;
     });
     if (this.employeeName?.name) {
-      this.filterdata = filteredData.filter((data: any) => data?.name === this.employeeName?.name );
-      if(this.allProjectName?.name){
-        this.filterdata = this.filterdata.filter((item: any) => 
+      this.filterdata = filteredData.filter((data: any) => data?.name === this.employeeName?.name);
+      if (this.allProjectName?.name) {
+        this.filterdata = this.filterdata.filter((item: any) =>
           item.data?.some((innerData: any) => innerData.issueName === this.allProjectName?.name)
         );
         this.filterproject = this.allProjectName?.name;
       }
-      
-    } else if(this.allProjectName?.name){
-      this.filterdata = filteredData.filter((item: any) => 
+
+    } else if (this.allProjectName?.name) {
+      this.filterdata = filteredData.filter((item: any) =>
         item.data?.some((innerData: any) => innerData.issueName === this.allProjectName?.name)
       );
       if (this.employeeName?.name) {
-        this.filterdata = this.filterdata.filter((data: any) => data?.name === this.employeeName?.name );
+        this.filterdata = this.filterdata.filter((data: any) => data?.name === this.employeeName?.name);
       }
       this.filterproject = this.allProjectName?.name;
       console.log('all project filterdata', this.allData)
@@ -335,11 +340,11 @@ this.search();
     return hours * 60 + minutes;
   }
 
-  filterlogdata(data: any){
-    if(this.filterproject){
-      const filterdataproject = data.filter((item: any)=> item.issueName === this.allProjectName.name)
+  filterlogdata(data: any) {
+    if (this.filterproject) {
+      const filterdataproject = data.filter((item: any) => item.issueName === this.allProjectName.name)
       return this.calculateTotalTime(filterdataproject)
-    }else{
+    } else {
       return this.calculateTotalTime(data)
     }
 
@@ -359,60 +364,60 @@ this.search();
     //  this.excelService.exportToExcel();
     let data
     console.log('innerdata', this.innerdata)
-    console.log('employeeName', this.allProjectName )
+    console.log('employeeName', this.allProjectName)
 
-if(this.filterproject){
-  data = this.innerdata.filter((item: any)=> item.issueName === this.allProjectName.name)
-  // console.log('name', data)
-}else{
-  data = this.innerdata;
-}
-  
-  
-      const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet('Sheet1');
-      
-      // Add header row dynamically
-      console.log('outname', data)
-      // const columns = Object.keys(this.innerdata[0]).map((key: any) => ({ header: key, key }));
-      // worksheet.columns = columns;
-      // console.log('name', columns)
-      worksheet.columns = [
-        {header: 'Employee ID', key: 'employeeid', width: 20},
-        {header: 'Date', key: 'date', width: 20},
-        {header: 'Project Code', key: 'projectCode', width: 15},
-        {header: 'Project Name', key: 'issueName', width: 30, style:{alignment: { horizontal: 'left' }}},
-        {header: 'Employee Name', key: 'name', width: 30},
-        {header: 'Description', key: 'description', width: 40},
-        {header: 'Hours', key: 'spentTame', width: 10, style:{alignment: { horizontal: 'right' }}},
-      ];
-
-      worksheet.getRow(1).font = { bold: true };
-
-      let totalMinutes = 0;  // To accumulate the total minutes
-        // Function to parse time in "Xh Ym" format and convert to minutes
-  function parseTime(time: string): number {
-    let minutes = 0;
-    if (time) {
-      const hourMatch = time.match(/(\d+)h/);
-      const minuteMatch = time.match(/(\d+)m/);
-      
-      if (hourMatch) {
-        minutes += parseInt(hourMatch[1], 10) * 60; // Convert hours to minutes
-      }
-      if (minuteMatch) {
-        minutes += parseInt(minuteMatch[1], 10); // Add minutes
-      }
+    if (this.filterproject) {
+      data = this.innerdata.filter((item: any) => item.issueName === this.allProjectName.name)
+      // console.log('name', data)
+    } else {
+      data = this.innerdata;
     }
-    return minutes;
-  }
 
-      // Add data rows dynamically
-      data.forEach((item: any) => {
-        const time = item.spentTame || '0h 0m';  // Default to '0h 0m' if no hours
-        const minutes = parseTime(time); // Convert time to minutes
-        
-        worksheet.addRow({
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Sheet1');
+
+    // Add header row dynamically
+    console.log('outname', data)
+    // const columns = Object.keys(this.innerdata[0]).map((key: any) => ({ header: key, key }));
+    // worksheet.columns = columns;
+    // console.log('name', columns)
+    worksheet.columns = [
+      { header: 'Employee ID', key: 'employeeid', width: 20 },
+      { header: 'Date', key: 'date', width: 20 },
+      { header: 'Project Code', key: 'projectCode', width: 15 },
+      { header: 'Project Name', key: 'issueName', width: 30, style: { alignment: { horizontal: 'left' } } },
+      { header: 'Employee Name', key: 'name', width: 30 },
+      { header: 'Description', key: 'description', width: 40 },
+      { header: 'Hours', key: 'spentTame', width: 10, style: { alignment: { horizontal: 'right' } } },
+    ];
+
+    worksheet.getRow(1).font = { bold: true };
+
+    let totalMinutes = 0;  // To accumulate the total minutes
+    // Function to parse time in "Xh Ym" format and convert to minutes
+    function parseTime(time: string): number {
+      let minutes = 0;
+      if (time) {
+        const hourMatch = time.match(/(\d+)h/);
+        const minuteMatch = time.match(/(\d+)m/);
+
+        if (hourMatch) {
+          minutes += parseInt(hourMatch[1], 10) * 60; // Convert hours to minutes
+        }
+        if (minuteMatch) {
+          minutes += parseInt(minuteMatch[1], 10); // Add minutes
+        }
+      }
+      return minutes;
+    }
+
+    // Add data rows dynamically
+    data.forEach((item: any) => {
+      const time = item.spentTame || '0h 0m';  // Default to '0h 0m' if no hours
+      const minutes = parseTime(time); // Convert time to minutes
+
+      worksheet.addRow({
         employeeid: item.employeeid,
         date: item.date,
         projectCode: item.projectCode,
@@ -421,36 +426,36 @@ if(this.filterproject){
         description: item.description,
         spentTame: item.spentTame
       })
-    
+
       totalMinutes += minutes;
-  });
-      
-   // Convert total minutes to "Xh Ym" format
-   const totalHours = Math.floor(totalMinutes / 60);
-   const remainingMinutes = totalMinutes % 60;
-   const totalTimeFormatted = `${totalHours}h ${remainingMinutes}m`;
- 
-   // Add total hours row at the bottom
-   const totalRow = worksheet.addRow({
-    employeeid: '',
-    date: 'Total',
-        projectCode: '',
-        issueName: '',
-        name: '',
-        description: '',
-        spentTame: totalTimeFormatted
-   });
+    });
 
-   totalRow.font = { bold: true };
-   const date = new Date().toISOString();
-      // Write the workbook to a buffer and save as a file
-      workbook.xlsx.writeBuffer().then(buffer => {
-        const blob = new Blob([buffer], { type: 'application/octet-stream' });
-        saveAs(blob, `TimeLogsExcelsheet${date}.xlsx`);
-      });
-    
+    // Convert total minutes to "Xh Ym" format
+    const totalHours = Math.floor(totalMinutes / 60);
+    const remainingMinutes = totalMinutes % 60;
+    const totalTimeFormatted = `${totalHours}h ${remainingMinutes}m`;
 
-   }
+    // Add total hours row at the bottom
+    const totalRow = worksheet.addRow({
+      employeeid: '',
+      date: 'Total',
+      projectCode: '',
+      issueName: '',
+      name: '',
+      description: '',
+      spentTame: totalTimeFormatted
+    });
+
+    totalRow.font = { bold: true };
+    const date = new Date().toISOString();
+    // Write the workbook to a buffer and save as a file
+    workbook.xlsx.writeBuffer().then(buffer => {
+      const blob = new Blob([buffer], { type: 'application/octet-stream' });
+      saveAs(blob, `TimeLogsExcelsheet${date}.xlsx`);
+    });
+
+
+  }
 
   totalTime(data: any) {
     console.log("this is all data", data);
@@ -458,20 +463,20 @@ if(this.filterproject){
   }
 
   getAllUserProfilesdata() {
-    this.firestoreService.getAllUser().subscribe(
+    this.firestoreService.getAllUser(this.companyID).subscribe(
       (data) => {
         this.userdata = data;
       });
   }
 
   isSelected(data: any): boolean {
-    const currentDate = new Date().toDateString(); 
-    const filteredData = this.allData.some((selected = this.allData) =>  new Date(selected.date).toDateString() === currentDate );
+    const currentDate = new Date().toDateString();
+    const filteredData = this.allData.some((selected = this.allData) => new Date(selected.date).toDateString() === currentDate);
     if (!filteredData) {
-      return this.allData.some((selected = this.allData) =>  selected.name === data.name);
-      
-    } else{
-      return this.allData.some((selected = this.allData) =>  selected.name === data.name && new Date(selected.date).toDateString() === currentDate );
+      return this.allData.some((selected = this.allData) => selected.name === data.name);
+
+    } else {
+      return this.allData.some((selected = this.allData) => selected.name === data.name && new Date(selected.date).toDateString() === currentDate);
 
     }
   }
@@ -479,9 +484,9 @@ if(this.filterproject){
   carousel() {
     this.responsiveOptions = [
       {
-          breakpoint: '1199px',
-          numVisible: 4,
-          numScroll: 1
+        breakpoint: '1199px',
+        numVisible: 4,
+        numScroll: 1
       },
       {
         breakpoint: '991px',
@@ -519,7 +524,7 @@ if(this.filterproject){
                 const hours = parseInt(hourMatch[1], 10); // Convert to number
                 totalHours += hours; // Sum up the hours
               }
-  
+
               // Match and parse minutes (e.g., '30m')
               const minuteMatch = time.match(/(\d+)m/);
               if (minuteMatch) {
@@ -527,7 +532,7 @@ if(this.filterproject){
                 totalMinutes += minutes; // Sum up the minutes
               }
             }
-          }else{
+          } else {
             const time = item.spentTame;
 
             if (time) {
@@ -537,7 +542,7 @@ if(this.filterproject){
                 const hours = parseInt(hourMatch[1], 10); // Convert to number
                 totalHours += hours; // Sum up the hours
               }
-  
+
               // Match and parse minutes (e.g., '30m')
               const minuteMatch = time.match(/(\d+)m/);
               if (minuteMatch) {

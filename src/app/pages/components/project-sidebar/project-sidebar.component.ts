@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { RouteService } from '@services/route.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../auth.service';
@@ -16,28 +16,34 @@ import { SharedService } from '@services/shared/shared.service';
   templateUrl: './project-sidebar.component.html',
   styleUrls: ['./project-sidebar.component.scss']
 })
-export class ProjectSidebarComponent implements OnInit{
+export class ProjectSidebarComponent implements OnInit {
   sidebarOpen = false;
   open = false;
-
+  companyID: any;
   constructor(
     public routeService: RouteService,
     private toaster: ToastrService,
     private authService: AuthService, private router: Router,
-    private shared: SharedService
-  ) { }
-
-ngOnInit(): void {
-  this.shared.sidebarState$.subscribe((state) => {
-    this.open = state;
-  });
-}
-
-sidemenu(){
-  if(window.innerWidth <= 767){
-    this.shared.toggleSidebar();
+    private shared: SharedService,
+    private route: ActivatedRoute
+  ) {
+    this.route.parent?.paramMap.subscribe(params => {
+      this.companyID = params.get('companyId');
+      console.log('Company ID:', this.companyID);
+    });
   }
-}
+
+  ngOnInit(): void {
+    this.shared.sidebarState$.subscribe((state) => {
+      this.open = state;
+    });
+  }
+
+  sidemenu() {
+    if (window.innerWidth <= 767) {
+      this.shared.toggleSidebar();
+    }
+  }
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;

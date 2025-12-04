@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouteService } from '@services/route.service';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastrService } from '@services/toastr.service';
 import { FirestoreService } from '@services/firestore.service';
@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit {
   loading: boolean = false;
   loginForm: FormGroup;
   passwordFieldType: string = 'password';
-
+  companyID: any;
 
   constructor(
     public routeService: RouteService,
@@ -29,12 +29,27 @@ export class LoginComponent implements OnInit {
     private firestoreService: FirestoreService,
     private fb: FormBuilder,
     private authService: AuthService
+    , private route: ActivatedRoute
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required]],
       password: ['', Validators.required],
       rememberMe: [false]
     });
+    this.route.parent?.paramMap.subscribe(params => {
+      this.companyID = params.get('companyId');
+      console.log('Company ID:', this.companyID);
+    });
+    let currentRoute: ActivatedRoute | null = this.route;
+    while (currentRoute) {
+      const id = currentRoute.snapshot.paramMap.get('companyId');
+      if (id) {
+        this.companyID = id;
+        console.log('Company ID:', this.companyID);
+        break;
+      }
+      currentRoute = currentRoute.parent;
+    }
   }
   ngOnInit() {
     const currentRole = this.authService.getRole();
@@ -49,7 +64,7 @@ export class LoginComponent implements OnInit {
 
   fetchTimelogData(name: string) {
     this.loading = true;
-    this.firestoreService.getuserProfile(name)
+    this.firestoreService.getuserProfil(this.companyID, name)
       .then((data) => {
         let password = this.loginForm.controls['password'].value;
         console.log('Timelog data:', data);

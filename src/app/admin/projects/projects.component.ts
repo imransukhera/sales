@@ -10,6 +10,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { CommonModule } from '@angular/common';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { FirestoreService } from '@services/firestore.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-projects',
@@ -41,12 +42,19 @@ export class ProjectsComponent {
   employeeDropdown: any;
   employeeName: any;
   update = false;
+  companyID: any;
   constructor(
     private projectService: ProjectServiceService
-    , private firestore: Firestore
+    , private firestore: Firestore,
+    private route: ActivatedRoute
     , private firestoreService: FirestoreService,
   ) {
-    const projectsCollection = collection(this.firestore, 'projects');
+    this.route.parent?.paramMap.subscribe(params => {
+      this.companyID = params.get('companyId');
+      console.log('Company ID:', this.companyID);
+    });
+
+    const projectsCollection = collection(this.firestore, `${this.companyID}projects`);
     this.projects$ = collectionData(projectsCollection);
   }
 
@@ -65,7 +73,7 @@ export class ProjectsComponent {
       description: this.description,
     };
 
-    this.projectService.postProjectData(projectId, projectData)
+    this.projectService.postProjectData(this.companyID, projectId, projectData)
       .then((data) => {
         console.log('Project posted successfully', data);
         this.visible = false;
@@ -89,14 +97,14 @@ export class ProjectsComponent {
   }
 
   getAllUserProfiles() {
-    this.firestoreService.getAllUser().subscribe(
+    this.firestoreService.getAllUser(this.companyID).subscribe(
       (data) => {
         this.employeeDropdown = data;
       });
   }
 
   deleteField(projectCode: any) {
-    this.projectService.deleteProjectData(projectCode)
+    this.projectService.deleteProjectData(this.companyID, projectCode)
       .then(() => console.log('Project deleted successfully'))
       .catch((error) => console.error('Error deleting project: ', error));
   }
@@ -109,7 +117,7 @@ export class ProjectsComponent {
       description: this.description,
     };
 
-    this.projectService.updateProjectData(projectId, projectData)
+    this.projectService.updateProjectData(this.companyID, projectId, projectData)
       .then(() => {
         console.log('Project posted or updated successfully');
         this.visible = false;

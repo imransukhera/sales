@@ -10,6 +10,7 @@ import { push } from 'firebase/database';
 import { ChartModule } from 'primeng/chart';
 import { AnylogClockComponent } from "./compound/anylog-clock/anylog-clock.component";
 import { UserSerivceService } from '@services/user-service/user-serivce.service';
+import { ActivatedRoute } from '@angular/router';
 
 
 
@@ -27,16 +28,16 @@ import { UserSerivceService } from '@services/user-service/user-serivce.service'
     TimeLogsSheetComponent,
     ChartModule,
     AnylogClockComponent
-],
+  ],
   templateUrl: './dashboard-page.component.html',
   styleUrl: './dashboard-page.component.scss'
 })
-export class DashboardPageComponent implements OnInit  {
+export class DashboardPageComponent implements OnInit {
   loading: boolean = true;
   timelog: any
   username: any;
-  date= new Date().toDateString(); 
-  timezone : any;
+  date = new Date().toDateString();
+  timezone: any;
   data: any;
   MonthlyHours: any;
   totalMonthlyValue: any;
@@ -45,7 +46,7 @@ export class DashboardPageComponent implements OnInit  {
   TodayHours: any;
   totaltodayValue: any;
   timedata: any;
-  ontime: any ;
+  ontime: any;
   ontimecount: any;
   middletime: any;
   middletimecount: any;
@@ -54,17 +55,30 @@ export class DashboardPageComponent implements OnInit  {
   userremainingleaves: any;
   leavedata: any;
   totalleave: any;
-  leavesstatus : any;
+  leavesstatus: any;
   livetime: any;
   timer: any;
   timechartdata: any;
   timechartoptions: any;
   leavechartdata: any;
   leavechartoptions: any;
-
-  constructor(private firestoreService: FirestoreService,  private userService: UserSerivceService) {
-    
-const date = new Date();
+  companyID: any;
+  constructor(private firestoreService: FirestoreService, private route: ActivatedRoute,) {
+    this.route.parent?.paramMap.subscribe(params => {
+      this.companyID = params.get('companyId');
+      console.log('Company ID:', this.companyID);
+    });
+    let currentRoute: ActivatedRoute | null = this.route;
+    while (currentRoute) {
+      const id = currentRoute.snapshot.paramMap.get('companyId');
+      if (id) {
+        this.companyID = id;
+        console.log('Company ID:', this.companyID);
+        break;
+      }
+      currentRoute = currentRoute.parent;
+    }
+    const date = new Date();
     const dateString = date.toString();
     this.timezone = dateString.match(/GMT[+-]\d{4}/)?.[0] || 'Timezone not found';
   }
@@ -73,95 +87,95 @@ const date = new Date();
     this.getusername();
     this.getlogstime();
     this.checkintimedata();
-   this.getuserleave();
-   this.timer = setInterval(() => {
-    this.timelive();
-  }, 1000);
+    this.getuserleave();
+    this.timer = setInterval(() => {
+      this.timelive();
+    }, 1000);
 
   }
 
   ngOnDestroy(): void {
     if (this.timer) {
-      clearInterval(this.timer); 
+      clearInterval(this.timer);
     }
   }
 
-  timechart(ontime: any, alowtimecount: any, aftertimecount:any){
+  timechart(ontime: any, alowtimecount: any, aftertimecount: any) {
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue('--text-color');
-   
-if(ontime != 0 || alowtimecount != 0 || aftertimecount != 0){
-    this.timechartdata = {
+
+    if (ontime != 0 || alowtimecount != 0 || aftertimecount != 0) {
+      this.timechartdata = {
         labels: ['On Time', 'Allow Time', 'Late'],
         datasets: [
-            {
-                data: [ontime, alowtimecount, aftertimecount],
-                backgroundColor: [documentStyle.getPropertyValue('--green-500'), documentStyle.getPropertyValue('--yellow-500'),  documentStyle.getPropertyValue('--red-500')],
-                hoverBackgroundColor: [documentStyle.getPropertyValue('--green-400'), documentStyle.getPropertyValue('--yellow-400'), documentStyle.getPropertyValue('--red-400')]
-            }
-        ]
-    };
-  }else{
-    this.timechartdata = {
-      labels: ['On Time', 'Allow Time', 'Late'],
-      datasets: [
           {
-              data: [0.1, alowtimecount, aftertimecount],
-              backgroundColor: [documentStyle.getPropertyValue('--green-500'), documentStyle.getPropertyValue('--yellow-500'),  documentStyle.getPropertyValue('--red-500')],
-              hoverBackgroundColor: [documentStyle.getPropertyValue('--green-400'), documentStyle.getPropertyValue('--yellow-400'), documentStyle.getPropertyValue('--red-400')]
+            data: [ontime, alowtimecount, aftertimecount],
+            backgroundColor: [documentStyle.getPropertyValue('--green-500'), documentStyle.getPropertyValue('--yellow-500'), documentStyle.getPropertyValue('--red-500')],
+            hoverBackgroundColor: [documentStyle.getPropertyValue('--green-400'), documentStyle.getPropertyValue('--yellow-400'), documentStyle.getPropertyValue('--red-400')]
           }
-      ]
-  };
-  }
+        ]
+      };
+    } else {
+      this.timechartdata = {
+        labels: ['On Time', 'Allow Time', 'Late'],
+        datasets: [
+          {
+            data: [0.1, alowtimecount, aftertimecount],
+            backgroundColor: [documentStyle.getPropertyValue('--green-500'), documentStyle.getPropertyValue('--yellow-500'), documentStyle.getPropertyValue('--red-500')],
+            hoverBackgroundColor: [documentStyle.getPropertyValue('--green-400'), documentStyle.getPropertyValue('--yellow-400'), documentStyle.getPropertyValue('--red-400')]
+          }
+        ]
+      };
+    }
     console.log('addent chart data', this.timechartdata)
     this.timechartoptions = {
       plugins: {
-          legend: {
-              labels: {
-                usePointStyle: true,
-                color: textColor
-              }
+        legend: {
+          labels: {
+            usePointStyle: true,
+            color: textColor
           }
+        }
       }
-  };
+    };
 
   }
 
-  leaveschart(totalleave: any, Remainings: any){
+  leaveschart(totalleave: any, Remainings: any) {
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue('--text-color');
-   
-console.log('apply leaves chart ', Remainings , 'totle', totalleave)
+
+    console.log('apply leaves chart ', Remainings, 'totle', totalleave)
     this.leavechartdata = {
-        labels: ['Remainings Leave', 'Apply Leaves'],
-        datasets: [
-            {
-                data: [Remainings, totalleave],
-                backgroundColor: [documentStyle.getPropertyValue('--green-500'), documentStyle.getPropertyValue('--blue-500')],
-                hoverBackgroundColor: [documentStyle.getPropertyValue('--green-400'), documentStyle.getPropertyValue('--blue-400')]
-            }
-        ]
+      labels: ['Remainings Leave', 'Apply Leaves'],
+      datasets: [
+        {
+          data: [Remainings, totalleave],
+          backgroundColor: [documentStyle.getPropertyValue('--green-500'), documentStyle.getPropertyValue('--blue-500')],
+          hoverBackgroundColor: [documentStyle.getPropertyValue('--green-400'), documentStyle.getPropertyValue('--blue-400')]
+        }
+      ]
     };
     console.log("leaves cahrt", this.leavechartdata)
     this.leavechartoptions = {
       cutout: '40%',
       plugins: {
-          legend: {
-              labels: {
-                usePointStyle: true,
-                color: textColor
-              }
+        legend: {
+          labels: {
+            usePointStyle: true,
+            color: textColor
           }
+        }
       }
-  };
+    };
 
   }
 
-  getusername(){
-  
+  getusername() {
+
     const locathostData = localStorage.getItem('userProfile')
-    if(locathostData){
-      const profileData =  JSON.parse(locathostData);
+    if (locathostData) {
+      const profileData = JSON.parse(locathostData);
       this.username = profileData.username
       this.userdataleave = profileData.totalLeaves;
       this.userremainingleaves = profileData.remainingLeaves;
@@ -171,37 +185,37 @@ console.log('apply leaves chart ', Remainings , 'totle', totalleave)
     }
   }
 
-  getlogstime(){
+  getlogstime() {
 
 
-    this.firestoreService.getTimelog(this.username).then((data)=>{
+    this.firestoreService.getTimelog(this.companyID, this.username).then((data) => {
       this.data = []
       for (const key in data) {
         if (data[key]?.data) { // Check if `data[key].data` exists
-            const dataarray = data[key].data;
-            this.data.push(...dataarray); // Push all elements of `dataarray` into `this.data`
+          const dataarray = data[key].data;
+          this.data.push(...dataarray); // Push all elements of `dataarray` into `this.data`
         }
-        
-    }
+
+      }
 
       this.gethourtimelog()
     })
   }
 
-  gethourtimelog(){
-   this.loading = false
+  gethourtimelog() {
+    this.loading = false
     const options: Intl.DateTimeFormatOptions = {
       weekday: 'short',
       year: 'numeric',
       month: 'short',
       day: 'numeric'
-  };
+    };
 
     const startDate = new Date();
-    startDate.setDate(1); 
+    startDate.setDate(1);
     startDate.setHours(0, 0, 0, 0);
     const endDate = new Date(startDate);
-    endDate.setMonth(endDate.getMonth() + 1); 
+    endDate.setMonth(endDate.getMonth() + 1);
     endDate.setDate(0);
 
     const today = new Date();
@@ -210,7 +224,7 @@ console.log('apply leaves chart ', Remainings , 'totle', totalleave)
     const daysToSubtract = (dayOfWeek === 0 ? 6 : dayOfWeek - 1); // Adjust for Monday as the start
     currentWeekStartDate.setDate(today.getDate() - daysToSubtract);
     const weeklyDatestart = new Date(currentWeekStartDate);
-    weeklyDatestart.setDate(currentWeekStartDate.getDate() );
+    weeklyDatestart.setDate(currentWeekStartDate.getDate());
     weeklyDatestart.setHours(0, 0, 0, 0);
     const weeklyDateend = new Date(currentWeekStartDate);
     weeklyDateend.setDate(currentWeekStartDate.getDate() + 5);
@@ -221,7 +235,7 @@ console.log('apply leaves chart ', Remainings , 'totle', totalleave)
 
 
     const start = startDate.toDateString()
-    
+
     console.log('Start of the month:', startDate);
     console.log('Start of the weekly:', weeklyDatestart);
     console.log('End of the weekly:', weeklyDateend);
@@ -230,23 +244,23 @@ console.log('apply leaves chart ', Remainings , 'totle', totalleave)
     console.log('formmat Start of the month:', formattedStartDate);
 
     console.log('data', this.data)
-    const monthlyhour = this.data.filter((item: any)=>{
-      const itemDate = new Date(item.date); 
-      return itemDate >= startDate && itemDate <= endDate  ;
+    const monthlyhour = this.data.filter((item: any) => {
+      const itemDate = new Date(item.date);
+      return itemDate >= startDate && itemDate <= endDate;
     }).map((item: any) => item.spentTame);
     console.log('monthly start date', startDate)
     console.log('monthly hour', monthlyhour)
     this.monthlyhour(monthlyhour)
 
-    const weeklyhour = this.data.filter((item: any)=>{
-      const itemDate2 = new Date(item.date); 
-      return itemDate2 >= weeklyDatestart && itemDate2 <= weeklyDateend ;
+    const weeklyhour = this.data.filter((item: any) => {
+      const itemDate2 = new Date(item.date);
+      return itemDate2 >= weeklyDatestart && itemDate2 <= weeklyDateend;
     }).map((item: any) => item.spentTame);
     console.log('weekly hour', weeklyhour)
     this.weeklyhour(weeklyhour)
 
-    const Todayhour = this.data.filter((item: any)=> {
-      const itemDate3 = new Date(item.date); 
+    const Todayhour = this.data.filter((item: any) => {
+      const itemDate3 = new Date(item.date);
       return itemDate3 >= Todaydate && itemDate3 <= Todaydate;
     }).map((item: any) => item.spentTame);
     console.log('today hour', Todayhour)
@@ -256,29 +270,29 @@ console.log('apply leaves chart ', Remainings , 'totle', totalleave)
   }
 
 
-  monthlyhour(data: any){
+  monthlyhour(data: any) {
 
     let totalHours = 0;
-let totalMinutes = 0;
-    data.forEach((spenttime: any)=>{
+    let totalMinutes = 0;
+    data.forEach((spenttime: any) => {
       const hoursMatch = spenttime.match(/(\d+)h/); // Match hours
-    const minutesMatch = spenttime.match(/(\d+)m/); // Match minutes
+      const minutesMatch = spenttime.match(/(\d+)m/); // Match minutes
 
-    if (hoursMatch) {
-      totalHours += parseInt(hoursMatch[1]);
-  }
-  if (minutesMatch) {
-    totalMinutes += parseInt(minutesMatch[1]);
-}
+      if (hoursMatch) {
+        totalHours += parseInt(hoursMatch[1]);
+      }
+      if (minutesMatch) {
+        totalMinutes += parseInt(minutesMatch[1]);
+      }
     })
     totalHours += Math.floor(totalMinutes / 60);
-totalMinutes = totalMinutes % 60; // Keep the remaining minutes
+    totalMinutes = totalMinutes % 60; // Keep the remaining minutes
 
-console.log(`monthly Total time: ${totalHours}h ${totalMinutes}m`);
-this.MonthlyHours = `${totalHours}h ${totalMinutes}m`
+    console.log(`monthly Total time: ${totalHours}h ${totalMinutes}m`);
+    this.MonthlyHours = `${totalHours}h ${totalMinutes}m`
 
-const timeParts = this.MonthlyHours.match(/(\d+h)?\s*(\d+m)?/);
-let totalHourpersent = 0;
+    const timeParts = this.MonthlyHours.match(/(\d+h)?\s*(\d+m)?/);
+    let totalHourpersent = 0;
 
     if (timeParts) {
       const hours = timeParts[1] ? parseInt(timeParts[1].replace('h', '')) : 0;
@@ -291,30 +305,30 @@ let totalHourpersent = 0;
 
 
   }
-  
 
-  weeklyhour(data: any){
+
+  weeklyhour(data: any) {
     let totalHours = 0;
-let totalMinutes = 0;
-    data.forEach((spenttime: any)=>{
+    let totalMinutes = 0;
+    data.forEach((spenttime: any) => {
       const hoursMatch = spenttime.match(/(\d+)h/); // Match hours
-    const minutesMatch = spenttime.match(/(\d+)m/); // Match minutes
+      const minutesMatch = spenttime.match(/(\d+)m/); // Match minutes
 
-    if (hoursMatch) {
-      totalHours += parseInt(hoursMatch[1]);
-  }
-  if (minutesMatch) {
-    totalMinutes += parseInt(minutesMatch[1]);
-}
+      if (hoursMatch) {
+        totalHours += parseInt(hoursMatch[1]);
+      }
+      if (minutesMatch) {
+        totalMinutes += parseInt(minutesMatch[1]);
+      }
     })
     totalHours += Math.floor(totalMinutes / 60);
-totalMinutes = totalMinutes % 60; // Keep the remaining minutes
+    totalMinutes = totalMinutes % 60; // Keep the remaining minutes
 
-console.log(`weekly Total time: ${totalHours}h ${totalMinutes}m`);
-this.WeeklyHours = `${totalHours}h ${totalMinutes}m`
+    console.log(`weekly Total time: ${totalHours}h ${totalMinutes}m`);
+    this.WeeklyHours = `${totalHours}h ${totalMinutes}m`
 
-const timeParts = this.WeeklyHours.match(/(\d+h)?\s*(\d+m)?/);
-let totalHourpersent = 0;
+    const timeParts = this.WeeklyHours.match(/(\d+h)?\s*(\d+m)?/);
+    let totalHourpersent = 0;
 
     if (timeParts) {
       const hours = timeParts[1] ? parseInt(timeParts[1].replace('h', '')) : 0;
@@ -327,28 +341,28 @@ let totalHourpersent = 0;
 
   }
 
-  todayhour(data: any){
+  todayhour(data: any) {
     let totalHours = 0;
-let totalMinutes = 0;
-    data.forEach((spenttime: any)=>{
+    let totalMinutes = 0;
+    data.forEach((spenttime: any) => {
       const hoursMatch = spenttime.match(/(\d+)h/); // Match hours
-    const minutesMatch = spenttime.match(/(\d+)m/); // Match minutes
+      const minutesMatch = spenttime.match(/(\d+)m/); // Match minutes
 
-    if (hoursMatch) {
-      totalHours += parseInt(hoursMatch[1]);
-  }
-  if (minutesMatch) {
-    totalMinutes += parseInt(minutesMatch[1]);
-}
+      if (hoursMatch) {
+        totalHours += parseInt(hoursMatch[1]);
+      }
+      if (minutesMatch) {
+        totalMinutes += parseInt(minutesMatch[1]);
+      }
     })
     totalHours += Math.floor(totalMinutes / 60);
-totalMinutes = totalMinutes % 60; // Keep the remaining minutes
+    totalMinutes = totalMinutes % 60; // Keep the remaining minutes
 
-console.log(`today Total time: ${totalHours}h ${totalMinutes}m`);
-this.TodayHours = `${totalHours}h ${totalMinutes}m`
+    console.log(`today Total time: ${totalHours}h ${totalMinutes}m`);
+    this.TodayHours = `${totalHours}h ${totalMinutes}m`
 
-const timeParts = this.TodayHours.match(/(\d+h)?\s*(\d+m)?/);
-let totalHourpersent = 0;
+    const timeParts = this.TodayHours.match(/(\d+h)?\s*(\d+m)?/);
+    let totalHourpersent = 0;
 
     if (timeParts) {
       const hours = timeParts[1] ? parseInt(timeParts[1].replace('h', '')) : 0;
@@ -358,67 +372,67 @@ let totalHourpersent = 0;
 
     let value = (totalHourpersent / 9) * 100;
     this.totaltodayValue = Math.round(value);
-    console.log("todaypresentvalue",  this.totaltodayValue )
+    console.log("todaypresentvalue", this.totaltodayValue)
 
   }
-  
-  checkintimedata(){
-this.loading = true;
-    this.firestoreService.getAttendanceRecord(this.username).then((data2)=>{
+
+  checkintimedata() {
+    this.loading = true;
+    this.firestoreService.getAttendanceRecord(this.companyID, this.username).then((data2) => {
       this.timedata = []
       for (const key in data2) {
         if (data2[key]?.data) { // Check if `data[key].data` exists
-            const dataarray = data2[key].data;
-            this.timedata.push(...dataarray); // Push all elements of `dataarray` into `this.data`
-            this.loading = false;
+          const dataarray = data2[key].data;
+          this.timedata.push(...dataarray); // Push all elements of `dataarray` into `this.data`
+          this.loading = false;
         }
-    }
-    console.log('timedata????', this.timedata)
-    this.timeconut()
+      }
+      console.log('timedata????', this.timedata)
+      this.timeconut()
       // this.gethourtimelog()
     })
   }
 
-  timeconut(){
+  timeconut() {
     const startDate = new Date();
-    startDate.setDate(1); 
+    startDate.setDate(1);
     startDate.setHours(0, 0, 0, 0);
     const endDate = new Date(startDate);
-    endDate.setMonth(endDate.getMonth() + 1); 
+    endDate.setMonth(endDate.getMonth() + 1);
     endDate.setDate(0);
-    const monthydata = this.timedata.filter((item: any)=>{
-      const itemDate = new Date(item.date); 
-      return itemDate >= startDate && itemDate <= endDate   ;
+    const monthydata = this.timedata.filter((item: any) => {
+      const itemDate = new Date(item.date);
+      return itemDate >= startDate && itemDate <= endDate;
     });
     console.log('time ka data', monthydata)
     const ontime = new Date();
     const middletime = new Date();
-   ontime.setHours(10, 40, 0); // Set cutoff time to 10:30 am
-   middletime.setHours(11, 0, 59); // Set cutoff time to 10:30 am
-   this.ontime = ontime.toLocaleTimeString();
-   this.middletime= middletime.toLocaleTimeString();
-      this.ontimecount = monthydata.filter((product: any) => product.checkInTime < this.ontime).length;
-        this.middletimecount = monthydata.filter((product: any) => product.checkInTime < this.middletime && product.checkInTime > this.ontime ).length;
-        this.aftertimecount = monthydata.filter((product: any) => product.checkInTime > this.middletime  ).length;
-        
-this.timechart(this.ontimecount,this.middletimecount, this.aftertimecount)
-console.log('timechart', this.ontimecount,this.middletimecount, this.aftertimecount)
+    ontime.setHours(10, 40, 0); // Set cutoff time to 10:30 am
+    middletime.setHours(11, 0, 59); // Set cutoff time to 10:30 am
+    this.ontime = ontime.toLocaleTimeString();
+    this.middletime = middletime.toLocaleTimeString();
+    this.ontimecount = monthydata.filter((product: any) => product.checkInTime < this.ontime).length;
+    this.middletimecount = monthydata.filter((product: any) => product.checkInTime < this.middletime && product.checkInTime > this.ontime).length;
+    this.aftertimecount = monthydata.filter((product: any) => product.checkInTime > this.middletime).length;
+
+    this.timechart(this.ontimecount, this.middletimecount, this.aftertimecount)
+    console.log('timechart', this.ontimecount, this.middletimecount, this.aftertimecount)
 
   }
-  
+
 
   getuserleave() {
-    this.firestoreService.getuserProfile(this.username)
-    .then((data) => {
-      console.log('usr data leave leaves ' , data)
-      const applyleaves = data.totalLeaves - data.remainingLeaves;
-      this.leaveschart(applyleaves, data.remainingLeaves )
-    });
+    this.firestoreService.getuserProfile(this.companyID, this.username)
+      .then((data) => {
+        console.log('usr data leave leaves ', data)
+        const applyleaves = data.totalLeaves - data.remainingLeaves;
+        this.leaveschart(applyleaves, data.remainingLeaves)
+      });
   }
 
 
 
-  timelive(){
+  timelive() {
     this.livetime = new Date().toLocaleTimeString();
   }
 

@@ -35,7 +35,7 @@
                     </a>
                 </li>
                 <li class="relative">
-                    <a routerLink="/timelogs">
+                    <a routerLink="/{{companyID}}/timelogs">
                         <button (click)="sidemenu()"
                             class="flex items-center justify-between w-full p-4 hover:bg-gray-700 focus:outline-none">
                             <div class="flex items-center gap-3">
@@ -55,7 +55,7 @@
                     </a>
                 </li>
                 <li class="relative">
-                    <a routerLink="/{{routeService.checkingdetail}}">
+                    <a routerLink="/{{companyID}}/{{routeService.checkingdetail}}">
                         <button (click)="sidemenu()"
                             class="flex items-center justify-between w-full p-4 hover:bg-gray-700 focus:outline-none">
                             <div class="flex items-center gap-3">
@@ -73,7 +73,7 @@
                     </a>
                 </li>
                 <li class="relative">
-                    <a routerLink="/{{routeService.leaves}}">
+                    <a routerLink="/{{companyID}}/{{routeService.leaves}}">
                         <button (click)="sidemenu()"
                             class="flex items-center justify-between w-full p-4 hover:bg-gray-700 focus:outline-none">
                             <div class="flex items-center gap-3">
@@ -92,7 +92,7 @@
                 </li>
 
                 <li class="relative">
-                    <a routerLink="/{{routeService.Task}}">
+                    <a [routerLink]="'/' + companyID + '/' + routeService.Task">
                         <button (click)="sidemenu()"
                             class="flex items-center justify-between w-full p-4 hover:bg-gray-700 focus:outline-none">
                             <div class="flex items-center gap-3">

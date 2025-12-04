@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { UserSerivceService } from '@services/user-service/user-serivce.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-leaves-logs',
@@ -26,7 +27,7 @@ import { UserSerivceService } from '@services/user-service/user-serivce.service'
   templateUrl: './leaves-logs.component.html',
   styleUrl: './leaves-logs.component.scss'
 })
-export class LeavesLogsComponent implements OnInit{
+export class LeavesLogsComponent implements OnInit {
   loading: boolean = false;
   employeeDropdown: any;
   rangeDates: any;
@@ -34,19 +35,35 @@ export class LeavesLogsComponent implements OnInit{
   allData: any;
   getAllData: any;
   visible = false;
+  companyID: any
 
 
-
-constructor(
-  private firestoreService: FirestoreService
-  , private firestore: Firestore
-      , private userService: UserSerivceService
-  , private toaster: ToastrService
-){}
+  constructor(
+    private firestoreService: FirestoreService
+    , private firestore: Firestore
+    , private userService: UserSerivceService
+    , private toaster: ToastrService
+    , private route: ActivatedRoute
+  ) {
+    this.route.parent?.paramMap.subscribe(params => {
+      this.companyID = params.get('companyId');
+      console.log('Company ID:', this.companyID);
+    });
+    let currentRoute: ActivatedRoute | null = this.route;
+    while (currentRoute) {
+      const id = currentRoute.snapshot.paramMap.get('companyId');
+      if (id) {
+        this.companyID = id;
+        console.log('Company ID:', this.companyID);
+        break;
+      }
+      currentRoute = currentRoute.parent;
+    }
+  }
   ngOnInit(): void {
-    this. lastMonthDate();
-      this.getAllUserProfiles();
-      this.getuserleave()
+    this.lastMonthDate();
+    this.getAllUserProfiles();
+    this.getuserleave()
   }
 
 
@@ -58,7 +75,7 @@ constructor(
 
   }
   getAllUserProfiles() {
-    this.firestoreService.getAllUser().subscribe(
+    this.firestoreService.getAllUser(this.companyID).subscribe(
       (data) => {
         this.employeeDropdown = data;
         console.log('user datas', this.employeeDropdown)
@@ -82,26 +99,26 @@ constructor(
 
   getuserleave() {
     const date = new Date().toDateString();
-    this.firestoreService.getleave().subscribe((req) => {
+    this.firestoreService.getleave(this.companyID).subscribe((req) => {
       console.log("date", date)
       console.log("all request data", req)
       // const data = req.filter((item:any) => item.id == this.userdata.username)
       // console.log("date76237167", data)
       this.allData = [];
 
-      for(let key in req){
+      for (let key in req) {
         if (req[key] && typeof req[key] === 'object') {
-        for(let key2 in req[key]){
-          console.log("data2", req[key][key2].data)
-          if (req[key][key2] && req[key][key2].data && Array.isArray(req[key][key2].data)) {
-            this.allData.push(...req[key][key2].data );
-            this.allData.sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
-            this.getAllData = this.allData
-            this.loading = false;
+          for (let key2 in req[key]) {
+            console.log("data2", req[key][key2].data)
+            if (req[key][key2] && req[key][key2].data && Array.isArray(req[key][key2].data)) {
+              this.allData.push(...req[key][key2].data);
+              this.allData.sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
+              this.getAllData = this.allData
+              this.loading = false;
 
+            }
           }
         }
-      }
       }
       // this.allData = this.allData.length ;
       console.log("Processed leave data", this.allData);
@@ -115,33 +132,33 @@ constructor(
     this.visible = false;
   }
 
-  acceptleave(index: any){
+  acceptleave(index: any) {
     const value = index;
     const date = value.Date;
     const username = index.username
     const data = {
-     name: value.name,
-     leavetype:  value.leavetype,
-     Date: value.Date,
-     description: value.description,
-     username: index.username,
-     status: 'Approved',
-     totalLeaveCount: value.totalLeaveCount 
+      name: value.name,
+      leavetype: value.leavetype,
+      Date: value.Date,
+      description: value.description,
+      username: index.username,
+      status: 'Approved',
+      totalLeaveCount: value.totalLeaveCount
     }
-    console.log('data',username,  date,data)
-    this.firestoreService.leaveupdate(username, date, data)
-    .then(() => {
-      this.toaster.success('Successfully Leave Approved');
-      this.loading = false;
+    console.log('data', username, date, data)
+    this.firestoreService.leaveupdate(this.companyID, username, date, data)
+      .then(() => {
+        this.toaster.success('Successfully Leave Approved');
+        this.loading = false;
 
-    })
-    .catch(error => {
-      this.loading = false;
-      console.error('Error adding data: ', error);
-    });
+      })
+      .catch(error => {
+        this.loading = false;
+        console.error('Error adding data: ', error);
+      });
 
-    const userleavesdata = this.employeeDropdown.find((item: any)=> item.username == username)
-    console.log('leaves and user data find',userleavesdata.remainingLeaves)
+    const userleavesdata = this.employeeDropdown.find((item: any) => item.username == username)
+    console.log('leaves and user data find', userleavesdata.remainingLeaves)
     const totalLeaveCount = value.totalLeaveCount;
     const updateremaining = userleavesdata.remainingLeaves - totalLeaveCount;
 
@@ -158,40 +175,40 @@ constructor(
       designation: userleavesdata.designation,
       username: userleavesdata.username,
     }
-console.log ('userupdate data ', userupdate)
+    console.log('userupdate data ', userupdate)
 
-this.userService.updateProjectData(username, userupdate)
-.then((data) => {
-  this.visible = false;
-})
-.catch((error) => console.error('Error posting project: ', error));
+    this.userService.updateProjectData(username, userupdate)
+      .then((data) => {
+        this.visible = false;
+      })
+      .catch((error) => console.error('Error posting project: ', error));
 
   }
 
-  rejectleave(index: any){
+  rejectleave(index: any) {
     const value = index;
     const date = value.Date;
     const username = index.username
     const data = {
-     name: value.name,
-     leavetype:  value.leavetype,
-     Date: value.Date,
-     description: value.description,
-     username: index.username,
-     status: 'Approved' 
+      name: value.name,
+      leavetype: value.leavetype,
+      Date: value.Date,
+      description: value.description,
+      username: index.username,
+      status: 'Approved'
     }
-    console.log('data',username,  date,data)
-    this.firestoreService.leavedelete(username, date, data)
-    .then(() => {
-      this.toaster.success('Successfully delete');
-      this.loading = false;
-      // this.visible= false;
+    console.log('data', username, date, data)
+    this.firestoreService.leavedelete(this.companyID, username, date, data)
+      .then(() => {
+        this.toaster.success('Successfully delete');
+        this.loading = false;
+        // this.visible= false;
 
-    })
-    .catch(error => {
-      this.loading = false;
-      console.error('Error adding data: ', error);
-    });
+      })
+      .catch(error => {
+        this.loading = false;
+        console.error('Error adding data: ', error);
+      });
   }
 
 

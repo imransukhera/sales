@@ -13,6 +13,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { UserSerivceService } from '@services/user-service/user-serivce.service';
 import { ToastrService } from '@services/toastr.service';
 import { QRCodeModule } from 'angularx-qrcode';
+import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-add-users',
   standalone: true,
@@ -62,29 +63,17 @@ export class AddUsersComponent {
 
   department: any[] = [
     {
-      department: 'Accounts'
+      department: 'Admin Department'
     },
     {
-      department: 'Mobile Application Development'
+      department: 'Accounts Department'
     },
     {
-      department: 'Digital Marketing'
+      department: 'Marketing Department'
     },
     {
-      department: 'Web Development'
-    },
-    {
-      department: 'Quality Assurance'
-    },
-    {
-      department: 'Human Resource'
-    },
-    {
-      department: 'Wordpress'
-    },
-    {
-      department: 'Management'
-    },
+      department: 'Engineering Department'
+    }
   ]
 
 
@@ -96,6 +85,7 @@ export class AddUsersComponent {
   qrData: string = '';
   uniqueId: string = '';
   showQRCode: boolean = false;
+  companyID: any;
   ngOnInit() {
     this.locathostData = localStorage.getItem('userProfile');
     this.profileData = JSON.parse(this.locathostData);
@@ -106,11 +96,26 @@ export class AddUsersComponent {
   constructor(
     private projectService: ProjectServiceService
     , private firestore: Firestore
+    , private route: ActivatedRoute
     , private firestoreService: FirestoreService
     , private userService: UserSerivceService
     , private fb: FormBuilder
     , private toaster: ToastrService
   ) {
+    this.route.parent?.paramMap.subscribe(params => {
+      this.companyID = params.get('companyId');
+      console.log('Company ID:', this.companyID);
+    });
+    let currentRoute: ActivatedRoute | null = this.route;
+    while (currentRoute) {
+      const id = currentRoute.snapshot.paramMap.get('companyId');
+      if (id) {
+        this.companyID = id;
+        console.log('Company ID:', this.companyID);
+        break;
+      }
+      currentRoute = currentRoute.parent;
+    }
     const projectsCollection = collection(this.firestore, 'projects');
     this.projects$ = collectionData(projectsCollection);
   }
@@ -151,7 +156,7 @@ export class AddUsersComponent {
   }
 
   getAllUserProfiles() {
-    this.firestoreService.getAllUser().subscribe(
+    this.firestoreService.getAllUser(this.companyID).subscribe(
       (data) => {
         console.log("this value:", data);
         this.filterData = data;
@@ -199,7 +204,16 @@ export class AddUsersComponent {
       department: this.profileForm.value['department'],
       designation: this.profileForm.value['designation'],
       username: this.profileForm.value['username'],
+      companyID: this.companyID
     };
+    this.userService.addUserCompany(this.companyID, projectId, projectData)
+      .then((data) => {
+        console.log('Project posted successfully', data);
+        this.toaster.showSuccess('User Created successfully');
+        this.visible = false;
+        this.profileForm.reset();
+      })
+      .catch((error) => console.error('Error posting project: ', error));
 
     this.userService.addUserData(projectId, projectData)
       .then((data) => {

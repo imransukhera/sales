@@ -18,7 +18,7 @@
             <ul class="menu-links">
                 <!-- Dashboard -->
                 <li class="relative">
-                    <a a routerLink="/{{routeService.admin}}" [pTooltip]="tooltipdashbored" tooltipPosition="right">
+                    <a a routerLink="/{{companyID}}/{{routeService.admin}}" [pTooltip]="tooltipdashbored" tooltipPosition="right">
                         <button
                             class="flex items-center justify-between w-full p-4 hover:bg-gray-700 focus:outline-none">
                             <div class="flex items-center gap-3">
@@ -42,7 +42,7 @@
                     </ng-template>
                 </li>
                 <li class="relative">
-                    <a routerLink="/admin/time-sheet" [pTooltip]="tooltipattendance" tooltipPosition="right">
+                    <a routerLink="/{{companyID}}/admin/time-sheet" [pTooltip]="tooltipattendance" tooltipPosition="right">
                         <button
                             class="flex items-center justify-between w-full p-4 hover:bg-gray-700 focus:outline-none">
                             <div class="flex items-center gap-3">
@@ -70,7 +70,7 @@
                     </ng-template>
                 </li>
                 <li class="relative">
-                    <a routerLink="/admin/leaves-logs">
+                    <a [routerLink]="'/' + companyID + '/admin/leaves-logs'">
                         <button
                             class="flex items-center justify-between w-full p-4 hover:bg-gray-700 focus:outline-none">
                             <div class="flex items-center gap-3">
@@ -88,7 +88,7 @@
                     </a>
                 </li>
                 <li class="relative">
-                    <a routerLink="/admin/projects" [pTooltip]="tooltipproject" tooltipPosition="right">
+                    <a routerLink="/{{companyID}}/admin/projects" [pTooltip]="tooltipproject" tooltipPosition="right">
                         <div class="flex items-center justify-center hover:bg-gray-700 p-4">
                             <!-- <img src="../../../../assets/project.png" alt="" class="w-[25px] h-[25px]"> -->
                             <svg xmlns="http://www.w3.org/2000/svg" width="29" height="37" viewBox="0 0 22 22"
@@ -106,7 +106,7 @@
                 </li>
 
                 <li class="relative">
-                    <a routerLink="/admin/add-users" [pTooltip]="tooltipemployee" tooltipPosition="right">
+                    <a routerLink="/{{companyID}}/admin/add-users" [pTooltip]="tooltipemployee" tooltipPosition="right">
                         <button
                             class="flex items-center justify-between w-full p-4 hover:bg-gray-700 focus:outline-none">
                             <div class="flex items-center gap-3">

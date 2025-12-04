@@ -4,7 +4,7 @@ import { Component, Input, ViewChild } from '@angular/core';
 import { Firestore, collectionData, collection } from '@angular/fire/firestore';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FirestoreService } from '@services/firestore.service';
 import { ImageServiceService } from '@services/image-service.service';
 import { IssueReportService } from '@services/issue/issue-report.service';
@@ -30,14 +30,14 @@ export class IssueReportComponent {
   allData: any;
   filterData: any;
   visible: boolean = false;
-  selectedBug: any; 
+  selectedBug: any;
 
   dropdownProject: any[] = [
-    { name: 'Story' , icon: 'pi pi-bullseye text-white bg-red-600 p-1 rounded-sm'},
-    { name: 'Task' , icon: 'pi pi-bullseye text-white bg-red-600 p-1 rounded-sm'},
-    { name: 'Bug' , icon: 'pi pi-bullseye text-white bg-red-600 p-1 rounded-sm'},
-    { name: 'Epic' , icon: 'pi pi-bullseye text-white bg-red-600 p-1 rounded-sm'},
-    { name: 'Improvment' , icon: 'pi pi-bullseye text-white bg-red-600 p-1 rounded-sm'},
+    { name: 'Story', icon: 'pi pi-bullseye text-white bg-red-600 p-1 rounded-sm' },
+    { name: 'Task', icon: 'pi pi-bullseye text-white bg-red-600 p-1 rounded-sm' },
+    { name: 'Bug', icon: 'pi pi-bullseye text-white bg-red-600 p-1 rounded-sm' },
+    { name: 'Epic', icon: 'pi pi-bullseye text-white bg-red-600 p-1 rounded-sm' },
+    { name: 'Improvment', icon: 'pi pi-bullseye text-white bg-red-600 p-1 rounded-sm' },
   ];
 
   bugStatus: any[] = [
@@ -55,6 +55,7 @@ export class IssueReportComponent {
   showDialog() {
     this.visible = true;
   }
+  companyID: any;
 
   profileForm = new FormGroup({
     projectName: new FormControl(''),
@@ -73,6 +74,7 @@ export class IssueReportComponent {
     , private sanitizer: DomSanitizer
     , private imageService: ImageServiceService
     , private firestore: Firestore
+    , private route: ActivatedRoute
     , private issueService: IssueReportService
     , private firestoreService: FirestoreService, private _fb: FormBuilder) {
     this.getProject();
@@ -95,6 +97,20 @@ export class IssueReportComponent {
     this.getAllUserProfiles();
     this.getproducts();
     this.text = "<p>PAkistan</p>"
+    this.route.parent?.paramMap.subscribe(params => {
+      this.companyID = params.get('companyId');
+      console.log('Company ID:', this.companyID);
+    });
+    let currentRoute: ActivatedRoute | null = this.route;
+    while (currentRoute) {
+      const id = currentRoute.snapshot.paramMap.get('companyId');
+      if (id) {
+        this.companyID = id;
+        console.log('Company ID:', this.companyID);
+        break;
+      }
+      currentRoute = currentRoute.parent;
+    }
   }
 
   pactValue(data: any) {
@@ -126,7 +142,7 @@ export class IssueReportComponent {
   }
 
   getAllUserProfiles() {
-    this.firestoreService.getAllUser().subscribe(
+    this.firestoreService.getAllUser(this.companyID).subscribe(
       (data) => {
         this.filterData = data;
         this.allData = data;

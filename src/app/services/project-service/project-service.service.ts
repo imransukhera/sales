@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Firestore, doc, setDoc, getDoc, DocumentSnapshot, collection, collectionData, QuerySnapshot, getDocs, deleteDoc } from '@angular/fire/firestore';
+import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 
 
@@ -8,11 +9,13 @@ import { Observable } from 'rxjs';
 })
 export class ProjectServiceService {
   private collectionName = 'projects';  // Collection name
+  companyID: any;
+  constructor(private firestore: Firestore, private route: ActivatedRoute) {
+  }
 
-  constructor(private firestore: Firestore) { }
-
-  async postProjectData(id: any, data: any): Promise<void> {
-    const projectDocRef = doc(this.firestore, `${this.collectionName}/${id}`);
+  async postProjectData(companyID: any, id: any, data: any): Promise<void> {
+    console.log("DJASD", this.companyID)
+    const projectDocRef = doc(this.firestore, `${companyID}${this.collectionName}/${id}`);
     try {
       await setDoc(projectDocRef, { ...data });
       console.log(`Document with ID ${id} psoted written or updated!`);
@@ -22,8 +25,8 @@ export class ProjectServiceService {
   }
 
   // Function to post data to Firestore
-  async updateProjectData(id: string, data: any): Promise<void> {
-    const projectDocRef = doc(this.firestore, `${this.collectionName}/${id}`);
+  async updateProjectData(companyID: any, id: string, data: any): Promise<void> {
+    const projectDocRef = doc(this.firestore, `${companyID}${this.collectionName}/${id}`);
     try {
       await setDoc(projectDocRef, { id, ...data }, { merge: true });
       console.log(`Document with ID ${id} successfully written!`);
@@ -32,8 +35,8 @@ export class ProjectServiceService {
     }
   }
 
-  async deleteProjectData(id: string): Promise<void> {
-    const projectDocRef = doc(this.firestore, `${this.collectionName}/${id}`);
+  async deleteProjectData(companyID: any, id: string): Promise<void> {
+    const projectDocRef = doc(this.firestore, `${companyID}${this.collectionName}/${id}`);
     try {
       await deleteDoc(projectDocRef);
       console.log(`Document with ID ${id} successfully deleted!`);

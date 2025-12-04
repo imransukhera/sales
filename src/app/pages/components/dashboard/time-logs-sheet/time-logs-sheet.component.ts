@@ -15,6 +15,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { DashboardComponent } from "../dashboard/dashboard.component";
 import { SharedService } from '@services/shared/shared.service';
+import { ActivatedRoute } from '@angular/router';
 
 interface TimelogEntry {
   date: any; // Use appropriate type if you know it (e.g., Date or Timestamp)
@@ -46,7 +47,7 @@ interface WeeklyData {
     CheckingDetailComponent,
     ProgressBarModule,
     DashboardComponent
-],
+  ],
   templateUrl: './time-logs-sheet.component.html',
   styleUrls: ['./time-logs-sheet.component.scss']
 })
@@ -85,15 +86,29 @@ export class TimeLogsSheetComponent implements OnInit {
   dailyTotalHorse: any;
   weaklyTotalHorse: any;
   weaklyHours: any;
-
-  constructor(private firestoreService: FirestoreService, private firestore: Firestore, private toaster: ToastrService, private shared: SharedService) {
+  companyID: any
+  constructor(private firestoreService: FirestoreService, private route: ActivatedRoute, private firestore: Firestore, private toaster: ToastrService, private shared: SharedService) {
+    this.route.parent?.paramMap.subscribe(params => {
+      this.companyID = params.get('companyId');
+      console.log('Company ID:', this.companyID);
+    });
+    let currentRoute: ActivatedRoute | null = this.route;
+    while (currentRoute) {
+      const id = currentRoute.snapshot.paramMap.get('companyId');
+      if (id) {
+        this.companyID = id;
+        console.log('Company ID:', this.companyID);
+        break;
+      }
+      currentRoute = currentRoute.parent;
+    }
     this.dateTime.setDate(this.dateTime.getDate() + 0);
     const today = new Date();
     this.dateOf = today;
     this.todayDate = today.toDateString();
     this.dayName = this.daysOfWeek[today.getDay()];
 
-    const projectsCollection = collection(this.firestore, 'projects');
+    const projectsCollection = collection(this.firestore, `${this.companyID}projects`);
     this.projects$ = collectionData(projectsCollection);
 
   }
@@ -111,9 +126,9 @@ export class TimeLogsSheetComponent implements OnInit {
     this.getproducts();
     this.fetchTimelogData(this.profileData.username);
     console.log('time check calender', this.rangeDates)
-   
+
   }
-  
+
 
   searchRecord() {
     const start = new Date(this.rangeDates[0]);
@@ -148,7 +163,7 @@ export class TimeLogsSheetComponent implements OnInit {
   }
 
   getAllUserProfiles() {
-    this.firestoreService.getAllUser().subscribe(
+    this.firestoreService.getAllUser(this.companyID).subscribe(
       (data) => {
         this.employeeDropdown = data;
       });
@@ -167,13 +182,13 @@ export class TimeLogsSheetComponent implements OnInit {
     this.startTime = null;
     this.description = null;
 
-    this.firestoreService.getTimelog(this.profileData.username)
+    this.firestoreService.getTimelog(this.companyID, this.profileData.username)
       .then((data) => {
         this.apiData = data;
         this.loading = false;
         this.processTimelogData(this.apiData);
         this.processTimelo(this.apiData);
-        
+
         // this.filterData();
         this.searchRecord()
         this.WeaklyTotalReport()
@@ -282,7 +297,7 @@ export class TimeLogsSheetComponent implements OnInit {
     }
 
     this.isProcessing = true;
-    this.firestoreService.addTimelog(name, day, data)
+    this.firestoreService.addTimelog(this.companyID,name, day, data)
       .then(() => {
         this.toaster.showSuccess('Data added successfully');
         this.visible = false;
@@ -349,7 +364,7 @@ export class TimeLogsSheetComponent implements OnInit {
     const data = {
       date: entry.date
     };
-    this.firestoreService.daleteTimelog(name, day, data, index)
+    this.firestoreService.daleteTimelog(this.companyID, name, day, data, index)
       .then(() => {
         this.toaster.showSuccess('Deleted successfully');
         this.visible = false;
@@ -385,7 +400,7 @@ export class TimeLogsSheetComponent implements OnInit {
       return;
     }
     this.isProcessing = true;
-    this.firestoreService.updateTimelog(name, day, data, this.index)
+    this.firestoreService.updateTimelog(this.companyID, name, day, data, this.index)
       .then(() => {
         this.toaster.showSuccess('Updated successfully');
 
@@ -489,7 +504,7 @@ export class TimeLogsSheetComponent implements OnInit {
     console.log("Total Hours:", filteredData);
     this.dailyReport(filteredData);
     this.processTimelogData(filteredData);
-    
+
     this.processTimelo(filteredData);
   }
 
@@ -541,7 +556,7 @@ export class TimeLogsSheetComponent implements OnInit {
     grandTotalMinutes = grandTotalMinutes % 60;
 
     this.dailyTotalHorse = `${grandTotalHours}h ${grandTotalMinutes}m`;
-    
+
     this.currentHours = this.dailyPercent(this.dailyTotalHorse,);
     console.log("daily Hours:", this.currentHours, "Hors:", this.dailyTotalHorse);
     // this.grandTotalTime = grandTotalTime;

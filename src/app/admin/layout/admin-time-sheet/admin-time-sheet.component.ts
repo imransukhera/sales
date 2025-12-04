@@ -11,7 +11,7 @@ import { ToastrService } from '@services/toastr.service';
 import { ProjectSidebarComponent } from '../../../pages/components/project-sidebar/project-sidebar.component';
 import jsPDF from 'jspdf';
 import { CarouselModule } from 'primeng/carousel';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { retry } from 'rxjs';
 import { MenubarModule } from 'primeng/menubar';
 import { MenuItem } from 'primeng/api';
@@ -78,7 +78,22 @@ export class AdminTimeSheetComponent {
   middletime: any;
   accept: boolean = false;
   items: MenuItem[] | undefined;
-  constructor(private firestoreService: FirestoreService, private firestore: Firestore, private toaster: ToastrService, private fb: FormBuilder) {
+  companyID: any;
+  constructor(private firestoreService: FirestoreService, private route: ActivatedRoute, private toaster: ToastrService, private fb: FormBuilder) {
+    this.route.parent?.paramMap.subscribe(params => {
+      this.companyID = params.get('companyId');
+      console.log('Company ID:', this.companyID);
+    });
+    let currentRoute: ActivatedRoute | null = this.route;
+    while (currentRoute) {
+      const id = currentRoute.snapshot.paramMap.get('companyId');
+      if (id) {
+        this.companyID = id;
+        console.log('Company ID:', this.companyID);
+        break;
+      }
+      currentRoute = currentRoute.parent;
+    }
 
   }
   ngOnInit() {
@@ -144,7 +159,7 @@ export class AdminTimeSheetComponent {
     });
   }
   getAllUserProfiles() {
-    this.firestoreService.getAllUser().subscribe(
+    this.firestoreService.getAllUser(this.companyID).subscribe(
       (data) => {
         this.employeeDropdown = data;
         console.log("dhfgsjhagdh data usr", this.employeeDropdown)
@@ -200,7 +215,7 @@ export class AdminTimeSheetComponent {
     }
     console.log("checkout time check:", data, "user name:", name[0].username, date, "Valuegg", name);
 
-    this.firestoreService.checkOut(name[0].username, date, data)
+    this.firestoreService.checkOut(this.companyID, name[0].username, date, data)
       .then(() => {
         this.toaster.showSuccess('Successfully Check-In');
         this.loading = false;
@@ -232,7 +247,7 @@ export class AdminTimeSheetComponent {
     }
     console.log("checkout time check:", data, "user name:", name[0].username, date, "Valuegg", name);
 
-    this.firestoreService.checkOut(name[0].username, date, data)
+    this.firestoreService.checkOut(this.companyID, name[0].username, date, data)
       .then(() => {
         this.toaster.showSuccess('Successfully Check-In');
         this.loading = false;
@@ -245,52 +260,10 @@ export class AdminTimeSheetComponent {
       });
   }
 
-  // checkout(value: any) {
-  //   console.log("This is value:", value, "Value", this.time);
-  //   this.loading = true;
-  //   // const currentDate = new Date();
-  //   // const time = currentDate.toTimeString().split(' ')[0];
-  //   // const time = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-  //   // console.log("this is location name:", this.locationName, "nd", time);
-
-  //   const date = value.date
-  //   // const choutTime = this.days.find(product => product.date == date);
-
-
-  //   // if (choutTime?.checkOutTime) {
-  //   //   this.toaster.showError('you are already checkout');
-  //   //   this.loading = false;
-  //   //   return;
-  //   // }
-  //   let name = this.userdata.filter((data: any) => data.name === value.name)
-  //   const data = {
-  //     checkInTime: value?.checkInTime,
-  //     name: value.name,
-  //     checkOutTime: '07:00 PM',
-  //     date: value.date,
-  //     location: value.location,
-  //   }
-  //   console.log("checkout time check:", data, "user name:", name[0].username, date, "Valuegg", name);
-  //   this.firestoreService.checkOut(name[0].username, date, data)
-  //     .then(() => {
-  //       this.toaster.showSuccess('Successfully Checkout');
-  //       this.checkingstatus = false;
-  //       this.loading = false;
-
-  //       this.fetchTimelogData(this.profileData.username);
-  //     })
-  //     .catch(error => {
-  //       this.loading = false;
-
-  //       console.error('Error adding data: ', error);
-  //     });
-  // }
-
-
   fetchTimelogData(name: string) {
     this.loading = true;
 
-    this.firestoreService.getAttendance().subscribe(
+    this.firestoreService.getAttendance(this.companyID).subscribe(
       (data: any[]) => {
 
         const allAttendance = data.map((item: any) => {
@@ -426,7 +399,7 @@ export class AdminTimeSheetComponent {
   }
 
   getAllUserProfilesdata() {
-    this.firestoreService.getAllUser().subscribe(
+    this.firestoreService.getAllUser(this.companyID).subscribe(
       (data) => {
         console.log("all data profiles:", data);
         this.userdata = data;
@@ -497,7 +470,7 @@ export class AdminTimeSheetComponent {
 
   getrequest() {
     const date = new Date().toDateString();
-    this.firestoreService.getRequest().subscribe((req) => {
+    this.firestoreService.getRequest(this.companyID).subscribe((req) => {
       console.log("date", date)
       console.log("all request data", req)
       const data = req.map((item: any[]) => item)
@@ -537,7 +510,7 @@ export class AdminTimeSheetComponent {
     console.log("checkout time check:", name, data);
 
     if (index.status == 'Check In' || index.status == 'Both') {
-      this.firestoreService.AcceptRequest(name, date, data)
+      this.firestoreService.AcceptRequest(this.companyID,name, date, data)
         .then(() => {
           this.toaster.showSuccess('Successfully Accept Request');
           this.loading = false;
@@ -553,7 +526,7 @@ export class AdminTimeSheetComponent {
           return
         });
     } else if (index.status == 'Check Out') {
-      this.firestoreService.checkOut(name, date, data)
+      this.firestoreService.checkOut(this.companyID, name, date, data)
         .then(() => {
           this.toaster.showSuccess('Successfully Accept Request');
           this.loading = false;
@@ -587,7 +560,7 @@ export class AdminTimeSheetComponent {
 
     console.log("delete", name, date, data, requestindex)
 
-    this.firestoreService.daleterequest(name, date, data, requestindex).then(() => {
+    this.firestoreService.daleterequest(this.companyID, name, date, data, requestindex).then(() => {
       this.loading = false;
       if (!this.accept) {
         this.toaster.showError('Successfully Delete Request');
