@@ -1,0 +1,100 @@
+/* Section background */
+.process-section {
+    padding: 60px 20px;
+    background: #ffffff;
+    text-align: center;
+    font-family: "Inter", sans-serif;
+}
+
+/* Header */
+.process-header .badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 20px;
+    background: #F8C000;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.process-header h2 {
+    margin-top: 20px;
+    font-size: 38px;
+    font-weight: 800;
+    color: #245A70;
+}
+
+.process-header h2 span {
+    color: #F8C000;
+}
+
+.process-header .subtitle {
+    margin-top: 14px;
+    font-size: 16px;
+    color: #245A70;
+}
+
+/* Cards container */
+.process-container {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+/* Card */
+.process-card {
+    background: #ffffff;
+    width: 260px;
+    padding: 30px;
+    border-radius: 16px;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+    transition: 0.2s ease;
+}
+
+.process-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.12);
+}
+
+/* Icon */
+.icon-wrapper {
+    position: relative;
+    display: inline-block;
+    background: #e8f3ff;
+    padding: 16px;
+    border-radius: 12px;
+}
+
+.icon {
+    font-size: 32px;
+}
+
+/* Step number badge */
+.step-number {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #245A70;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+/* Headings */
+.process-card h3 {
+    margin-top: 16px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #245A70;
+}
+
+.process-card p {
+    margin-top: 8px;
+    font-size: 15px;
+    color: #245A70;
+}

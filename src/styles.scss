@@ -1,6 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 @import "primeng/resources/themes/lara-light-blue/theme.css";
 @import "primeng/resources/primeng.css";
 @import "../node_modules/quill/dist/quill.core.css";
@@ -12,29 +9,6 @@
     box-sizing: border-box;
 }
 
-html,
-body {
-    height: 100vh;
-    width: 100vw;
-    background-color: rgb(241, 241, 241);
-}
-
-body {
-    margin: 0;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
-}
-
-html,
-body {
-    height: 100%;
-}
-
-body {
-    margin: 0;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
-}
-
-.dull-bg {
-    opacity: 0.5 !important;
-    pointer-events: none;
+.bg-color{
+    background-color:  #245A70;;
 }

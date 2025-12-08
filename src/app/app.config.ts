@@ -11,15 +11,14 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getDatabase, provideDatabase } from '@angular/fire/database';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 const firebaseConfig = {
-  apiKey: "AIzaSyBZu1G6AOmZbVE_E9vYI6JGIjWcNtL-fMc",
-  authDomain: "tecklog-f1ffd.firebaseapp.com",
-  projectId: "tecklog-f1ffd",
-  storageBucket: "tecklog-f1ffd.firebasestorage.app",
-  messagingSenderId: "660832365625",
-  appId: "1:660832365625:web:134038c6bf35007a49b1e8",
-  measurementId: "G-WT9ZHB4M5Z"
+  apiKey: "AIzaSyA7x0IlRGupuH836mnL2c9i39_tRHsxD0A",
+  authDomain: "fir-adm-1e34d.firebaseapp.com",
+  projectId: "fir-adm-1e34d",
+  storageBucket: "fir-adm-1e34d.firebasestorage.app",
+  messagingSenderId: "362570340069",
+  appId: "1:362570340069:web:4f159b4d00f80f5ac7e60c",
+  measurementId: "G-2KYMFF77ZM"
 };
-
 export const appConfig: ApplicationConfig = {
   providers: [
     provideFirebaseApp(() => initializeApp(firebaseConfig)),

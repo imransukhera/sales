@@ -1,0 +1,76 @@
+.biometric-section {
+    background-color: #1c5c70;
+    /* Deep teal blue */
+    padding: 80px 20px;
+    text-align: center;
+    border: 10px solid transparent;
+    /* For spacing effect seen in screenshot */
+}
+
+.content-box {
+    max-width: 800px;
+    margin: auto;
+    padding: 40px 20px;
+    border: 2px solid #e0e0e0;
+    /* Thin white border like in screenshot */
+}
+
+.content-box h2 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 15px;
+}
+
+.content-box p {
+    color: #d7e6ec;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+/* Buttons */
+.btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.btn {
+    padding: 10px 25px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.3s ease;
+}
+
+.btn-light {
+    background: #ffffff;
+    color: #1c5c70;
+    border: none;
+}
+
+.btn-light:hover {
+    background: #e6e6e6;
+}
+
+.btn-outline {
+    border: 2px solid #ffffff;
+    color: #ffffff;
+    background: transparent;
+}
+
+.btn-outline:hover {
+    background: #ffffff;
+    color: #1c5c70;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .btn-group {
+        flex-direction: column;
+    }
+}

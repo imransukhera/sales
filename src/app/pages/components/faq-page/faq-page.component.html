@@ -1,0 +1,25 @@
+<div class="bg-color py-8">
+    <div>
+        <h1 class="text-center text-white">
+            <span class="yellow">Frequently Asked Questions</span><br>
+        </h1>
+    </div>
+</div>
+<div class="faq-container grid w-full m-auto py-7">
+
+    <div class="col-8 m-auto">
+        <div class="w-full">
+            <div *ngFor="let faq of filteredFaqs(); let i = index" class="faq-item">
+                <div class="question" (click)="toggle(i)">
+
+                    {{ faq.question }}
+                    <span class="toggle-icon">{{ faq.open ? '−' : '+' }}</span>
+                </div>
+                <div class="answer" *ngIf="faq.open" [innerHTML]="faq.answer">
+                    {{ faq.answer }}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
