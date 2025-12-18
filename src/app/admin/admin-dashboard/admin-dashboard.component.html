@@ -1,18 +1,44 @@
-<div class="w-full relative h-screen h-[calc(77vh-80px)]">
-    <div>
-        <!-- Table Header -->
-        
+<div class="dashboard-container">
 
-        <div>
-            <div>
-                <div>
-                    <app-time-logs-list></app-time-logs-list>
-                </div>
-                <!-- <div> checking time</div> -->
+    <!-- HEADER -->
+    <header class="dashboard-header">
+        <div class="logo">My Admin</div>
 
+        <div class="flex">
+            <button class="logout-btn" (click)="logout()">
+                Logout
+            </button>
+            <div class="align-items-center flex lg:hidden block" (click)="sidebarVisible2 = true">
+                <i class="pi pi-ellipsis-v"></i>
             </div>
         </div>
 
+    </header>
 
+    <div class="dashboard-body">
+        <!-- SIDE NAVIGATION -->
+        <nav class="sidebar lg:block hidden">
+            <ul>
+                <li (click)="value()" class="sidebar1" routerLinkActive="active">Appointments</li>
+                <li (click)="value1()" class="sidebar1 mt-2" routerLinkActive="active">Contact Page</li>
+            </ul>
+        </nav>
+        <!-- MAIN CONTENT -->
+        <main class="content-area">
+            <router-outlet></router-outlet>
+        </main>
     </div>
+
+
 </div>
+
+
+<p-sidebar [(visible)]="sidebarVisible2" position="right">
+    <ul>
+        <li (click)="value()" class="sidebar p-2 bg-white" style="color: black;" routerLinkActive="active">Appointments
+        </li>
+        <li (click)="value1()" class="sidebar mt-2 p-2 bg-white" style="color: black;" routerLinkActive="active">Contact Page
+        </li>
+    </ul>
+
+</p-sidebar>

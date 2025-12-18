@@ -1,0 +1,23 @@
+<div class="login-bg">
+  <div class="login-card">
+    <h2 class="text-center">Admin Login</h2>
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="input-group">
+        <label>Username</label>
+        <input type="text" [(ngModel)]="username" name="username" required />
+      </div>
+
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" [(ngModel)]="password" name="password" required />
+      </div>
+
+      <button type="submit" class="btn-login">Login</button>
+
+      <p style="color: red; margin-top: 10px;" *ngIf="errorMsg">
+        {{ errorMsg }}
+      </p>
+    </form>
+  </div>
+</div>

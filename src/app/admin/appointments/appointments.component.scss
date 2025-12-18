@@ -1,0 +1,87 @@
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  // box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+}
+
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.styled-table th {
+  background: #245A70;
+  color: white;
+  padding: 12px;
+  text-align: left;
+}
+
+.styled-table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.styled-table tr:hover {
+  background: #f1f7fa;
+}
+
+.status {
+  padding: 5px 10px;
+  border-radius: 6px;
+  text-transform: capitalize;
+  color: white;
+}
+
+.status.Confirmed {
+  background: #28a745;
+}
+
+.status.Pending {
+  background: #ffc107;
+  color: #222;
+}
+
+.status.Cancelled {
+  background: #dc3545;
+}
+.button{
+  background: #245A70;
+  padding: 10px 15px;
+  border: 1px solid #245A70;
+}
+
+input{
+padding: 10px;
+border-radius: 10px;
+border: 1px solid #222;
+width: 100%;
+}
+
+:host::ng-deep{
+  .p-dialog {
+    padding: 20px !important;
+    background-color: white;
+    overflow: hidden;
+  }
+  .p-dialog .p-dialog-content{
+    padding: 20px;
+  }
+  .p-dialog .p-dialog-header{
+    padding: 20px;
+  }
+  .p-dropdown{
+    width: 100%;
+    padding: 10px;
+  }
+  .p-dropdown-item{
+    padding: 10px;
+  }
+  .p-dropdown:not(.p-disabled).p-focus {
+    outline: 0 none;
+    outline-offset: 0;
+    box-shadow: 0 0 0 0 #BFDBFE !important;
+    border-color: none !important;
+  }
+}

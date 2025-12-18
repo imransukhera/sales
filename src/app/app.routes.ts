@@ -1,21 +1,23 @@
-// OTHER IMPORTS
 import { Routes } from '@angular/router';
-import { DashboardLayoutComponent } from './pages/components/dashboard/dashboard-layout/dashboard-layout.component';
-import { AllServiceComponent } from './pages/components/all-service/all-service.component';
-import { BookingComponent } from './pages/components/booking/booking.component';
-import { AboutUsComponent } from './pages/components/about-us/about-us.component';
-import { ContactComponent } from './pages/components/contact/contact.component';
-import { FaqPageComponent } from './pages/components/faq-page/faq-page.component';
+import { LoginComponent } from './admin/login/login.component';
+import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard.component';
+import { AuthGuard } from './auth.guard';
+import { AppointmentsComponent } from './admin/appointments/appointments.component';
+import { ContactDataComponent } from './admin/contact-data/contact-data.component';
+
 export const routes: Routes = [
-    { path: '', component: DashboardLayoutComponent },
-    { path: 'services', component: AllServiceComponent },
-    { path: 'appointment', component: BookingComponent },
-    { path: 'about-us', component: AboutUsComponent },
-    { path: 'contact-us', component: ContactComponent },
-    { path: 'faq', component: FaqPageComponent },
-
-
-
-
-    { path: '**', redirectTo: '' }
+  { path: '', component: LoginComponent },
+  {
+    path: 'admin',
+    component: AdminDashboardComponent,
+    canActivate: [AuthGuard],
+    children: [
+      { path: 'appointments', component: AppointmentsComponent },
+      { path: 'contact-us-data', component: ContactDataComponent },
+      // { path: 'reports', component: ReportsComponent },
+      { path: '', redirectTo: 'appointments', pathMatch: 'full' }
+    ]
+  },
+  { path: '**', redirectTo: '' }
 ];
+

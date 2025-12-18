@@ -4,14 +4,10 @@ import { RouterModule } from '@angular/router';
 import { Firestore, collection, getDocs } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
-import { HomePageComponent } from "./pages/components/home-page/home-page.component";
-import { HeaderComponent } from "./pages/components/header/header.component";
-import { BookAppoitmentComponent } from "./pages/components/book-appoitment/book-appoitment.component";
-import { FooterComponent } from "./pages/components/footer/footer.component";
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterModule, HeaderComponent, BookAppoitmentComponent, FooterComponent],
+  imports: [CommonModule, RouterModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

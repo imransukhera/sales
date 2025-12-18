@@ -1,0 +1,87 @@
+.dashboard-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f5f7fa;
+}
+
+/* HEADER */
+.dashboard-header {
+  height: 60px;
+  background: #245A70;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 25px;
+  font-size: 20px;
+}
+
+.logo {
+  font-weight: bold;
+}
+
+.logout-btn {
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.3s;
+
+  &:hover {
+    background: #e63e3e;
+  }
+}
+
+/* BODY SECTION (SIDEBAR + CONTENT) */
+.dashboard-body {
+  display: flex;
+  height: calc(100vh - 60px);
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 240px;
+  background: #1e4d60;
+  color: white;
+  padding-top: 20px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.sidebar li {
+  padding: 15px 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.sidebar1 {
+  background: #245a70;
+  color: white;
+}
+
+.sidebar1.active {
+  background: #e413e4;
+}
+
+
+/* MAIN CONTENT AREA */
+.content-area {
+  flex: 1;
+  padding: 25px;
+  overflow-y: auto;
+}
+
+:host::ng-deep {
+  .p-sidebar-right {
+    width: 200px !important;
+    background: #245A70;
+  }
+}

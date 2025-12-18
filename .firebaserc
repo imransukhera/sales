@@ -1,5 +1,15 @@
 {
   "projects": {
-    "default": "tecklog-f1ffd"
-  }
+    "default": "fir-adm-1e34d"
+  },
+  "targets": {
+    "fir-adm-1e34d": {
+      "hosting": {
+        "app2": [
+          "safeguard-app2"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

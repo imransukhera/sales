@@ -5,7 +5,9 @@ import {
   collectionData,
   addDoc,
   doc,
-  getDoc
+  getDoc,
+  updateDoc,
+  deleteDoc
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
@@ -32,6 +34,13 @@ export class FirestoreService {
     return collectionData(appointCollection, { idField: 'id' });
   }
 
+  // Update an appointment
+  updateAppointment(id: string, data: any): Promise<void> {
+    const appointDocRef = doc(this.firestore, `appointments/${id}`);
+    return updateDoc(appointDocRef, data);
+  }
+
+
   // -----------------------
   // Get Appointment by ID
   // -----------------------
@@ -39,4 +48,25 @@ export class FirestoreService {
     const docRef = doc(this.firestore, `appointments/${id}`);
     return getDoc(docRef);
   }
+  // Delete value
+  deleteAppointment(id: string): Promise<void> {
+    const docRef = doc(this.firestore, `appointments/${id}`);
+    return deleteDoc(docRef);
+  }
+
+    // -----------------------
+  // Get All Appointments
+  // -----------------------
+  getContactPage(): Observable<any[]> {
+    const appointCollection = collection(this.firestore, 'contact-page');
+    return collectionData(appointCollection, { idField: 'id' });
+  }
+
+   // Delete value
+  deleteContact(id: string): Promise<void> {
+    const docRef = doc(this.firestore, `contact-page/${id}`);
+    return deleteDoc(docRef);
+  }
+
+
 }

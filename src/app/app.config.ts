@@ -10,6 +10,8 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getDatabase, provideDatabase } from '@angular/fire/database';
 import { getStorage, provideStorage } from '@angular/fire/storage';
+import { provideHttpClient } from '@angular/common/http';
+import { MessageService } from 'primeng/api';
 const firebaseConfig = {
   apiKey: "AIzaSyA7x0IlRGupuH836mnL2c9i39_tRHsxD0A",
   authDomain: "fir-adm-1e34d.firebaseapp.com",
@@ -24,6 +26,8 @@ export const appConfig: ApplicationConfig = {
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideRouter(routes),
     provideClientHydration(),
+    provideHttpClient(),
+    MessageService,
     provideToastr({
       preventDuplicates: true,
       closeButton: true,

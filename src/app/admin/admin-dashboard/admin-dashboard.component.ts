@@ -1,17 +1,28 @@
 import { Component, OnInit } from '@angular/core';
-import { TimeLogsListComponent } from "../time-logs-list/time-logs-list.component";
+import { Router, RouterOutlet } from "@angular/router";
+import { SidebarModule } from 'primeng/sidebar';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [TimeLogsListComponent],
+  imports: [RouterOutlet,SidebarModule],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.scss'
 })
 export class AdminDashboardComponent implements OnInit {
+
+   menuActive = false;
+  sidebarVisible2: boolean = false;
+  toggleMenu() {
+    this.menuActive = !this.menuActive;
+  }
+
   profileData: any;
   locathostData: any;
   pdfdownload: any;
+
+  constructor(private router: Router) {}
+
 
   ngOnInit() {
     this.locathostData = localStorage.getItem('userProfile');
@@ -20,4 +31,19 @@ export class AdminDashboardComponent implements OnInit {
   changeValue() {
     this.pdfdownload = "imran"
   }
+
+  logout() {
+    localStorage.clear();
+    this.router.navigate(['/']);
+  }
+
+  value() {
+    localStorage.clear();
+    this.router.navigate(['/admin/appointments']);
+  }
+  value1() {
+    localStorage.clear();
+    this.router.navigate(['/admin/contact-us-data']);
+  }
+
 }
