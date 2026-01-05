@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   Firestore,
@@ -7,16 +8,18 @@ import {
   doc,
   getDoc,
   updateDoc,
-  deleteDoc
+  deleteDoc,
+  query,
+  orderBy
 } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirestoreService {
-
-  constructor(private firestore: Firestore) { }
+  apiURL = 'https://lkk9rhor38.execute-api.us-east-1.amazonaws.com/prod';
+  constructor(private firestore: Firestore, private http: HttpClient) { }
 
   // -----------------------
   // Add Appointment
@@ -54,7 +57,7 @@ export class FirestoreService {
     return deleteDoc(docRef);
   }
 
-    // -----------------------
+  // -----------------------
   // Get All Appointments
   // -----------------------
   getContactPage(): Observable<any[]> {
@@ -62,11 +65,55 @@ export class FirestoreService {
     return collectionData(appointCollection, { idField: 'id' });
   }
 
-   // Delete value
+  // Delete value
   deleteContact(id: string): Promise<void> {
     const docRef = doc(this.firestore, `contact-page/${id}`);
     return deleteDoc(docRef);
   }
 
+  sendEmail(data: any) {
+    return this.http.post('https://flashbiometricscentre.com/api/wp-json/email/v1/send', data);
+  }
+
+  uploadFile(obj: any) {
+    return this.http.post(this.apiURL + '/Upload-Image-to-s3', obj);
+  }
+
+
+  getReportsFromS3(data: any) {
+    return this.http.post(this.apiURL + '/Upload-Image-to-s3', data);
+  }
+
+  putReportsFromS3(obj: any): Observable<any> {
+    const file = obj.file;
+    const uploadUrl = obj.uploadUrl;
+
+    return from(
+      fetch(uploadUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': file.type // e.g., application/pdf or image/png
+        },
+        body: file // <-- raw binary data
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error(`Upload failed: ${response.statusText}`);
+        }
+        return { message: 'Upload successful' };
+      })
+    );
+  }
+
+  // Add Reciept 
+  addReciept(data: any): Promise<any> {
+    const appointCollection = collection(this.firestore, 'Receipt');
+    return addDoc(appointCollection, data);
+  }
+
+  // ✅ Get all receipts (returns Observable)
+  getReceipts(): Observable<any[]> {
+    const appointCollection = collection(this.firestore, 'Receipt');
+    return collectionData(appointCollection, { idField: 'id' });
+  }
 
 }

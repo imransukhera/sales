@@ -1,7 +1,7 @@
 {
   "hosting": {
-    "target": "app2",
-    "public": "dist/app2/browser",
+     "site": "app3-site",
+    "public": "dist/safeguard/browser",
     "ignore": [
       "firebase.json",
       "**/.*",

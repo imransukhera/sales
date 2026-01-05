@@ -1,34 +1,81 @@
 <div class="card">
-    <h2>Appointments |snfdsk</h2>
+    <h2>Appointments</h2>
 
-    <p-table [value]="appList" class="styled-table" [tableStyle]="{ 'min-width': '50rem' }">
+    <p-table [value]="appList" class="styled-table" [tableStyle]="{ 'min-width': '50rem' }" [scrollable]="true"
+        scrollHeight="400px">
         <ng-template pTemplate="header">
             <tr>
-                <th>Service Name</th>
-                <th>Client</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Note</th>
-                <th>Status</th>
-                <th>Action</th>
+                <th class="max-w-14rem">Sr.No</th>
+                <th class="w-10rem">Service Code</th>
+                <th class="w-15rem">Service Name</th>
+                <th class="w-10rem">Service Category</th>
+                <th class="w-10rem">Appoitment Date</th>
+                <th class="w-10rem">Time</th>
+                <th class="w-15rem">Client Name</th>
+                <th class="w-15rem">Client Email</th>
+                <th class="w-10rem">Client Phone</th>
+                <th class="w-15rem">Note</th>
+                <th class="w-15rem">DCN</th>
+                <th class="w-15rem">Status</th>
+                <th pFrozenColumn alignFrozen="right" class="text-center">Action</th>
             </tr>
         </ng-template>
 
-        <ng-template pTemplate="body" let-product>
-            <tr >
-                <td class="w-30rem">{{ product.serviceName['name'] }}</td>
-                <td class="w-30rem">{{ product.customerName }}</td>
-                <td class="w-30rem">{{ product.selectedDate }}</td>
-                <td class="w-30rem">{{ product.selectedTime }}</td>
-                <td class="w-20rem">{{ product.notes }}</td>
+        <ng-template pTemplate="body" let-product let-rowIndex="rowIndex" [scrollable]="true" scrollHeight="400px">
+            <tr>
+                <td class="max-w-14rem">
+                    <div class="w-4rem">
+                        {{ rowIndex + 1}}
+                    </div>
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product?.serviceName['code']}}</div>
+                </td>
+                <td class="w-15rem">
+                    <div class="w-15rem">{{ product.serviceName['name'] }}</div>
+                </td>
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product.serviceName['feildStatus'] }}</div>
+                </td>
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product.selectedDate }}</div>
+                </td>
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product.selectedTime }}</div>
+                </td>
+                <td class="w-15rem">
+                    <div class="w-15rem">{{ product.customerName }}</div>
+                </td>
+                <td class="w-15rem">
+                    <div class="w-15rem">{{ product.customerEmail }}</div>
+                </td>
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product.customerPhone }}</div>
+                </td>
+                <td
+                    class="w-20rem text-center text-overflow-ellipsis overflow-hidden white-space-nowrap max-w-10rem text-sm px-3 py-2">
+                    <div class="w-20rem pr-4">{{ product.notes }}</div>
+                </td>
+                <td class="w-20rem">
+                    <div class="w-10rem">
+                        {{ product?.DCN ? product?.DCN : ' - ' }}
+                    </div>
+                </td>
                 <td class="w-20rem">
                     <span class="status" [ngClass]="product.status">
                         {{ product.status }}
                     </span>
                 </td>
-                <td class="w-20rem">
-                    <i class="pi pi-file-edit cursor-pointer" (click)="openEditDialog(product)"></i>
-                    <i class="pi pi-trash pl-2 cursor-pointer" (click)="deleteValue(product?.id)"></i>
+                <td class="w-20rem" pFrozenColumn alignFrozen="right">
+                    <div class="flex w-5rem text-center m-auto justify-content-center gap-2 ">
+                        <i class="pi pi-file-edit cursor-pointer" pTooltip="Update Appointment" tooltipPosition="bottom"
+                            (click)="openEditDialog(product)"></i>
+                        <!-- <i class="pi pi-trash pl-2 cursor-pointer" (click)="deleteValue(product?.id)"></i> -->
+
+                        <i class="pi pi-send pl-2 cursor-pointer " pTooltip="Send Email" tooltipPosition="bottom"
+                            *ngIf="product?.DCN" (click)="sendDialog();downloadPDF(product)"></i>
+                        <i class="pi pi-download pl-2 cursor-pointer " pTooltip="Download Receipt"
+                            tooltipPosition="bottom" *ngIf="product?.DCN" (click)="dirctlyDownload(); data = product"></i>
+                    </div>
                 </td>
             </tr>
         </ng-template>
@@ -40,7 +87,7 @@
 
         <!-- Name -->
         <div class="py-2">
-            <label>Name</label>
+            <label>Name <span class="text-red-500">*</span></label>
             <input type="text" class="w-full p-inputtext" formControlName="name">
 
             <small *ngIf="editForm.get('name')?.touched && editForm.get('name')?.invalid" class="p-error">
@@ -50,7 +97,7 @@
 
         <!-- Service Name -->
         <div class="py-2">
-            <label>Service Name</label>
+            <label>Service Name <span class="text-red-500">*</span></label>
             <input type="text" class="w-full p-inputtext" formControlName="serviceName">
 
             <small *ngIf="editForm.get('serviceName')?.touched && editForm.get('serviceName')?.invalid" class="p-error">
@@ -60,7 +107,7 @@
 
         <!-- Date -->
         <div class="py-2">
-            <label>Date</label>
+            <label>Date <span class="text-red-500">*</span></label>
             <input type="date" class="w-full p-inputtext" formControlName="date">
 
             <small *ngIf="editForm.get('date')?.touched && editForm.get('date')?.invalid" class="p-error">
@@ -70,7 +117,7 @@
 
         <!-- Time -->
         <div class="py-2">
-            <label>Time</label>
+            <label>Time <span class="text-red-500">*</span></label>
             <input type="time" class="w-full p-inputtext" formControlName="time">
 
             <small *ngIf="editForm.get('time')?.touched && editForm.get('time')?.invalid" class="p-error">
@@ -80,11 +127,11 @@
 
         <!-- Status -->
         <div class="py-2">
-            <label>Status</label>
+            <label>Status <span class="text-red-500">*</span></label>
             <!-- <input type="text" class="w-full p-inputtext" formControlName="status"> -->
-            <div class="pt-2 pb-4">
+            <div class="pt-2">
                 <p-dropdown [options]="statusArray" optionLabel="status" optionValue="status" formControlName="status"
-                    placeholder="Select a City"></p-dropdown>
+                    [(ngModel)]="StatusValue" placeholder="Select a City"></p-dropdown>
                 <small *ngIf="editForm.get('status')?.touched && editForm.get('status')?.invalid" class="p-error">
                     Status is required.
                 </small>
@@ -94,7 +141,17 @@
             </small>
         </div>
 
-        <div class="py-4 flex justify-content-end">
+        <div class="pb-4" *ngIf="StatusValue == 'Done'">
+            <label>Enter DCN <span class="text-red-500">*</span></label>
+            <input type="input" class="w-full p-inputtext" [(ngModel)]="DCNNumber"
+                [ngModelOptions]="{standalone: true}">
+
+
+
+        </div>
+
+        <div class="pb-4 flex justify-content-end pt-5">
+
             <button class="button text-white border-round-lg" [disabled]="editForm.invalid">
                 Update
             </button>
@@ -102,3 +159,111 @@
 
     </form>
 </p-dialog>
+
+
+<div class="invoice-wrapper m-auto" style="display: none;">
+    <div style="width:800px !important;margin-left: 20px; " id="invoice">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="logo">
+                <img src="../../../assets/receipt-image.jpeg" width="100%" height="100px" />
+            </div>
+            <div class="invoice-title py-5 text-right px-2"><span>
+                    INVOICE
+                </span></div>
+        </div>
+
+        <!-- CLIENT + INVOICE INFO -->
+        <div class="info-grid">
+            <div class="left">
+                <p><strong>Client Name:</strong> {{ data?.customerName }}</p>
+                <p><strong>Address:</strong> {{ data?.address }}</p>
+                <p><strong>Phone #:</strong> {{ data?.customerPhone }}</p>
+                <p><strong>Email:</strong> {{ data?.customerEmail }}</p>
+                <p><strong>Location:</strong> Mississauga</p>
+            </div>
+
+            <div class="right justify-content-end flex">
+                <div>
+                    <p><strong>Inv. No:</strong> {{ data?.DCN }}</p>
+                    <p><strong>Order No:</strong> {{ data?.serviceName['code'] }}</p>
+                    <p><strong>Invoice Date:</strong> {{ data?.selectedDate }}</p>
+                    <p><strong>Due Date:</strong> {{data?.selectedDate}}</p>
+                    <p><strong>HST No:</strong> 810240382 RT0001</p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- TABLE -->
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th>Amount ($)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngIf="data">
+                    <td>{{ data?.serviceName['code']}}</td>
+                    <td>
+                        <p><strong>Category:</strong> {{ data?.serviceName['feildStatus'] }}</p>
+                        <p><strong>Service:</strong> {{data?.serviceName['name'] }}</p>
+                        <p><strong>Description:</strong>{{ data?.serviceName['discription'] }}</p>
+                        <p><strong>Fee:</strong></p>
+                        <p><strong>RCMP Fee:</strong></p>
+                    </td>
+                    <td>
+                        <p class="py-3"></p>
+                        <p class="pt-3 pb-4"></p>
+                        <p>{{ data?.serviceName['price'] }}</p>
+                        <p>{{ data?.serviceName['rcmb'] }}</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <!-- TOTALS -->
+        <div class="totals">
+            <p>Sub Total: <span>{{ subTotal }}</span></p>
+            <p>GST (13%): <span>{{ gst }}</span></p>
+            <p class="grand">Grand Total: <span>{{ grandTotal }}</span></p>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <p><strong>Thank you for your business</strong></p>
+            <img src="../../../assets/footer-reciept.jpeg" alt="" width="100%">
+
+        </div>
+    </div>
+</div>
+
+
+<p-dialog header="Send Email" [modal]="true" [(visible)]="emailDilog" [style]="{ width: '50rem' }">
+
+    <div>
+        <div>
+            <label>Subject</label>
+            <input type="text" name="" id="" placeholder="Enter Your Subject" [(ngModel)]="subject">
+
+        </div>
+        <div class="my-3">
+            <label for="">Body</label>
+            <div >
+                <p-editor [(ngModel)]="text" [style]="{ height: '320px' }" [(ngModel)]="body" />
+            </div>
+        </div>
+    </div>
+  
+    <div>
+        <button (click)="sendEmail()">Send Email</button>
+    </div>
+
+</p-dialog>
+
+<!-- <button (click)="downloadPDF()">Download Receipt</button> -->
+
+
+
+<p-toast customClass="my-custom-toast"></p-toast>

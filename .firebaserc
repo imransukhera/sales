@@ -7,6 +7,9 @@
       "hosting": {
         "app2": [
           "safeguard-app2"
+        ],
+        "app3": [
+          "app3-site"
         ]
       }
     }

@@ -38,6 +38,10 @@
   background: #28a745;
 }
 
+.status.Done {
+  background: #28a745;
+}
+
 .status.Pending {
   background: #ffc107;
   color: #222;
@@ -46,42 +50,175 @@
 .status.Cancelled {
   background: #dc3545;
 }
-.button{
+
+.button {
   background: #245A70;
   padding: 10px 15px;
   border: 1px solid #245A70;
 }
 
-input{
-padding: 10px;
-border-radius: 10px;
-border: 1px solid #222;
-width: 100%;
+input {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #222;
+  width: 100%;
 }
 
-:host::ng-deep{
+:host::ng-deep {
   .p-dialog {
     padding: 20px !important;
     background-color: white;
     overflow: hidden;
   }
-  .p-dialog .p-dialog-content{
+
+  .p-dialog .p-dialog-content {
     padding: 20px;
   }
-  .p-dialog .p-dialog-header{
+
+  .p-dialog .p-dialog-header {
     padding: 20px;
   }
-  .p-dropdown{
+
+  .p-dropdown {
     width: 100%;
     padding: 10px;
   }
-  .p-dropdown-item{
+
+  .p-dropdown-item {
     padding: 10px;
   }
+
   .p-dropdown:not(.p-disabled).p-focus {
     outline: 0 none;
     outline-offset: 0;
     box-shadow: 0 0 0 0 #BFDBFE !important;
     border-color: none !important;
   }
+}
+
+
+//
+// Invoice Slip css 
+.invoice-wrapper {
+  width: 794px;
+  /* A4 width */
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background: #fff;
+  color: #000;
+}
+
+.header {
+  // display: flex;
+  justify-content: space-between;
+  border-bottom: 2px solid #000;
+  padding-bottom: 10px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+// .logo img {
+//   height: 40px;
+// }
+
+.invoice-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 20px 0;
+}
+
+.invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.invoice-table th,
+.invoice-table td {
+  border: 1px solid #000;
+  padding: 8px;
+  vertical-align: top;
+}
+
+.invoice-table th {
+  background: #f3f3f3;
+}
+
+.totals {
+  width: 40%;
+  margin-left: auto;
+  margin-top: 20px;
+}
+
+.totals p {
+  display: flex;
+  justify-content: space-between;
+}
+
+.grand {
+  font-weight: bold;
+  border-top: 2px solid #000;
+  padding-top: 5px;
+}
+
+.footer {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.footer-bar {
+  background: #000;
+  color: #fff;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+/* Style the custom severity class */
+:host ::ng-deep {
+  .p-toast-message-custom-severity {
+    background-color: #e1cfe7;
+    border: solid #8a427a;
+    border-width: 0 0 0 6px;
+    padding: 20px !important;
+    margin: 10px !important;
+    color: #2c1e30;
+  }
+
+  .p-toast-summary {
+    padding: 0px 10px;
+  }
+
+  .p-toast-top-right {
+    padding: 0px 10px;
+  }
+  .p-toast-detail {
+    padding: 5px 10px;
+  }
+
+  .p-toast-message {
+    padding: 5px;
+  }
+
+  .p-tooltip-bottom{
+    padding: 10px !important;
+  }
+}
+
+
+::ng-deep{ 
+  .p-tooltip-bottom {
+  padding: 10px !important;
+}
+.p-tooltip-text {
+  padding: 5px !important;
+}
 }
