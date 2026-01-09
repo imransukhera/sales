@@ -307,7 +307,6 @@ export class AppointmentsComponent {
         });
       } catch (error) { }
     } else {
-      // this.loading = false; console.error('HTML element not found:', htmlData);
     }
   }
 
