@@ -25,15 +25,39 @@ export class FirestoreService {
   // Add Appointment
   // -----------------------
   addAppointment(data: any): Promise<any> {
-    const appointCollection = collection(this.firestore, 'appointments');
+    const appointCollection = collection(this.firestore, 'imports');
     return addDoc(appointCollection, data);
+  }
+
+   // Update an appointment
+  updateImports(id: string, data: any): Promise<void> {
+    const appointDocRef = doc(this.firestore, `imports/${id}`);
+    return updateDoc(appointDocRef, data);
+  }
+
+  // Update an appointment
+  updateEports(id: string, data: any): Promise<void> {
+    const appointDocRef = doc(this.firestore, `exports/${id}`);
+    return updateDoc(appointDocRef, data);
+  }
+  // Add Export
+  // -----------------------
+  addExport(data: any): Promise<any> {
+    const appointCollection = collection(this.firestore, 'exports');
+    return addDoc(appointCollection, data);
+  }
+
+  // -----------------------
+  getExports(): Observable<any[]> {
+    const appointCollection = collection(this.firestore, 'exports');
+    return collectionData(appointCollection, { idField: 'id' });
   }
 
   // -----------------------
   // Get All Appointments
   // -----------------------
   getAllAppointments(): Observable<any[]> {
-    const appointCollection = collection(this.firestore, 'appointments');
+    const appointCollection = collection(this.firestore, 'imports');
     return collectionData(appointCollection, { idField: 'id' });
   }
 
@@ -52,8 +76,14 @@ export class FirestoreService {
     return getDoc(docRef);
   }
   // Delete value
-  deleteAppointment(id: string): Promise<void> {
-    const docRef = doc(this.firestore, `appointments/${id}`);
+  deleteExports(id: string): Promise<void> {
+    const docRef = doc(this.firestore, `exports/${id}`);
+    return deleteDoc(docRef);
+  }
+
+  // Delete value
+  deleteImport(id: string): Promise<void> {
+    const docRef = doc(this.firestore, `imports/${id}`);
     return deleteDoc(docRef);
   }
 

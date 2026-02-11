@@ -1,78 +1,197 @@
 <div class="card">
-    <h2>Contact Page Info</h2>
+    <div class="flex justify-content-between">
+        <div>
+            <h2>Export / Consumption</h2>
+        </div>
+        <div>
+            <button class="px-3 py-2 border-round-lg button text-white" (click)="visible = true"><span>Add Export /
+                    Consumption</span></button>
+        </div>
+    </div>
 
-    <p-table [value]="appList" class="styled-table" [tableStyle]="{ 'min-width': '50rem' }">
+
+    <p-table [value]="appList" class="styled-table" [tableStyle]="{ 'min-width': '50rem' }" [scrollable]="true"
+        scrollHeight="400px">
         <ng-template pTemplate="header">
             <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Subject</th>
-                <th>Description</th>
-                <th>Action</th>
+                <th class="max-w-14rem">Sr.No</th>
+                <th class="w-10rem">Vendor</th>
+                <th class="w-15rem">GD Number</th>
+                <th class="w-15rem">GD Invoice (Import ID)</th>
+                <th class="w-10rem">Date of Export</th>
+                <th class="w-10rem">Date Of Consumption</th>
+                <th class="w-10rem">Type Of Export</th>
+                <th class="w-10rem">Qty</th>
+                <th class="w-15rem">Rate</th>
+                <th class="w-15rem">Total</th>
+                <th pFrozenColumn alignFrozen="right" class="text-center">Action</th>
             </tr>
         </ng-template>
 
-        <ng-template pTemplate="body" let-product>
+        <ng-template pTemplate="body" let-product let-rowIndex="rowIndex" [scrollable]="true" scrollHeight="400px">
             <tr>
-                <td class="w-30rem">{{ product?.name }}</td>
-                <td class="w-30rem">{{ product?.email }}</td>
-                <td class="w-30rem">{{ product?.subject }}</td>
-                <td class="w-30rem">{{ product?.notes }}</td>
-                <td class="w-20rem">
-                    <i class="pi pi-send pl-2 cursor-pointer" (click)="openEditDialog(product)"></i>
-                    <i class="pi pi-trash pl-2 cursor-pointer" (click)="deleteValue(product?.id)"></i>
+                <td class="max-w-14rem">
+                    <div class="w-4rem">
+                        {{ rowIndex + 1}}
+                    </div>
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product?.vendor}}</div>
+                </td>
+                <td class="w-15rem">
+                    <div class="w-15rem">{{ product?.GD_Invoice }}</div>
+                </td>
+                <td class="w-15rem">
+                    <div class="w-15rem">{{ product?.importID }}</div>
+                </td>
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product?.dateOfExport }}</div>
+                </td>
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product?.dateOfConsumption }}</div>
+                </td>
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product?.type_Of_Export }}</div>
+                </td>
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product?.qty }}</div>
+                </td>
+                <td class="w-15rem">
+                    <div class="w-15rem">{{ product?.rate }}</div>
+                </td>
+                <td class="w-15rem">
+                    <div class="w-15rem">{{ product?.total }}</div>
+                </td>
+                <td class="w-20rem" pFrozenColumn alignFrozen="right">
+                    <div class="flex w-5rem text-center m-auto justify-content-center gap-2 ">
+                        <i class="pi pi-file-edit pl-2 cursor-pointer " pTooltip="Download Import"
+                            (click)="openEditDialog(product);" tooltipPosition="bottom"></i>
+                        <i class="pi pi-trash pl-2 cursor-pointer text-red-500" pTooltip="Download Import"
+                            (click)="deleteValue(product?.id);" tooltipPosition="bottom"></i>
+                        <i class="pi pi-download pl-2 cursor-pointer " pTooltip="Download Import"
+                            (click)="exportToExcel(product);" tooltipPosition="bottom"></i>
+                    </div>
                 </td>
             </tr>
         </ng-template>
     </p-table>
 </div>
 
-<p-dialog header="Send Message" [modal]="true" [(visible)]="visible" [style]="{ width: '30rem' }">
-    <form [formGroup]="editForm" (ngSubmit)="updateAppointment()">
+<p-dialog header="Add Export / Consumption" [modal]="true" [(visible)]="visible" [style]="{ width: '30rem' }" (onHide)="closeDialog()">
+    <form [formGroup]="editForm">
 
         <!-- Name -->
         <div class="py-2">
-            <label>Sent To</label>
-            <input type="text" class="w-full p-inputtext mt-2" formControlName="email">
-             <div *ngIf="submitted && f['email'].errors" class="invalid-feedback" style="margin-top: -15px;">
-                <div *ngIf="!f['email'].value" class="error text-red-500">
-                    Field is required
-                </div>
-            </div>
+            <label>Vendor <span class="text-red-500">*</span></label>
+            <input type="text" class="w-full p-inputtext" formControlName="vendor">
+
+            <small *ngIf="editForm.get('vendor')?.touched && editForm.get('vendor')?.invalid" class="p-error">
+                Vendor
+            </small>
         </div>
 
         <!-- Service Name -->
         <div class="py-2">
-            <label>Subject</label>
-            <input type="text" class="w-full p-inputtext mt-2" formControlName="subject">
+            <label>Export Invoice / Invoice Number (Export ID)<span class="text-red-500">*</span></label>
+            <input type="text" class="w-full p-inputtext" formControlName="GD_Invoice">
 
-             <div *ngIf="submitted && f['subject'].errors" class="invalid-feedback" style="margin-top: -15px;">
-                <div *ngIf="!f['subject'].value" class="error text-red-500">
-                    Field is required
-                </div>
-            </div>
+            <small *ngIf="editForm.get('GD_Invoice')?.touched && editForm.get('GD_Invoice')?.invalid" class="p-error">
+                GD Number / Invoice Number / Reference (Export ID)
+            </small>
         </div>
 
-        <!-- Time -->
+        <!-- Service Name -->
         <div class="py-2">
-            <label>Description</label>
-            <div class="mt-2">
-                <textarea rows="4" formControlName="notes"></textarea>
-            </div>
+            <label>GD Invoice / Invoice Number (Import ID)<span class="text-red-500">*</span></label>
+            <input type="text" class="w-full p-inputtext" formControlName="importID">
 
-            <div *ngIf="submitted && f['notes'].errors" class="invalid-feedback" style="margin-top: -15px;">
-                <div *ngIf="!f['notes'].value" class="error text-red-500">
-                    Field is required
-                </div>
-            </div>
+            <small *ngIf="editForm.get('importID')?.touched && editForm.get('importID')?.invalid" class="p-error">
+                GD Invoice / Invoice Number / Reference (Import ID)
+            </small>
         </div>
 
-        <div class="py-4 flex justify-content-end">
-            <button class="button text-white border-round-lg">
-                Send
+
+        <!-- Date -->
+        <div class="py-2">
+            <label>Date of GD Export <span class="text-red-500">*</span></label>
+            <input type="date" class="w-full p-inputtext" formControlName="dateOfExport">
+
+            <small *ngIf="editForm.get('dateOfExport')?.touched && editForm.get('dateOfExport')?.invalid"
+                class="p-error">
+                Date is required.
+            </small>
+        </div>
+
+        <!-- Date -->
+        <div class="py-2">
+            <label>Date of Consumption <span class="text-red-500">*</span></label>
+            <input type="date" class="w-full p-inputtext" formControlName="dateOfConsumption">
+
+            <small *ngIf="editForm.get('dateOfConsumption')?.touched && editForm.get('dateOfConsumption')?.invalid"
+                class="p-error">
+                Date of Consumption is required.
+            </small>
+        </div>
+
+        <div class="py-2">
+            <label>Type of Export <span class="text-red-500">*</span></label>
+            <!-- <input type="text" class="w-full p-inputtext" formControlName="status"> -->
+            <div class="pt-2">
+                <p-dropdown [options]="statusArray" optionLabel="status" optionValue="status"
+                    formControlName="type_Of_Export" [(ngModel)]="StatusValue"
+                    placeholder="Select a Type of Export"></p-dropdown>
+                <small *ngIf="editForm.get('type_Of_Export')?.touched && editForm.get('type_Of_Export')?.invalid"
+                    class="p-error">
+                    Status is required.
+                </small>
+            </div>
+            <small *ngIf="editForm.get('type_Of_Export')?.touched && editForm.get('type_Of_Export')?.invalid"
+                class="p-error">
+                Type of Export is required.
+            </small>
+        </div>
+
+
+        <!-- Date -->
+        <div class="py-2">
+            <label>Qty <span class="text-red-500">*</span></label>
+            <input type="text" class="w-full p-inputtext" formControlName="qty">
+
+            <small *ngIf="editForm.get('qty')?.touched && editForm.get('qty')?.invalid" class="p-error">
+                Qty is required.
+            </small>
+        </div>
+
+        <!-- Date -->
+        <div class="py-2">
+            <label>Rate <span class="text-red-500">*</span></label>
+            <input type="text" class="w-full p-inputtext" formControlName="rate">
+
+            <small *ngIf="editForm.get('rate')?.touched && editForm.get('rate')?.invalid" class="p-error">
+                Rate is required.
+            </small>
+        </div>
+
+        <!-- Date -->
+        <div class="py-2">
+            <label>Total <span class="text-red-500">*</span></label>
+            <input type="text" class="w-full p-inputtext" formControlName="total">
+
+            <small *ngIf="editForm.get('total')?.touched && editForm.get('total')?.invalid" class="p-error">
+                Total is required.
+            </small>
+        </div>
+
+        <div class="pb-4 flex justify-content-end pt-5">
+            <button *ngIf="!isEditMode" class="button text-white border-round-lg" (click)="submit()">
+                Submit
+            </button>
+            <button *ngIf="isEditMode" class="button text-white border-round-lg" (click)="update()">
+                Update
             </button>
         </div>
+
     </form>
 </p-dialog>
 
-<p-toast></p-toast>
+
+<p-toast customClass="my-custom-toast"></p-toast>

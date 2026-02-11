@@ -4,6 +4,7 @@ import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard
 import { AuthGuard } from './auth.guard';
 import { AppointmentsComponent } from './admin/appointments/appointments.component';
 import { ContactDataComponent } from './admin/contact-data/contact-data.component';
+import { DashboardComponent } from './admin/dashboard/dashboard.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -12,10 +13,11 @@ export const routes: Routes = [
     component: AdminDashboardComponent,
     canActivate: [AuthGuard],
     children: [
-      { path: 'appointments', component: AppointmentsComponent },
-      { path: 'contact-us-data', component: ContactDataComponent },
+      { path: 'imports', component: AppointmentsComponent },
+      { path: 'exports', component: ContactDataComponent },
+      { path: 'dashboard', component: DashboardComponent },
       // { path: 'reports', component: ReportsComponent },
-      { path: '', redirectTo: 'appointments', pathMatch: 'full' }
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
   { path: '**', redirectTo: '' }

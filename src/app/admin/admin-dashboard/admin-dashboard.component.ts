@@ -39,11 +39,15 @@ export class AdminDashboardComponent implements OnInit {
 
   value() {
     localStorage.clear();
-    this.router.navigate(['/admin/appointments']);
+    this.router.navigate(['/admin/imports']);
   }
   value1() {
     localStorage.clear();
-    this.router.navigate(['/admin/contact-us-data']);
+    this.router.navigate(['/admin/exports']);
+  }
+   value2() {
+    localStorage.clear();
+    this.router.navigate(['/admin/dashboard']);
   }
 
 }

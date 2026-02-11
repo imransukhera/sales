@@ -2,15 +2,15 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FirestoreService } from '@services/firestore.service';
-import { MessageService, PrimeNGConfig } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { ToastModule } from 'primeng/toast';
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
-import jsPDF from 'jspdf';
 import { EditorModule } from 'primeng/editor';
-import { timeout } from 'rxjs';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-appointments',
@@ -36,40 +36,46 @@ export class AppointmentsComponent {
   selectedId: string = '';
   appointment: any;
   DCNNumber: any;
-
+isEditMode = false;
 
   statusArray: any = [
     {
-      status: 'Done'
+      status: 'Raw Material'
     },
     {
-      status: 'Confirmed'
+      status: 'Machinery Parts'
     },
     {
-      status: 'Pending'
-    },
-    {
-      status: 'Cancelled'
+      status: 'Machinery'
     }
   ]
 
   data: any;
 
   constructor(private appService: FirestoreService, private fb: FormBuilder, private appointmentService: FirestoreService, private messageService: MessageService,
-    private primengConfig: PrimeNGConfig
+
   ) {
     this.getEm();
   }
 
   ngOnInit() {
-    this.fetchReceipts();
     this.editForm = this.fb.group({
-      name: ['', Validators.required],
-      serviceName: ['', Validators.required],
-      date: ['', Validators.required],
-      time: ['', Validators.required],
-      DCN: [''],
-      status: ['', Validators.required]
+      vendor: [''],
+      GD_Invoice: ['', Validators.required],
+      dateOfImport: ['', Validators.required],
+      dateOfExport: ['', Validators.required],
+      HS_Code: ['', Validators.required],
+      Sales_Tax: ['', Validators.required],
+      Custom_Duty: ['', Validators.required],
+      Income_Tax: ['', Validators.required],
+      FED: ['', Validators.required],
+      Additional_Custom_Duty: ['', Validators.required],
+      Additional_Sales_Tax: ['', Validators.required],
+      type: ['', Validators.required],
+      qty: ['', Validators.required],
+      rate: ['', Validators.required],
+      total: ['', Validators.required],
+      id: [''],
     });
 
   }
@@ -84,112 +90,116 @@ export class AppointmentsComponent {
     })
   }
 
+   closeDialog(){
+    this.isEditMode = false;
+    this.editForm.reset();
+    this.visible=false;
+  }
+
   openEditDialog(appointment: any) {
+    this.isEditMode = true; 
     this.appointment = appointment;
     this.visible = true;
     this.selectedId = appointment.id;
     this.DCNNumber = this.appointment?.DCN,
       console.log("this is the Value of :", this.appointment,)
     this.editForm.patchValue({
-      name: appointment.customerName,
-      serviceName: appointment.serviceName?.name,
-      date: appointment.selectedDate,
-      time: this.convertTo24Hour(appointment.selectedTime),
-      status: appointment.status,
-
+      vendor: appointment.vendor,
+      GD_Invoice: appointment.GD_Invoice,
+      dateOfImport: appointment.dateOfImport,
+      dateOfExport: appointment.dateOfExport,
+      HS_Code: appointment.HS_Code,
+      Sales_Tax: appointment.Sales_Tax,
+      Custom_Duty: appointment.Custom_Duty,
+      Income_Tax: appointment.Income_Tax,
+      FED: appointment.FED,
+      Additional_Custom_Duty: appointment.Additional_Custom_Duty,
+      Additional_Sales_Tax: appointment.Additional_Sales_Tax,
+      type: appointment.type,
+      qty: appointment.qty,
+      rate: appointment.rate,
+      total: appointment.total,
+       id: appointment.id,
     });
   }
 
-  convertTo24Hour(time: string): string {
-    const [t, modifier] = time.split(' '); // "09:00", "AM"
-    let [hours, minutes] = t.split(':');
-
-    if (modifier === 'PM' && hours !== '12') {
-      hours = String(Number(hours) + 12);
-    }
-
-    if (modifier === 'AM' && hours === '12') {
-      hours = '00';
-    }
-
-    return `${hours}:${minutes}`;
-  }
 
   // Update Firestore
-  updateAppointment() {
+  submit() {
     if (this.editForm.invalid) {
+      console.log("value")
       this.editForm.markAllAsTouched();
       return;
     }
+    let value = this.editForm.value;
 
-    let value = this.editForm.value
-
-
-    let serviceName = {
-      discription: this.appointment?.serviceName?.discription,
-      name: value?.serviceName,
-      price: this.appointment?.serviceName?.price,
-      rcmb: this.appointment?.serviceName?.rcmb,
-      fee: this.appointment?.serviceName?.price,
-      code: this.appointment?.serviceName?.code,
-      feildStatus: this.appointment?.serviceName?.feildStatus,
-    }
-
-
-    let dataOfSubmit = {
-      id: this.appointment.id,
-      serviceName,
-      locationName: 'Mississauga',
-      worker: 'flashbiometricscentre',
-      customerEmail: this.appointment.customerEmail,
-      address: this.appointment.address,
-      customerName: value.name,
-      customerPhone: this.appointment?.customerPhone,
-      selectedTime: this.convertToAMPM(value?.time),
-      selectedDate: value?.date,
-      DCN: this.DCNNumber,
-      status: value?.status
-    }
-    if (value?.status == 'Done' && this.DCNNumber == null) {
+    const repreatedValue = this.appList.filter((data: any) => data?.GD_Invoice == value?.GD_Invoice)
+    console.log("repreatedValue:", repreatedValue);
+    if (repreatedValue?.length > 0) {
       this.messageService.add({
         severity: 'error',
-        summary: 'Error',
-        detail: 'Please Enter the DCN'
+        summary: 'Duplicated',
+        detail: 'This GD number is already exist.'
       });
       return;
     }
 
 
-    console.log("This is Id:", this.selectedId, "dataOfSubmit", dataOfSubmit)
+    console.log("value", value);
+    this.visible = false;
     this.appointmentService
-      .updateAppointment(this.selectedId, dataOfSubmit)
+      .addAppointment(value)
       .then(() => {
+        this.editForm.reset();
         this.messageService.add({
           severity: 'success',
           summary: 'Updated',
-          detail: 'Appointment successfully updated'
+          detail: 'Imports successfully Added'
         });
-        this.visible = false;
+
       });
   }
 
-  convertToAMPM(time: string): string {
-    let [hours, minutes] = time.split(':');
-    let h = Number(hours);
-    const suffix = h >= 12 ? 'PM' : 'AM';
 
-    if (h === 0) {
-      h = 12; // 00:30 → 12:30 AM
-    } else if (h > 12) {
-      h = h - 12; // 13:30 → 1:30 PM
-    }
+  // Update Firestore
+  update() {
+  if (this.editForm.invalid) {
+    this.editForm.markAllAsTouched();
+    return;
+  }
+  
+  let value = this.editForm.value;
 
-    const formattedHours = h.toString().padStart(2, '0');
-    return `${formattedHours}:${minutes} ${suffix}`;
+  // FIX: Check for duplicates EXCEPT for the record with the current ID
+  const isDuplicate = this.appList.some((data: any) => 
+    data?.GD_Invoice === value?.GD_Invoice && data?.id !== value?.id
+  );
+
+  if (isDuplicate) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Duplicate',
+      detail: 'This GD number already exists in another record.'
+    });
+    return;
   }
 
+  this.visible = false;
+  this.appointmentService
+    .updateImports(value?.id, value)
+    .then(() => {
+      this.editForm.reset();
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Updated',
+        detail: 'Imports successfully Updated'
+      });
+    });
+}
+
+
   deleteValue(appointmentId: any) {
-    this.appService.deleteAppointment(appointmentId)
+    this.appService.deleteImport(appointmentId)
       .then(() => {
         console.log("Appointment deleted successfully!");
       })
@@ -199,183 +209,64 @@ export class AppointmentsComponent {
 
   }
 
-  private extractAmount(value: string | undefined): number {
-    if (!value) return 0;
-    const match = value.match(/[\d.]+/);
-    return match ? Number(match[0]) : 0;
-  }
+  exportToExcel(data: any) {
+    let value = [data];
+    console.log("appLiddst", this.appList)
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('App List');
 
-  get subTotal(): number {
-    const price = this.extractAmount(this.data?.serviceName?.price);
-    const rcmb = this.extractAmount(this.data?.serviceName?.rcmb);
-    return price + rcmb;
-  }
+    // 🔹 Table Headers
+    worksheet.addRow([
+      'Sr.No',
+      'Vendor',
+      'GD Number',
+      'GD Invoice (Import ID)',
+      'Date of Export',
+      'Qty',
+      'Rate',
+      'Total'
+    ]);
 
+    // 🔹 Header styling
+    worksheet.getRow(1).eachCell(cell => {
+      cell.font = { bold: true };
+      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' }
+      };
+    });
 
-  get gst() {
-    return this.subTotal * 0.13;
-  }
+    // 🔹 Table Data
+    value.forEach((item: any, index: number) => {
+      worksheet.addRow([
+        index + 1,
+        item.vendor,
+        item.GD_Invoice,
+        item.importID,
+        item.dateOfExport,
+        item.qty,
+        item.rate,
+        item.total
+      ]);
+    });
 
-  get grandTotal() {
-    return this.subTotal + this.gst;
-  }
+    // 🔹 Auto column width
+    worksheet.columns.forEach(column => {
+      column.width = 20;
+    });
 
-  downloadPDF(product: any) {
-    setTimeout(() => {
-      this.downloadPdf(product);
-    }, 1000);
-  }
-
-
-  downloadPdf(product: any) {
-    let value = this.receipts.map((item: any) => item.DCN == product?.DCN)
-    if (value[0] == true) {
-      console.log("Your Value Has been Matched:", value);
-      const customerName = product.customerName || "Customer";
-      let valu = this.receipts.filter((data: any) => data?.DCN == product?.DCN);
-      this.pdfUrl = valu[0].recieptUrl;
-      this.body = `
-        <p>Dear&nbsp;<strong>${customerName}</strong>,</p><p></p><p>Your&nbsp;DCN&nbsp;number&nbsp;is:&nbsp;<strong>12341</strong>.&nbsp;</p><p>Please&nbsp;download&nbsp;your&nbsp;receipt&nbsp;from&nbsp;the&nbsp;following&nbsp;link&nbsp;and&nbsp;complete&nbsp;the&nbsp;payment:&nbsp;</p><p><a href=\"${this.pdfUrl} \" rel=\"noopener noreferrer\" target=\"_blank\">${this.pdfUrl}&nbsp;</a></p><p>Thank&nbsp;you&nbsp;for&nbsp;your&nbsp;prompt&nbsp;attention.</p><p></p><p><strong>Best&nbsp;regards,</strong></p><p>Flash&nbsp;Biometric&nbsp;Centre&nbsp;</p>
-    `;
-
-
-    }
-    if (value[0] == false) {
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'pt',
-        format: 'a3',
-      });
-
-      const htmlData = document.getElementById('invoice');
-      if (!htmlData) {
-        console.error('HTML element not found');
-        return;
-      }
-
-      pdf.html(htmlData, {
-        margin: [23, 0, 70, 0],
-        html2canvas: {
-          logging: true,
-          letterRendering: true,
-        },
-        callback: (pdf) => {
-          const pdfBlob = pdf.output('blob');
-          const mimeType = 'application/pdf';
-          const fileName = 'ticket.pdf';
-
-          const fileObj = new File([pdfBlob], fileName, { type: mimeType });
-          const obj = {
-            fileName: fileName,
-            mimeType: mimeType
-          };
-
-          this.appService.getReportsFromS3(obj).subscribe({
-            next: (res: any) => {
-              const uploadUrl = res?.uploadUrl;
-              const fileUrl = res?.fileUrl;
-              this.uploadURL(uploadUrl, fileObj, fileUrl, product);
-            },
-            error: (err) => {
-              console.error('Error getting upload URL:', err);
-            }
-          });
-        }
-      });
-    }
-
-  }
-
-  dirctlyDownload() {
-    setTimeout(() => {
-      this.downloadDir()
-    }), 1000;
-  }
-  downloadDir() {
-    const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a3', });
-    const htmlData = document.getElementById('invoice');
-    if (htmlData) {
-      try {
-        pdf.html(htmlData, {
-          margin: [23, 0, 70, 0], callback: (pdf) => {
-
-            pdf.save('ticket.pdf');
-
-
-          },
-          html2canvas: { logging: true, letterRendering: true, },
-        });
-      } catch (error) { }
-    } else {
-    }
-  }
-
-  async uploadURL(uploadUrl: string, file: File, fileUrl: string, product: any) {
-    const obj = {
-      file: file,
-      uploadUrl: uploadUrl
-    };
-
-    this.appService.putReportsFromS3(obj).subscribe({
-      next: (res: any) => {
-        console.log('PDF uploaded to S3 successfully:', fileUrl);
-        this.pdfUrl = fileUrl;
-        const customerName = product.customerName || "Customer";
-        this.body = `
-        <p>Dear&nbsp;<strong>${customerName}</strong>,</p><p></p><p>Your&nbsp;DCN&nbsp;number&nbsp;is:&nbsp;<strong>12341</strong>.&nbsp;</p><p>Please&nbsp;download&nbsp;your&nbsp;receipt&nbsp;from&nbsp;the&nbsp;following&nbsp;link&nbsp;and&nbsp;complete&nbsp;the&nbsp;payment:&nbsp;</p><p><a href=\"${this.pdfUrl} \" rel=\"noopener noreferrer\" target=\"_blank\">${this.pdfUrl}&nbsp;</a></p><p>Thank&nbsp;you&nbsp;for&nbsp;your&nbsp;prompt&nbsp;attention.</p><p></p><p><strong>Best&nbsp;regards,</strong></p><p>Flash&nbsp;Biometric&nbsp;Centre&nbsp;</p>
-        `;
-        let data = {
-          DCN: product?.DCN,
-          recieptUrl: fileUrl
-        }
-        this.appService.addReciept(data)
-          .then((res: any) => {
-            console.log("This is Value:", res);
-            this.fetchReceipts();
-          })
-          .catch((err: any) => {
-            console.error("Error adding receipt:", err);
-          });
-
-        // Optional: send email here with fileUrl
-        // this.sendEmail(fileUrl);
-      },
-      error: (err) => {
-        console.error('Upload Error:', err);
-      }
+    // 🔹 Download Excel file
+    workbook.xlsx.writeBuffer().then((buffer: any) => {
+      const blob = new Blob(
+        [buffer],
+        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+      );
+      saveAs(blob, 'App_List.xlsx');
     });
   }
-
-
-
-  fetchReceipts() {
-    this.appService.getReceipts().subscribe({
-      next: res => {
-        this.receipts = res;
-        console.log('All receipts:', this.receipts);
-      },
-      error: err => console.error(err)
-    });
-  }
-
-
-
-
-  sendEmail() {
-    console.log("This is Email:", this.subject, "This is Body:", this.body);
-    this.appService.sendEmail({
-      to: 'mimran@codeteck.com',
-      subject: `${this.subject}`,
-      message: this.body,
-    }).subscribe((response: any) => {
-      console.log(response);
-    });
-  }
-
-  sendDialog() {
-    this.emailDilog = true;
-  }
-
 
 
 }

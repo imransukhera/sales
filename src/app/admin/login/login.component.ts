@@ -27,7 +27,7 @@ export class LoginComponent {
     const loggedIn = this.authService.login(this.username, this.password);
 
     if (loggedIn) {
-      this.router.navigate(['/admin/appointments']);
+      this.router.navigate(['/admin/dashboard']);
     } else {
       this.errorMsg = 'Invalid username or password!';
     }
