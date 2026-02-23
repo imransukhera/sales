@@ -1,9 +1,11 @@
 {
   "projects": {
-    "default": "fir-adm-1e34d"
+    "default": "erpsystem-70393",
+    "yes": "erpsystem-70393",
+    "n": "system-c3c5e"
   },
   "targets": {
-    "fir-adm-1e34d": {
+    "erpsystem-70393": {
       "hosting": {
         "app2": [
           "safeguard-app2"

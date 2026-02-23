@@ -1,6 +1,6 @@
 {
   "hosting": {
-     "site": "app3-site",
+     "site": "erpsystem-70393",
     "public": "dist/safeguard/browser",
     "ignore": [
       "firebase.json",

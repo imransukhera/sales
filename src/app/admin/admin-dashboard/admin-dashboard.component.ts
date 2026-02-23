@@ -1,16 +1,17 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterOutlet } from "@angular/router";
+import { Router, RouterModule, RouterOutlet } from "@angular/router";
 import { SidebarModule } from 'primeng/sidebar';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [RouterOutlet,SidebarModule],
+  imports: [RouterOutlet,SidebarModule,CommonModule,RouterModule],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.scss'
 })
 export class AdminDashboardComponent implements OnInit {
-
+showReportsSubMenu = false;
    menuActive = false;
   sidebarVisible2: boolean = false;
   toggleMenu() {
@@ -21,7 +22,11 @@ export class AdminDashboardComponent implements OnInit {
   locathostData: any;
   pdfdownload: any;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) {
+    if (this.router.url.includes('/reports')) {
+    this.showReportsSubMenu = true;
+  }
+  }
 
 
   ngOnInit() {
@@ -49,5 +54,21 @@ export class AdminDashboardComponent implements OnInit {
     localStorage.clear();
     this.router.navigate(['/admin/dashboard']);
   }
+   value3() {
+    localStorage.clear();
+    this.router.navigate(['/admin/NOC']);
+  }
+   value4() {
+    localStorage.clear();
+    this.router.navigate(['/admin/Reports']);
+  }
+   value5() {
+    localStorage.clear();
+    this.router.navigate(['/admin/All-Reports']);
+  }
+
+  toggleReports() {
+  this.showReportsSubMenu = !this.showReportsSubMenu;
+}
 
 }

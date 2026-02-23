@@ -1,45 +1,79 @@
 <div class="dashboard-container">
 
-    <!-- HEADER -->
-    <header class="dashboard-header">
-        <div class="logo">My Admin</div>
+  <!-- HEADER -->
+  <header class="dashboard-header">
+    <div class="logo">My Admin</div>
 
-        <div class="flex">
-            <button class="logout-btn" (click)="logout()">
-                Logout
-            </button>
-            <div class="align-items-center flex lg:hidden block" (click)="sidebarVisible2 = true">
-                <i class="pi pi-ellipsis-v"></i>
-            </div>
-        </div>
-
-    </header>
-
-    <div class="dashboard-body">
-        <!-- SIDE NAVIGATION -->
-        <nav class="sidebar lg:block hidden">
-            <ul>
-                <li (click)="value2()" class="sidebar1" routerLinkActive="active">Dashboard</li>
-                <li (click)="value()" class="sidebar1 mt-2" routerLinkActive="active">Add Imports</li>
-                <li (click)="value1()" class="sidebar1 mt-2" routerLinkActive="active">Add Exports</li>
-            </ul>
-        </nav>
-        <!-- MAIN CONTENT -->
-        <main class="content-area">
-            <router-outlet></router-outlet>
-        </main>
+    <div class="flex">
+      <button class="logout-btn" (click)="logout()">
+        Logout
+      </button>
+      <div class="align-items-center flex lg:hidden block" (click)="sidebarVisible2 = true">
+        <i class="pi pi-ellipsis-v"></i>
+      </div>
     </div>
+
+  </header>
+
+  <div class="dashboard-body">
+    <!-- SIDE NAVIGATION -->
+    <nav class="sidebar lg:block hidden">
+      <ul>
+        <li class="sidebar1" routerLink="/admin/dashboard" routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }">
+          Dashboard
+        </li>
+
+        <li class="sidebar1 mt-2" routerLink="/admin/imports" routerLinkActive="active">
+          Import GDs
+        </li>
+
+        <li class="sidebar1 mt-2" routerLink="/admin/exports" routerLinkActive="active">
+          Export GDs
+        </li>
+
+
+
+        <!-- Parent -->
+        <li class="sidebar1 mt-2 flex justify-between items-center cursor-pointer" (click)="toggleReports()">
+          All Reports
+          <span class="pl-3">{{ showReportsSubMenu ? '▾' : '▸' }}</span>
+        </li>
+
+        <!-- Sub Menu -->
+        <ul *ngIf="showReportsSubMenu" class="ml-4 mt-2">
+          <li class="sidebar1 mt-2" routerLink="/admin/NOC" routerLinkActive="active">
+            NOC
+          </li>
+          <li class="sidebar1 mt-1" routerLink="/admin/Reports" routerLinkActive="active">
+            Ledger Report
+          </li>
+
+          <li class="sidebar1 mt-1" routerLink="/admin/All-Reports" routerLinkActive="active">
+            All Reports
+          </li>
+        </ul>
+      </ul>
+
+
+    </nav>
+    <!-- MAIN CONTENT -->
+    <main class="content-area">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
 
 
 </div>
 
 
 <p-sidebar [(visible)]="sidebarVisible2" position="right">
-    <ul>
-        <li (click)="value()" class="sidebar p-2 bg-white" style="color: black;" routerLinkActive="active">Appointments
-        </li>
-        <li (click)="value1()" class="sidebar mt-2 p-2 bg-white" style="color: black;" routerLinkActive="active">Contact Page
-        </li>
-    </ul>
+  <ul>
+    <li (click)="value()" class="sidebar p-2 bg-white" style="color: black;" routerLinkActive="active">Appointments
+    </li>
+    <li (click)="value1()" class="sidebar mt-2 p-2 bg-white" style="color: black;" routerLinkActive="active">Contact
+      Page
+    </li>
+  </ul>
 
 </p-sidebar>

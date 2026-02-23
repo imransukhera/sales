@@ -13,19 +13,21 @@ import { CalendarModule } from 'primeng/calendar';
 import * as XLSX from 'xlsx';
 
 @Component({
-  selector: 'app-contact-data',
+  selector: 'app-reports',
   standalone: true,
-  imports: [CommonModule, DialogModule, ReactiveFormsModule, DropdownModule, ToastModule, FormsModule, TableModule, CalendarModule],
-  templateUrl: './contact-data.component.html',
-  styleUrl: './contact-data.component.scss'
+    imports: [CommonModule, DialogModule, ReactiveFormsModule, DropdownModule, ToastModule, FormsModule, TableModule, CalendarModule],
+  
+  templateUrl: './reports.component.html',
+  styleUrl: './reports.component.scss'
 })
-export class ContactDataComponent {
+export class ReportsComponent {
+  qtyValue:any;
   receipts: any;
   uplloadDailog: boolean = false;
   importDateRange: any;
   UnitValue: any;
   filteredList: any;
-
+ImportHSCode:any;
   pdfUrl: any;
   subject: any = 'J-Invoice Generated – TCN Details';
   body: any;
@@ -33,7 +35,6 @@ export class ContactDataComponent {
   text: string | undefined;
   @ViewChild('invoice', { static: false }) invoice!: ElementRef;
   appList: any;
-appData:any;
   visible: boolean = false;
   emailDilog: boolean = false;
   balanceFrozen: boolean = false;
@@ -42,8 +43,10 @@ appData:any;
   appointment: any;
   DCNNumber: any;
   isEditMode = false;
-  impoortHS_Code: any;
-  dataFilter: any;
+  dataFilter:any;
+  impoortHS_Code:any;
+  exportHsCode:any;
+
   statusArray: any = [
     {
       status: 'Garments'
@@ -59,22 +62,9 @@ appData:any;
     }
   ]
 
-  UOM: any = [
-    {
-      status: 'Yards'
-    },
-    {
-      status: 'Mm'
-    },
-    {
-      status: 'GSM'
-    },
-    {
-      status: 'All'
-    }
-  ]
-
   data: any;
+
+  product:any;
 
   constructor(private appService: FirestoreService, private fb: FormBuilder, private appointmentService: FirestoreService, private messageService: MessageService,
     private primengConfig: PrimeNGConfig
@@ -99,7 +89,6 @@ appData:any;
       rate: [0, Validators.required],
       Amount: [0, Validators.required],
       HS_Code: ['', Validators.required],
-      impoortHS_Code: ['', Validators.required],
       id: [''],
     });
 
@@ -169,11 +158,6 @@ appData:any;
     this.appService.getExports().subscribe({
       next: (res: any) => {
         this.appList = res;
-        this.appData = res.filter(
-          (item: any, index: any, self: any) =>
-            index === self.findIndex((t: any) => t.importID === item.importID)
-        );
-        this.filteredList = res;
         console.log("appList", this.appList);
 
       }
@@ -201,7 +185,7 @@ appData:any;
       unit: appointment.unit,
       orderNumber: appointment.orderNumber,
       HS_Code: appointment.HS_Code,
-      impoortHS_Code: appointment.impoortHS_Code,
+      importHS_Code: appointment.importHS_Code,
       analysisCard: appointment.analysisCard,
     });
   }
@@ -274,18 +258,18 @@ appData:any;
     let value = this.editForm.value;
 
     // FIX: Check for duplicates EXCEPT for the record with the current ID
-    // const isDuplicate = this.appList.some((data: any) =>
-    //   data?.GD_Invoice === value?.GD_Invoice && data?.id !== value?.id
-    // );
+    const isDuplicate = this.appList.some((data: any) =>
+      data?.GD_Invoice === value?.GD_Invoice && data?.id !== value?.id
+    );
 
-    // if (isDuplicate) {
-    //   this.messageService.add({
-    //     severity: 'error',
-    //     summary: 'Duplicated',
-    //     detail: 'This GD number already exists in another record.'
-    //   });
-    //   return;
-    // }
+    if (isDuplicate) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Duplicated',
+        detail: 'This GD number already exists in another record.'
+      });
+      return;
+    }
 
     this.visible = false;
     this.appointmentService
@@ -350,119 +334,105 @@ appData:any;
 
 
   exportToExcel() {
-
-    console.log("appList", this.appList);
-
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('App List');
-
-    // 🔹 Complete Table Headers
-    worksheet.addRow([
-
-      'Vendor',
-      'Export GD',
-      'Order Number',
-      'Import GD',
-      'Date of Export',
-      'Export HS Code',
-      'Import HS Code',
-      'Date Of Consumption',
-      'Analysis Card',
-      'UOM',
-      'Type Of Export',
-      'Qty',
-      'FYC',
-      'Amount'
-    ]);
-
-    // 🔹 Header Styling
-    worksheet.getRow(1).eachCell(cell => {
-      cell.font = { bold: true };
-      cell.alignment = { vertical: 'middle', horizontal: 'center' };
-      cell.border = {
-        top: { style: 'thin' },
-        left: { style: 'thin' },
-        bottom: { style: 'thin' },
-        right: { style: 'thin' }
-      };
-    });
-
-    // 🔹 Table Data
-    this.appList.forEach((item: any, index: number) => {
+  
+      console.log("appList", this.filteredList);
+  
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('App List');
+  
+      // 🔹 Complete Table Headers
       worksheet.addRow([
-        item.vendor,
-        item.GD_Invoice,
-        item.orderNumber,
-        item.importID,
-        item.dateOfExport,
-        item.HS_Code,
-        item.impoortHS_Code,
-        item.dateOfConsumption,
-        item.analysisCard,
-        item.unit,
-        item.type_Of_Export,
-        item.qty,
-        item.rate,
-        item.Amount
-
+        'Vendor',
+        'Export GD',
+        'Order Number',
+        'Import GD',
+        'Date of Export',
+        'HS Code',
+        'Date Of Consumption',
+        'Analysis Card',
+        'UOM',
+        'Type Of Export',
+        'Qty',
+        'FYC',
+        'Amount',
+        'Balance'
       ]);
-    });
-
-    // 🔹 Auto Column Width
-    worksheet.columns.forEach(column => {
-      column.width = 18;
-    });
-
-    // 🔹 Download Excel
-    workbook.xlsx.writeBuffer().then((buffer: any) => {
-      const blob = new Blob(
-        [buffer],
-        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
-      );
-      saveAs(blob, 'Export-data.xlsx');
-    });
-  }
+  
+      // 🔹 Header Styling
+      worksheet.getRow(1).eachCell(cell => {
+        cell.font = { bold: true };
+        cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+      });
+  
+      // 🔹 Table Data
+      this.filteredList.forEach((item: any, index: number) => {
+        worksheet.addRow([
+          item.vendor,
+          item.GD_Invoice,
+          item.orderNumber,
+          item.importID,
+          item.dateOfExport,
+          item.HS_Code,
+          item.dateOfConsumption,
+          item.analysisCard,
+          item.unit,
+          item.type_Of_Export,
+          item.qty,
+          item.rate,
+          item.Amount,
+          this.qtyValue[0]?.qty - item?.qty
+        ]);
+      });
+  
+      // 🔹 Auto Column Width
+      worksheet.columns.forEach(column => {
+        column.width = 18;
+      });
+  
+      // 🔹 Download Excel
+      workbook.xlsx.writeBuffer().then((buffer: any) => {
+        const blob = new Blob(
+          [buffer],
+          { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+        );
+        saveAs(blob, 'Leture-Report.xlsx');
+      });
+    }
 
 
   search() {
-    console.log("importDateRange", this.importDateRange);
+  console.log(
+    "Search Values:",this.exportHsCode,
+    this.StatusValue,      // importID
+    this.ImportHSCode,     // importHS-Code
+    this.appList
+  );
 
-    this.appList = this.filteredList.filter((item: any) => {
-      // Parse dateOfImport as local date (avoid timezone issues)
-      const importParts = item.dateOfExport.split('-'); // ["2026", "02", "03"]
-      const importDate = new Date(
-        +importParts[0],          // year
-        +importParts[1] - 1,      // month is 0-based
-        +importParts[2]            // day
-      );
+  this.filteredList = this.appList.filter((item: any) =>
+    item.importID === this.StatusValue &&
+    item.impoortHS_Code === this.ImportHSCode
+  );
 
-      const isGDMatch = !this.StatusValue || item.GD_Invoice === this.StatusValue;
-      const isHSMatch = !this.UnitValue || item.HS_Code === this.UnitValue;
+  this.qtyValue = this.exportHsCode.filter((item: any) =>
+    item.importID === this.StatusValue &&
+    item.HS_Code === this.ImportHSCode
+  );
 
-      let isDateMatch = true;
-      if (this.importDateRange && this.importDateRange.length === 2) {
-        let [start, end] = this.importDateRange;
-
-        // Normalize start/end to 0:00
-        start = new Date(start.getFullYear(), start.getMonth(), start.getDate());
-        end = new Date(end.getFullYear(), end.getMonth(), end.getDate());
-
-        // Compare inclusive
-        isDateMatch = importDate >= start && importDate <= end;
-      }
-
-      return isGDMatch && isHSMatch && isDateMatch;
-    });
-
-    console.log('Filtered List:', this.appList);
-  }
+  console.log('Filtered List:', this.filteredList,this.qtyValue);
+}
 
 
   resetFilters() {
     this.StatusValue = null;
     this.UnitValue = null;
     this.importDateRange = null;
-    this.appList = this.filteredList;
+    this.filteredList = this.product;
   }
 
 
@@ -498,32 +468,28 @@ appData:any;
 
       const payload = {
         vendor: row['Vendor'] || '',
-        GD_Invoice: row['Export GD'] || '',
+        GD_Invoice: row['Export GDs'] || '',
         orderNumber: row['Order Number'] || '',
-        importID: row['Import GD'] || '',
-        impoortHS_Code: row['Import HS Code'] || '',
-        dateOfExport: this.excelDateToJSDate(row['Date of Export']),
-        dateOfConsumption: this.excelDateToJSDate(row['Date Of Consumption']),
+        importID: row['Import GDs'] || '',
         HS_Code: row['HS Code'] || '',
-        
-        analysisCard: row['Analysis Card'] || '',
-        unit: row['UOM'] || '',
+        dateOfExport: row['Date of Export'] || '',
         type_Of_Export: row['Type Of Export'] || '',
+        dateOfConsumption: row['Date Of Consumption'] || '',
+        unit: row['Unit'] || '',
+        analysisCard: row['Analysis Card'] || '',
         qty: row['Qty'] || '',
-        rate: row['FYC'] || '',
+        rate: row['Rate'] || '',
         Amount: row['Amount'] || '',
       };
 
-      console.log("payload",payload)
-
       // 🔹 Duplicate check
-      // const isDuplicate = this.appList.some(
-      //   (item: any) => item.importID === payload.importID
-      // );
+      const isDuplicate = this.appList.some(
+        (item: any) => item.importID === payload.importID
+      );
 
-      // if (!isDuplicate) {
-      await this.appointmentService.addExport(payload);
-      // }
+      if (!isDuplicate) {
+        await this.appointmentService.addExport(payload);
+      }
     }
 
     this.messageService.add({
@@ -531,30 +497,7 @@ appData:any;
       summary: 'Uploaded',
       detail: 'All Excel entries imported successfully'
     });
-
     this.uplloadDailog = false;
-  }
-
-
-
-  excelDateToJSDate(excelDate: any): string {
-    if (!excelDate) return '';
-
-    // If already a Date object
-    if (excelDate instanceof Date) {
-      return excelDate.toISOString().split('T')[0];
-    }
-
-    // If Excel serial number
-    if (typeof excelDate === 'number') {
-      const utc_days = Math.floor(excelDate - 25569);
-      const utc_value = utc_days * 86400;
-      const date_info = new Date(utc_value * 1000);
-
-      return date_info.toISOString().split('T')[0]; // YYYY-MM-DD
-    }
-
-    return excelDate;
   }
 
 
@@ -568,9 +511,8 @@ appData:any;
   filterdata(filterdata: any) {
 
     let value = this.dataFilter?.filter((data: any) => data?.importID === filterdata?.value);
-    this.impoortHS_Code = value;
+    this.exportHsCode = value;
     console.log("filterdata:", value);
   }
 
 }
-

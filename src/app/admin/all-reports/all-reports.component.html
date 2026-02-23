@@ -1,0 +1,107 @@
+<div class="card">
+    <div class="flex justify-content-between">
+        <div>
+            <h2>All Reports</h2>
+        </div>
+        <div class="flex pb-4">
+            <div class="flex ">
+
+                <!-- Date Range Picker -->
+                <div class="mr-2">
+                    <p-calendar [(ngModel)]="importDateRange" selectionMode="range" dateFormat="yy-mm-dd"
+                        placeholder="Date Range" [showIcon]="true" [readonlyInput]="true">
+                    </p-calendar>
+                </div>
+
+                <!-- Buttons -->
+                <button class="px-3 py-2 border-round-lg button text-white mr-2" style="height: 40px;"
+                    (click)="search()">
+                    Search
+                </button>
+
+                <button class="px-3 py-2 border-round-lg button text-white mr-2" style="height: 40px;"
+                    (click)="resetFilters()">
+                    Clear
+                </button>
+            </div>
+            <button class="px-3 py-2 border-round-lg button text-white mx-2" style="height: 40px;"
+                (click)="exportToExcel()" > <i
+                    class="pi pi-download cursor-pointer "></i></button>
+
+        </div>
+    </div>
+
+
+    <p-table [value]="appList" class="styled-table" [tableStyle]="{ 'min-width': '50rem' }" [scrollable]="true"
+        scrollHeight="400px">
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="max-w-14rem">Sr.No</th>
+                <th class="w-10rem">Vendor</th>
+                <th style="min-width: 10rem;">Export GD</th>
+                <th style="min-width: 10rem;">Order Number</th>
+                <th style="min-width: 10rem;">Import GD</th>
+                <th style="min-width: 10rem;">Date of Export</th>
+                <th style="min-width: 10rem;">HS Code</th>
+                <th style="min-width: 10rem;">Date Of Consumption</th>
+                
+                <th style="min-width: 10rem;">Anlysis Card</th>
+                <th style="min-width: 10rem;">UOM</th>
+                <th style="min-width: 10rem;">Type Of Export</th>
+                <th style="min-width: 10rem;">Qty</th>
+                <th style="min-width: 10rem;">FYC</th>
+                <th style="min-width: 10rem;">Amount</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-product let-rowIndex="rowIndex" [scrollable]="true" scrollHeight="400px">
+            <tr>
+                <td >
+                    <div class="min-w-4rem">
+                        {{ rowIndex + 1}}
+                    </div>
+                <td class="min-w-10rem">
+                    <div class="min-w-10rem">{{ product?.vendor}}</div>
+                </td>
+                <td class="min-w-15rem">
+                    <div class="min-w-15rem">{{ product?.GD_Invoice }}</div>
+                </td>
+                <td class="w-15rem">
+                    <div class="w-15rem">{{ product?.orderNumber }}</div>
+                </td>
+                <td class="w-15rem">
+                    <div class="w-15rem">{{ product?.importID }}</div>
+                </td>
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product?.dateOfExport }}</div>
+                </td>
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product?.HS_Code }}</div>
+                </td>
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product?.dateOfConsumption }}</div>
+                </td>
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product?.analysisCard }}</div>
+                </td>
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product?.unit }}</div>
+                </td>
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product?.type_Of_Export }}</div>
+                </td>
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product?.qty }}</div>
+                </td>
+                <td class="w-15rem">
+                    <div class="w-15rem">{{ product?.rate }}</div>
+                </td>
+                <td class="w-15rem">
+                    <div class="w-15rem">{{ product?.Amount }}</div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-toast customClass="my-custom-toast"></p-toast>

@@ -1,87 +1,146 @@
-<div class="card">
+<div class="card" style="height: calc(85vh - 50px) !important">
     <div class="flex justify-content-between">
         <div>
             <h2>Export / Consumption</h2>
         </div>
-        <div>
-            <button class="px-3 py-2 border-round-lg button text-white" (click)="visible = true"><span>Add Export /
-                    Consumption</span></button>
+        <div class="flex pb-4">
+            <div class="flex ">
+                <!-- GD Invoice Dropdown -->
+                <div class="mr-2">
+                    <p-dropdown [options]="appData" optionLabel="GD_Invoice" optionValue="GD_Invoice"
+                        [(ngModel)]="StatusValue" placeholder="Export GD" [filter]="true">
+                    </p-dropdown>
+                </div>
+
+                <div class="mr-2">
+                    <p-dropdown [options]="appData" optionLabel="HS_Code" optionValue="HS_Code"
+                        [(ngModel)]="StatusValue" placeholder="HS_Code" [filter]="true">
+                    </p-dropdown>
+                </div>
+
+                <!-- Date Range Picker -->
+                <div class="mr-2">
+                    <p-calendar [(ngModel)]="importDateRange" selectionMode="range" dateFormat="yy-mm-dd"
+                        placeholder="Date Range" [showIcon]="true" [readonlyInput]="true">
+                    </p-calendar>
+                </div>
+
+                <!-- Buttons -->
+                <button class="px-3 py-2 border-round-lg button text-white mr-2" style="height: 40px;"
+                    (click)="search()">
+                    Search
+                </button>
+
+                <button class="px-3 py-2 border-round-lg button text-white mr-2" style="height: 40px;"
+                    (click)="resetFilters()">
+                    Clear
+                </button>
+            </div>
+
+            <button class="px-3 py-2 border-round-lg button text-white" style="height: 40px;"
+                (click)="visible = true"><span>Add Export</span></button>
+            <button class="px-3 py-2 border-round-lg button text-white mx-2" style="height: 40px;"
+                (click)="exportToExcel()"> <i class="pi pi-download cursor-pointer "></i></button>
+            <button class="px-3 py-2 border-round-lg button text-white " style="height: 40px;"
+                (click)="uplloadDailog = true"> <i class="pi pi-upload cursor-pointer "></i></button>
+
         </div>
     </div>
 
+    <div >
+        <p-table [value]="appList" class="styled-table " [tableStyle]="{ 'min-width': '50rem' }"  scrollHeight="calc(95vh - 150px)"
+            [responsive]="true">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="max-w-14rem">Sr.No</th>
+                    <th class="w-10rem">Vendor</th>
+                    <th style="min-width: 10rem;">Export GD</th>
+                    <th style="min-width: 10rem;">Order Number</th>
+                    <th style="min-width: 10rem;">Import GD</th>
+                    <th style="min-width: 10rem;">Date of Export</th>
+                    <th style="min-width: 10rem;">Export HS Code </th>
+                     <th style="min-width: 10rem;">Import HS Code </th>
+                    <th style="min-width: 10rem;">Date Of Consumption</th>
 
-    <p-table [value]="appList" class="styled-table" [tableStyle]="{ 'min-width': '50rem' }" [scrollable]="true"
-        scrollHeight="400px">
-        <ng-template pTemplate="header">
-            <tr>
-                <th class="max-w-14rem">Sr.No</th>
-                <th class="w-10rem">Vendor</th>
-                <th class="w-15rem">GD Number</th>
-                <th class="w-15rem">GD Invoice (Import ID)</th>
-                <th class="w-10rem">Date of Export</th>
-                <th class="w-10rem">Date Of Consumption</th>
-                <th class="w-10rem">Type Of Export</th>
-                <th class="w-10rem">Qty</th>
-                <th class="w-15rem">Rate</th>
-                <th class="w-15rem">Total</th>
-                <th pFrozenColumn alignFrozen="right" class="text-center">Action</th>
-            </tr>
-        </ng-template>
+                    <th style="min-width: 10rem;">Anlysis Card</th>
+                    <th style="min-width: 10rem;">UOM</th>
+                    <th style="min-width: 10rem;">Type Of Export</th>
+                    <th style="min-width: 10rem;">Qty</th>
+                    <th style="min-width: 10rem;">FYC</th>
+                    <th style="min-width: 10rem;">Amount</th>
+                    <th pFrozenColumn alignFrozen="right" class="text-center">Action</th>
+                </tr>
+            </ng-template>
 
-        <ng-template pTemplate="body" let-product let-rowIndex="rowIndex" [scrollable]="true" scrollHeight="400px">
-            <tr>
-                <td class="max-w-14rem">
-                    <div class="w-4rem">
-                        {{ rowIndex + 1}}
-                    </div>
-                <td class="w-10rem">
-                    <div class="w-10rem">{{ product?.vendor}}</div>
-                </td>
-                <td class="w-15rem">
-                    <div class="w-15rem">{{ product?.GD_Invoice }}</div>
-                </td>
-                <td class="w-15rem">
-                    <div class="w-15rem">{{ product?.importID }}</div>
-                </td>
-                <td class="w-10rem">
-                    <div class="w-10rem">{{ product?.dateOfExport }}</div>
-                </td>
-                <td class="w-10rem">
-                    <div class="w-10rem">{{ product?.dateOfConsumption }}</div>
-                </td>
-                <td class="w-10rem">
-                    <div class="w-10rem">{{ product?.type_Of_Export }}</div>
-                </td>
-                <td class="w-10rem">
-                    <div class="w-10rem">{{ product?.qty }}</div>
-                </td>
-                <td class="w-15rem">
-                    <div class="w-15rem">{{ product?.rate }}</div>
-                </td>
-                <td class="w-15rem">
-                    <div class="w-15rem">{{ product?.total }}</div>
-                </td>
-                <td class="w-20rem" pFrozenColumn alignFrozen="right">
-                    <div class="flex w-5rem text-center m-auto justify-content-center gap-2 ">
-                        <i class="pi pi-file-edit pl-2 cursor-pointer " pTooltip="Download Import"
-                            (click)="openEditDialog(product);" tooltipPosition="bottom"></i>
-                        <i class="pi pi-trash pl-2 cursor-pointer text-red-500" pTooltip="Download Import"
-                            (click)="deleteValue(product?.id);" tooltipPosition="bottom"></i>
-                        <i class="pi pi-download pl-2 cursor-pointer " pTooltip="Download Import"
-                            (click)="exportToExcel(product);" tooltipPosition="bottom"></i>
-                    </div>
-                </td>
-            </tr>
-        </ng-template>
-    </p-table>
+            <ng-template pTemplate="body" let-product let-rowIndex="rowIndex">
+                <tr>
+                    <td>
+                        <div class="min-w-4rem">
+                            {{ rowIndex + 1}}
+                        </div>
+                    <td class="min-w-10rem">
+                        <div class="min-w-10rem">{{ product?.vendor}}</div>
+                    </td>
+                    <td class="min-w-15rem">
+                        <div class="min-w-15rem">{{ product?.GD_Invoice }}</div>
+                    </td>
+                    <td class="w-15rem">
+                        <div class="w-15rem">{{ product?.orderNumber }}</div>
+                    </td>
+                    <td class="w-15rem">
+                        <div class="w-15rem">{{ product?.importID }}</div>
+                    </td>
+                    <td class="w-10rem">
+                        <div class="w-10rem">{{ product?.dateOfExport }}</div>
+                    </td>
+                    <td class="w-10rem">
+                        <div class="w-10rem">{{ product?.HS_Code }}</div>
+                    </td>
+                    <td class="w-10rem">
+                        <div class="w-10rem">{{ product?.impoortHS_Code }}</div>
+                    </td>
+                    <td class="w-10rem">
+                        <div class="w-10rem">{{ product?.dateOfConsumption }}</div>
+                    </td>
+                    <td class="w-10rem">
+                        <div class="w-10rem">{{ product?.analysisCard }}</div>
+                    </td>
+                    <td class="w-10rem">
+                        <div class="w-10rem">{{ product?.unit }}</div>
+                    </td>
+                    <td class="w-10rem">
+                        <div class="w-10rem">{{ product?.type_Of_Export }}</div>
+                    </td>
+                    <td class="w-10rem">
+                        <div class="w-10rem">{{ product?.qty }}</div>
+                    </td>
+                    <td class="w-15rem">
+                        <div class="w-15rem">{{ product?.rate }}</div>
+                    </td>
+                    <td class="w-15rem">
+                        <div class="w-15rem">{{ product?.Amount }}</div>
+                    </td>
+                    <td class="w-20rem" pFrozenColumn alignFrozen="right">
+                        <div class="flex w-5rem text-center m-auto justify-content-center gap-2 ">
+                            <i class="pi pi-file-edit pl-2 cursor-pointer " (click)="openEditDialog(product);"></i>
+                            <i class="pi pi-trash pl-2 cursor-pointer text-red-500"
+                                (click)="deleteValue(product?.id);"></i>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
 </div>
 
-<p-dialog header="Add Export / Consumption" [modal]="true" [(visible)]="visible" [style]="{ width: '30rem' }" (onHide)="closeDialog()">
+<p-dialog header="Add Export / Consumption" [modal]="true" [(visible)]="visible" [style]="{ width: '30rem' }"
+    (onHide)="closeDialog()">
     <form [formGroup]="editForm">
 
         <!-- Name -->
         <div class="py-2">
-            <label>Vendor <span class="text-red-500">*</span></label>
+            <label>Customer Name </label>
             <input type="text" class="w-full p-inputtext" formControlName="vendor">
 
             <small *ngIf="editForm.get('vendor')?.touched && editForm.get('vendor')?.invalid" class="p-error">
@@ -91,21 +150,44 @@
 
         <!-- Service Name -->
         <div class="py-2">
-            <label>Export Invoice / Invoice Number (Export ID)<span class="text-red-500">*</span></label>
+            <label>Export GDs</label>
             <input type="text" class="w-full p-inputtext" formControlName="GD_Invoice">
 
             <small *ngIf="editForm.get('GD_Invoice')?.touched && editForm.get('GD_Invoice')?.invalid" class="p-error">
-                GD Number / Invoice Number / Reference (Export ID)
+                Export GDs
             </small>
         </div>
 
         <!-- Service Name -->
         <div class="py-2">
-            <label>GD Invoice / Invoice Number (Import ID)<span class="text-red-500">*</span></label>
-            <input type="text" class="w-full p-inputtext" formControlName="importID">
+            <label>Order Number<span class="text-red-500">*</span></label>
+            <input type="text" class="w-full p-inputtext" formControlName="orderNumber">
 
-            <small *ngIf="editForm.get('importID')?.touched && editForm.get('importID')?.invalid" class="p-error">
-                GD Invoice / Invoice Number / Reference (Import ID)
+            <small *ngIf="editForm.get('orderNumber')?.touched && editForm.get('orderNumber')?.invalid" class="p-error">
+                Order Number is required
+            </small>
+        </div>
+
+        <!-- Service Name -->
+        <div class="py-2">
+            <label>Import GDs<span class="text-red-500">*</span></label>
+            <div class="pt-2">
+                <p-dropdown [options]="allImports" optionLabel="importID" optionValue="importID" (onChange)="filterdata($event)"
+                    formControlName="importID" filter="true" placeholder="Select GD Invoice"></p-dropdown>
+                <small *ngIf="editForm.get('importID')?.touched && editForm.get('importID')?.invalid" class="p-error">
+                    Import GDs is required.
+                </small>
+            </div>
+        </div>
+
+         <!-- Date -->
+        <div class="py-2">
+            <label>Import HS Code <span class="text-red-500">*</span></label>
+             <p-dropdown [options]="impoortHS_Code" optionLabel="HS_Code" optionValue="HS_Code" formControlName="impoortHS_Code"
+                    placeholder="Select a Import Hs Code"></p-dropdown>
+
+            <small *ngIf="editForm.get('impoortHS_Code')?.touched && editForm.get('impoortHS_Code')?.invalid" class="p-error">
+                Import Hs Code is required.
             </small>
         </div>
 
@@ -132,16 +214,52 @@
             </small>
         </div>
 
+        <!-- Date -->
+        <div class="py-2">
+            <label>Anlysis Card <span class="text-red-500">*</span></label>
+            <input type="text" class="w-full p-inputtext" formControlName="analysisCard">
+
+            <small *ngIf="editForm.get('analysisCard')?.touched && editForm.get('analysisCard')?.invalid"
+                class="p-error">
+                Anlysis Card is required.
+            </small>
+        </div>
+
+        <!-- Date -->
+        <div class="py-2">
+            <label>Export HS Code <span class="text-red-500">*</span></label>
+            <input type="text" class="w-full p-inputtext" formControlName="HS_Code">
+
+            <small *ngIf="editForm.get('HS_Code')?.touched && editForm.get('HS_Code')?.invalid" class="p-error">
+                HS Code is required.
+            </small>
+        </div>
+       
+
+        <div class="py-2">
+            <label>Unit of Material <span class="text-red-500">*</span></label>
+            <!-- <input type="text" class="w-full p-inputtext" formControlName="status"> -->
+            <div class="pt-2">
+                <p-dropdown [options]="UOM" optionLabel="status" optionValue="status" formControlName="unit"
+                    placeholder="Select a Unit of Material"></p-dropdown>
+                <small *ngIf="editForm.get('unit')?.touched && editForm.get('unit')?.invalid" class="p-error">
+                    Unit of Material is required.
+                </small>
+            </div>
+            <small *ngIf="editForm.get('unit')?.touched && editForm.get('unit')?.invalid" class="p-error">
+                Unit of Material is required.
+            </small>
+        </div>
+
         <div class="py-2">
             <label>Type of Export <span class="text-red-500">*</span></label>
             <!-- <input type="text" class="w-full p-inputtext" formControlName="status"> -->
             <div class="pt-2">
                 <p-dropdown [options]="statusArray" optionLabel="status" optionValue="status"
-                    formControlName="type_Of_Export" [(ngModel)]="StatusValue"
-                    placeholder="Select a Type of Export"></p-dropdown>
+                    formControlName="type_Of_Export" placeholder="Select a Type of Export"></p-dropdown>
                 <small *ngIf="editForm.get('type_Of_Export')?.touched && editForm.get('type_Of_Export')?.invalid"
                     class="p-error">
-                    Status is required.
+                    Type of Export is required.
                 </small>
             </div>
             <small *ngIf="editForm.get('type_Of_Export')?.touched && editForm.get('type_Of_Export')?.invalid"
@@ -163,7 +281,7 @@
 
         <!-- Date -->
         <div class="py-2">
-            <label>Rate <span class="text-red-500">*</span></label>
+            <label>FYC <span class="text-red-500">*</span></label>
             <input type="text" class="w-full p-inputtext" formControlName="rate">
 
             <small *ngIf="editForm.get('rate')?.touched && editForm.get('rate')?.invalid" class="p-error">
@@ -173,11 +291,11 @@
 
         <!-- Date -->
         <div class="py-2">
-            <label>Total <span class="text-red-500">*</span></label>
-            <input type="text" class="w-full p-inputtext" formControlName="total">
+            <label>Amount <span class="text-red-500">*</span></label>
+            <input type="text" class="w-full p-inputtext" formControlName="Amount">
 
-            <small *ngIf="editForm.get('total')?.touched && editForm.get('total')?.invalid" class="p-error">
-                Total is required.
+            <small *ngIf="editForm.get('toAmounttal')?.touched && editForm.get('Amount')?.invalid" class="p-error">
+                Amount is required.
             </small>
         </div>
 
@@ -191,6 +309,36 @@
         </div>
 
     </form>
+</p-dialog>
+
+
+<p-dialog header="Upload Excel Sheet" [modal]="true" [(visible)]="uplloadDailog" [style]="{ width: '32rem' }"
+    (onHide)="closeDialog()" [draggable]="false" [resizable]="false">
+
+    <div class="upload-container">
+
+        <!-- Sample File Section -->
+        <div class="sample-section">
+            <div class="sample-text">
+                <i class="pi pi-file-excel text-cyan-800"></i>
+                <span>Download Sample File</span>
+            </div>
+
+            <button pButton type="button" icon="pi pi-download" label="Download" class="p-button-sm  p-2"
+                (click)="downloadSampleFile()">
+            </button>
+        </div>
+
+
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <i class="pi pi-cloud-upload upload-icon"></i>
+            <p>Select Excel File to Upload</p>
+
+            <input type="file" (change)="onFileChange($event)" accept=".xlsx, .xls" class="file-input" />
+        </div>
+
+    </div>
 </p-dialog>
 
 

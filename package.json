@@ -27,7 +27,7 @@
     "chart.js": "^4.4.6",
     "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
-    "firebase": "^10.13.1",
+    "firebase": "^10.14.1",
     "flowbite": "^2.5.1",
     "jspdf": "^2.5.1",
     "ngx-toastr": "^19.0.0",
@@ -38,6 +38,7 @@
     "quill": "^2.0.3",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.14.3"
   },
   "devDependencies": {

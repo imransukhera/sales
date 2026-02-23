@@ -1,0 +1,183 @@
+<div class="card">
+    <div class="flex justify-content-between" style="align-items: center;">
+        <div>
+            <h2>NOC</h2>
+        </div>
+
+        <div class="flex pb-4">
+            <div class="flex ">
+                <!-- GD Invoice Dropdown -->
+                <div class="mr-2">
+                    <p-dropdown [options]="appList" optionLabel="importID" optionValue="importID"
+                        [(ngModel)]="StatusValue" placeholder="Select a Import GD" [filter]="true">
+                    </p-dropdown>
+                </div>
+
+                <!-- HS Code Dropdown -->
+                <div class="mr-2">
+                    <p-dropdown [options]="appList" optionLabel="HS_Code" optionValue="HS_Code" [(ngModel)]="UnitValue"
+                        placeholder="Select a HS Code" [filter]="true">
+                    </p-dropdown>
+                </div>
+
+                <!-- Date Range Picker -->
+                <div class="mr-2">
+                    <p-calendar [(ngModel)]="importDateRange" selectionMode="range" dateFormat="yy-mm-dd"
+                        placeholder="Select Import Date Range" [showIcon]="true" [readonlyInput]="true">
+                    </p-calendar>
+                </div>
+
+                <!-- Buttons -->
+                <button class="px-3 py-2 border-round-lg button text-white mr-2" style="height: 40px;"
+                    (click)="search()">
+                    Search
+                </button>
+
+                <button class="px-3 py-2 border-round-lg button text-white mr-2" style="height: 40px;"
+                    (click)="resetFilters()">
+                    Clear
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <p-table [value]="appList" class="styled-table" [tableStyle]="{ 'min-width': '50rem' }" [scrollable]="true">
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="max-w-14rem">Sr.No</th>
+                <th style="min-width: 10rem;">Vendor</th>
+                <th style="min-width: 10rem;"> Import GD</th>
+                <th style="min-width: 10rem;">Date of Import</th>
+                <th style="min-width: 10rem;">Date of Expiry</th>
+                 <th style="min-width: 10rem;">Date of Leture</th>
+                <th style="min-width: 10rem;">HS Code</th>
+                <th style="min-width: 10rem;">Type of Material </th>
+                <th style="min-width: 10rem;">Status</th>
+
+                <th pFrozenColumn alignFrozen="right" class="text-center">Action</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-product let-rowIndex="rowIndex" [scrollable]="true" scrollHeight="400px">
+            <tr>
+                <td class="max-w-14rem">
+                    <div class="w-4rem">
+                        {{ rowIndex + 1}}
+                    </div>
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product?.vendor}}</div>
+                </td>
+                <td class="w-15rem">
+                    <div class="w-15rem">{{ product?.importID }}</div>
+                </td>
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product?.dateOfImport }}</div>
+                </td>
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product?.dateOfExport }}</div>
+                </td>
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product?.dateOfApplied }}</div>
+                </td>
+
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product?.HS_Code }}</div>
+                </td>
+                <td class="w-10rem">
+                    <div class="w-10rem">{{ product?.type }}</div>
+                </td>
+
+                <td class="w-10rem">
+                    <span class="px-3 py-1 rounded-full text-white text-sm" [ngClass]="getStatusClass(product?.status)">
+                        {{ product?.status || 'Pending' }}
+                    </span>
+                </td>
+
+
+
+                <td class="w-20rem" pFrozenColumn alignFrozen="right">
+                    <div class="flex w-5rem text-center m-auto justify-content-center gap-2 ">
+                        <i class="pi pi-file-edit pl-2 cursor-pointer " (click)="openEditDialog(product);"></i>
+
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog header="Add Import / Purchases" [modal]="true" [(visible)]="visible" [style]="{ width: '30rem' }"
+    (onHide)="closeDialog()">
+    <form [formGroup]="editForm">
+
+        <!-- Vendor -->
+        <div class="py-2">
+            <label>Status</label>
+
+            <p-dropdown class="w-full" formControlName="status" [options]="statusOptions" placeholder="Select Status">
+            </p-dropdown>
+
+            <small *ngIf="editForm.get('status')?.touched && editForm.get('status')?.invalid" class="p-error">
+                Status is required
+            </small>
+        </div>
+
+
+        <!-- Date -->
+        <div class="py-2">
+            <label>Date of Expiry <span class="text-red-500">*</span></label>
+            <input type="date" class="w-full p-inputtext" formControlName="dateOfApplied">
+
+            <small *ngIf="editForm.get('dateOfApplied')?.touched && editForm.get('dateOfApplied')?.invalid"
+                class="p-error">
+                Date is required.
+            </small>
+        </div>
+
+        <div class="pb-4 flex justify-content-end pt-5">
+            <button *ngIf="!isEditMode" class="button text-white border-round-lg" (click)="submit()">
+                Submit
+            </button>
+            <button *ngIf="isEditMode" class="button text-white border-round-lg" (click)="update()">
+                Update
+            </button>
+        </div>
+
+    </form>
+</p-dialog>
+
+
+<p-dialog header="Upload Excel Sheet" [modal]="true" [(visible)]="uplloadDailog" [style]="{ width: '32rem' }"
+    (onHide)="closeDialog()" [draggable]="false" [resizable]="false">
+
+    <div class="upload-container">
+
+        <!-- Sample File Section -->
+        <div class="sample-section">
+            <div class="sample-text">
+                <i class="pi pi-file-excel text-cyan-800"></i>
+                <span>Download Sample File</span>
+            </div>
+
+            <button pButton type="button" icon="pi pi-download" label="Download" class="p-button-sm  p-2"
+                (click)="downloadSampleFile()">
+            </button>
+        </div>
+
+
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <i class="pi pi-cloud-upload upload-icon"></i>
+            <p>Select Excel File to Upload</p>
+
+            <input type="file" (change)="onFileChange($event)" accept=".xlsx, .xls" class="file-input" />
+        </div>
+
+    </div>
+</p-dialog>
+
+
+<p-toast customClass="my-custom-toast"></p-toast>

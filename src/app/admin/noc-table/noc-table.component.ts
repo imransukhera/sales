@@ -15,14 +15,14 @@ import { CalendarModule } from 'primeng/calendar';
 import * as XLSX from 'xlsx';
 
 @Component({
-  selector: 'app-appointments',
+  selector: 'app-noc-table',
   standalone: true,
-  imports: [CommonModule, DialogModule, EditorModule, ReactiveFormsModule, DropdownModule, ToastModule, TableModule, FormsModule, TooltipModule, CalendarModule],
-  providers: [MessageService],
-  templateUrl: './appointments.component.html',
-  styleUrl: './appointments.component.scss'
+    imports: [CommonModule, DialogModule, EditorModule, ReactiveFormsModule, DropdownModule, ToastModule, TableModule, FormsModule, TooltipModule, CalendarModule],
+
+  templateUrl: './noc-table.component.html',
+  styleUrl: './noc-table.component.scss'
 })
-export class AppointmentsComponent {
+export class NocTableComponent {
   receipts: any;
   importDateRange: any
   pdfUrl: any;
@@ -57,23 +57,13 @@ export class AppointmentsComponent {
     }
   ]
 
-  UOM: any = [
-    {
-      status: 'Yards'
-    },
-    {
-      status: 'Mm'
-    },
-    {
-      status: 'GSM'
-    },
-    {
-      status: 'All'
-    }
-  ]
-
   data: any;
   uplloadDailog: boolean = false;
+statusOptions = [
+  { label: 'Pending', value: 'Pending' },
+  { label: 'Availed', value: 'Availed' },
+  { label: 'Due', value: 'Due' }
+];
 
   constructor(private appService: FirestoreService, private fb: FormBuilder, private appointmentService: FirestoreService, private messageService: MessageService,
 
@@ -81,13 +71,15 @@ export class AppointmentsComponent {
     this.getEm();
   }
 
+
+
   ngOnInit() {
     this.editForm = this.fb.group({
       vendor: [''],
       importID: ['', Validators.required],
       dateOfImport: ['', Validators.required],
-      dateOfExport: [''],
-      dateOfApplied: [''],
+      dateOfExport: ['', Validators.required],
+      dateOfApplied:[''],
       HS_Code: ['', Validators.required],
       Sales_Tax: [0, Validators.required],
       Custom_Duty: [0, Validators.required],
@@ -100,7 +92,7 @@ export class AppointmentsComponent {
       rate: [0, Validators.required],
       total: [0, Validators.required],
       unit: ['', Validators.required],
-      status: [''],
+      status: ['Pending'],
       grandsTotal: [0, Validators.required],
       id: [''],
     });
@@ -135,14 +127,19 @@ export class AppointmentsComponent {
 
 
 
-  getEm() {
-    this.appService.getAllAppointments().subscribe({
-      next: (res: any) => {
-        this.appList = res;
-        this.filteredList = res;
-      }
-    })
-  }
+ getEm() {
+  this.appService.getFilteredImports().subscribe({
+    next: (res: any[]) => {
+      this.appList = res;
+      this.filteredList = res;
+      console.log('Filtered Imports:', res);
+    },
+    error: (err) => {
+      console.error(err);
+    }
+  });
+}
+
 
   closeDialog() {
     this.isEditMode = false;
@@ -162,7 +159,7 @@ export class AppointmentsComponent {
       importID: appointment.importID,
       dateOfImport: appointment.dateOfImport,
       dateOfExport: appointment.dateOfExport,
-      dateOfApplied: appointment.dateOfApplied,
+       dateOfApplied:appointment.dateOfApplied,
       HS_Code: appointment.HS_Code,
       Sales_Tax: appointment.Sales_Tax,
       Custom_Duty: appointment.Custom_Duty,
@@ -184,7 +181,6 @@ export class AppointmentsComponent {
 
   // Update Firestore
   submit() {
-    console.log("value", this.editForm.value);
     if (this.editForm.invalid) {
       console.log("value")
       this.editForm.markAllAsTouched();
@@ -252,34 +248,34 @@ export class AppointmentsComponent {
 
       const payload = {
         vendor: row['Vendor'] || '',
-        importID: row['Import GD'] || '',
-        dateOfImport: this.excelDateToJSDate(row['Date Of Import']),
-        dateOfExport: this.excelDateToJSDate(row['Date Of Expiry']),
+        importID: row['Import ID'] || '',
+        dateOfImport: row['Date Of Import'] || '',
+        dateOfExport: row['Date Of Export'] || '',
         dateOfApplied: row['Date Of Applied'] || '',
         HS_Code: row['HS Code'] || '',
-        unit: row['UOM'] || '',
-        type: row['Type of Material'] || '',
-        qty: Number(row['Qty']) || 0,
-        rate: Number(row['FCY']) || 0,
-        total: Number(row['Amount']) || 0,
-        Custom_Duty: Number(row['Custom Duty']) || 0,
-        Additional_Custom_Duty: Number(row['Add Custom Duty']) || 0,
         Sales_Tax: Number(row['Sales Tax']) || 0,
-        Additional_Sales_Tax: Number(row['Add Sales Tax']) || 0,
+        Custom_Duty: Number(row['Custom Duty']) || 0,
         Income_Tax: Number(row['Income Tax']) || 0,
         FED: Number(row['FED']) || 0,
+        Additional_Custom_Duty: Number(row['Additional Custom Duty']) || 0,
+        Additional_Sales_Tax: Number(row['Additional Sales Tax']) || 0,
+        type: row['Type'] || '',
+        qty: Number(row['Qty']) || 0,
+        rate: Number(row['Rate']) || 0,
+        total: Number(row['Total']) || 0,
+        unit: row['Unit'] || '',
         status: row['Status'] || '',
-        grandsTotal: Number(row['Grands Amount']) || 0,
+        grandsTotal: Number(row['Grand Total']) || 0,
       };
 
       // 🔹 Duplicate check
-      // const isDuplicate = this.appList.some(
-      //   (item: any) => item.importID === payload.importID
-      // );
+      const isDuplicate = this.appList.some(
+        (item: any) => item.importID === payload.importID
+      );
 
-      // if (!isDuplicate) {
+      if (!isDuplicate) {
         await this.appointmentService.addAppointment(payload);
-      // }
+      }
     }
 
     this.messageService.add({
@@ -288,26 +284,6 @@ export class AppointmentsComponent {
       detail: 'All Excel entries imported successfully'
     });
     this.uplloadDailog = false;
-  }
-
-  excelDateToJSDate(excelDate: any): string {
-    if (!excelDate) return '';
-
-    // If already a Date object
-    if (excelDate instanceof Date) {
-      return excelDate.toISOString().split('T')[0];
-    }
-
-    // If Excel serial number
-    if (typeof excelDate === 'number') {
-      const utc_days = Math.floor(excelDate - 25569);
-      const utc_value = utc_days * 86400;
-      const date_info = new Date(utc_value * 1000);
-
-      return date_info.toISOString().split('T')[0]; // YYYY-MM-DD
-    }
-
-    return excelDate;
   }
 
   // Update Firestore
@@ -358,83 +334,75 @@ export class AppointmentsComponent {
 
   }
 
-  exportToExcel() {
-
-    console.log("appList", this.appList);
-
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('App List');
-
-    // 🔹 Complete Table Headers
-    worksheet.addRow([
-      'Vendor',
-      'Import GD',
-      'Date Of Import',
-      'Date Of Expiry',
-      'HS Code',
-      'UOM',
-      'Type of Material',
-      'Qty',
-      'FCY',
-      'Amount',
-      'Custom Duty',
-      'Add Custom Duty',
-      'Sales Tax',
-      'Add Sales Tax',
-      'Income Tax',
-      'FED',
-      'Grands Amount'
-    ]);
-
-    // 🔹 Header Styling
-    worksheet.getRow(1).eachCell(cell => {
-      cell.font = { bold: true };
-      cell.alignment = { vertical: 'middle', horizontal: 'center' };
-      cell.border = {
-        top: { style: 'thin' },
-        left: { style: 'thin' },
-        bottom: { style: 'thin' },
-        right: { style: 'thin' }
-      };
-    });
-
-    // 🔹 Table Data
-    this.appList.forEach((item: any, index: number) => {
-      worksheet.addRow([
-        item.vendor || '',
-        item.importID || '',
-        item.dateOfImport ? new Date(item.dateOfImport).toLocaleDateString('en-GB') : '',
-        item.dateOfExport ? new Date(item.dateOfExport).toLocaleDateString('en-GB') : '',
-        item.HS_Code || '',
-        item.unit || '',
-        item.type || '',
-        item.qty || 0,
-        item.rate || 0,
-        item.total || 0,
-        item.Custom_Duty || 0,
-        item.Additional_Custom_Duty || 0,
-        item.Sales_Tax || 0,
-        item.Additional_Sales_Tax || 0,
-        item.Income_Tax || 0,
-        item.FED || 0,
-        item.grandsTotal || 0
-      ]);
-    });
-
-    // 🔹 Auto column width
-    worksheet.columns.forEach(column => {
-      column.width = 18;
-    });
-
-    // 🔹 Download Excel file
-    workbook.xlsx.writeBuffer().then((buffer: any) => {
-      const blob = new Blob(
-        [buffer],
-        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
-      );
-      saveAs(blob, 'import-data.xlsx');
-    });
-  }
+ exportToExcel() {
+ 
+     console.log("appList", this.appList);
+ 
+     const workbook = new ExcelJS.Workbook();
+     const worksheet = workbook.addWorksheet('App List');
+ 
+     // 🔹 Complete Table Headers
+     worksheet.addRow([
+       'Vendor',
+       'Export GD',
+       'Order Number',
+       'Import GD',
+       'Date of Export',
+       'HS Code',
+       'Date Of Consumption',
+       'Analysis Card',
+       'UOM',
+       'Type Of Export',
+       'Qty',
+       'FYC',
+       'Amount'
+     ]);
+ 
+     // 🔹 Header Styling
+     worksheet.getRow(1).eachCell(cell => {
+       cell.font = { bold: true };
+       cell.alignment = { vertical: 'middle', horizontal: 'center' };
+       cell.border = {
+         top: { style: 'thin' },
+         left: { style: 'thin' },
+         bottom: { style: 'thin' },
+         right: { style: 'thin' }
+       };
+     });
+ 
+     // 🔹 Table Data
+     this.appList.forEach((item: any, index: number) => {
+       worksheet.addRow([
+         item.vendor,
+         item.GD_Invoice,
+         item.orderNumber,
+         item.importID,
+         item.dateOfExport,
+         item.HS_Code,
+         item.dateOfConsumption,
+         item.analysisCard,
+         item.unit,
+         item.type_Of_Export,
+         item.qty,
+         item.rate,
+         item.Amount
+       ]);
+     });
+ 
+     // 🔹 Auto Column Width
+     worksheet.columns.forEach(column => {
+       column.width = 18;
+     });
+ 
+     // 🔹 Download Excel
+     workbook.xlsx.writeBuffer().then((buffer: any) => {
+       const blob = new Blob(
+         [buffer],
+         { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+       );
+       saveAs(blob, 'NOC-Data.xlsx');
+     });
+   }
 
 
   search() {
@@ -485,5 +453,18 @@ export class AppointmentsComponent {
     link.download = 'Sample_Import_File.xlsx';
     link.click();
   }
+
+  getStatusClass(status: string | undefined): string {
+  switch ((status || 'Pending').toLowerCase()) {
+    case 'availed':
+      return 'bg-green-500';
+    case 'due':
+      return 'bg-red-500';
+    case 'pending':
+    default:
+      return 'bg-yellow-500 text-black';
+  }
+}
+
 
 }

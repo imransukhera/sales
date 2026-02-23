@@ -10,9 +10,11 @@ import {
   updateDoc,
   deleteDoc,
   query,
-  orderBy
+  orderBy,
+  where,
+  Timestamp
 } from '@angular/fire/firestore';
-import { from, Observable } from 'rxjs';
+import { from, map, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +36,12 @@ export class FirestoreService {
     const appointDocRef = doc(this.firestore, `imports/${id}`);
     return updateDoc(appointDocRef, data);
   }
+
+  // Add a single export
+addExposrt(data: any): Promise<any> {
+  const exportCollection = collection(this.firestore, 'exports');
+  return addDoc(exportCollection, data);
+}
 
   // Update an appointment
   updateEports(id: string, data: any): Promise<void> {
@@ -60,6 +68,29 @@ export class FirestoreService {
     const appointCollection = collection(this.firestore, 'imports');
     return collectionData(appointCollection, { idField: 'id' });
   }
+
+  getFilteredImports(): Observable<any[]> {
+  return collectionData(collection(this.firestore, 'imports'), { idField: 'id' })
+    .pipe(
+      map((data: any[]) => {
+        const now = new Date();
+        const fourMonthsAgo = new Date();
+        fourMonthsAgo.setMonth(now.getMonth() - 4);
+
+        return data
+          .filter(item =>
+            item.type === 'Machinery Parts' &&
+            new Date(item.dateOfExport) >= fourMonthsAgo &&
+            new Date(item.dateOfExport) <= now
+          )
+          .sort((a, b) =>
+            new Date(a.dateOfExport).getTime() -
+            new Date(b.dateOfExport).getTime()
+          );
+      })
+    );
+}
+
 
   // Update an appointment
   updateAppointment(id: string, data: any): Promise<void> {

@@ -11,15 +11,15 @@ import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { CalendarModule } from 'primeng/calendar';
 import * as XLSX from 'xlsx';
-
 @Component({
-  selector: 'app-contact-data',
+  selector: 'app-all-reports',
   standalone: true,
   imports: [CommonModule, DialogModule, ReactiveFormsModule, DropdownModule, ToastModule, FormsModule, TableModule, CalendarModule],
-  templateUrl: './contact-data.component.html',
-  styleUrl: './contact-data.component.scss'
+
+  templateUrl: './all-reports.component.html',
+  styleUrl: './all-reports.component.scss'
 })
-export class ContactDataComponent {
+export class AllReportsComponent {
   receipts: any;
   uplloadDailog: boolean = false;
   importDateRange: any;
@@ -33,7 +33,6 @@ export class ContactDataComponent {
   text: string | undefined;
   @ViewChild('invoice', { static: false }) invoice!: ElementRef;
   appList: any;
-appData:any;
   visible: boolean = false;
   emailDilog: boolean = false;
   balanceFrozen: boolean = false;
@@ -42,8 +41,7 @@ appData:any;
   appointment: any;
   DCNNumber: any;
   isEditMode = false;
-  impoortHS_Code: any;
-  dataFilter: any;
+
   statusArray: any = [
     {
       status: 'Garments'
@@ -56,21 +54,6 @@ appData:any;
     },
     {
       status: 'Jackets'
-    }
-  ]
-
-  UOM: any = [
-    {
-      status: 'Yards'
-    },
-    {
-      status: 'Mm'
-    },
-    {
-      status: 'GSM'
-    },
-    {
-      status: 'All'
     }
   ]
 
@@ -99,7 +82,6 @@ appData:any;
       rate: [0, Validators.required],
       Amount: [0, Validators.required],
       HS_Code: ['', Validators.required],
-      impoortHS_Code: ['', Validators.required],
       id: [''],
     });
 
@@ -156,11 +138,7 @@ appData:any;
   getEmhhh() {
     this.appService.getAllAppointments().subscribe({
       next: (res: any) => {
-        this.dataFilter = res;
-        this.allImports = res.filter(
-          (item: any, index: any, self: any) =>
-            index === self.findIndex((t: any) => t.importID === item.importID)
-        );
+        this.allImports = res;
       }
     })
   }
@@ -169,10 +147,6 @@ appData:any;
     this.appService.getExports().subscribe({
       next: (res: any) => {
         this.appList = res;
-        this.appData = res.filter(
-          (item: any, index: any, self: any) =>
-            index === self.findIndex((t: any) => t.importID === item.importID)
-        );
         this.filteredList = res;
         console.log("appList", this.appList);
 
@@ -201,7 +175,6 @@ appData:any;
       unit: appointment.unit,
       orderNumber: appointment.orderNumber,
       HS_Code: appointment.HS_Code,
-      impoortHS_Code: appointment.impoortHS_Code,
       analysisCard: appointment.analysisCard,
     });
   }
@@ -274,18 +247,18 @@ appData:any;
     let value = this.editForm.value;
 
     // FIX: Check for duplicates EXCEPT for the record with the current ID
-    // const isDuplicate = this.appList.some((data: any) =>
-    //   data?.GD_Invoice === value?.GD_Invoice && data?.id !== value?.id
-    // );
+    const isDuplicate = this.appList.some((data: any) =>
+      data?.GD_Invoice === value?.GD_Invoice && data?.id !== value?.id
+    );
 
-    // if (isDuplicate) {
-    //   this.messageService.add({
-    //     severity: 'error',
-    //     summary: 'Duplicated',
-    //     detail: 'This GD number already exists in another record.'
-    //   });
-    //   return;
-    // }
+    if (isDuplicate) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Duplicated',
+        detail: 'This GD number already exists in another record.'
+      });
+      return;
+    }
 
     this.visible = false;
     this.appointmentService
@@ -358,14 +331,12 @@ appData:any;
 
     // 🔹 Complete Table Headers
     worksheet.addRow([
-
       'Vendor',
       'Export GD',
       'Order Number',
       'Import GD',
       'Date of Export',
-      'Export HS Code',
-      'Import HS Code',
+      'HS Code',
       'Date Of Consumption',
       'Analysis Card',
       'UOM',
@@ -396,7 +367,6 @@ appData:any;
         item.importID,
         item.dateOfExport,
         item.HS_Code,
-        item.impoortHS_Code,
         item.dateOfConsumption,
         item.analysisCard,
         item.unit,
@@ -404,7 +374,6 @@ appData:any;
         item.qty,
         item.rate,
         item.Amount
-
       ]);
     });
 
@@ -419,7 +388,7 @@ appData:any;
         [buffer],
         { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
       );
-      saveAs(blob, 'Export-data.xlsx');
+      saveAs(blob, 'All-Report.xlsx');
     });
   }
 
@@ -498,32 +467,28 @@ appData:any;
 
       const payload = {
         vendor: row['Vendor'] || '',
-        GD_Invoice: row['Export GD'] || '',
+        GD_Invoice: row['Export GDs'] || '',
         orderNumber: row['Order Number'] || '',
-        importID: row['Import GD'] || '',
-        impoortHS_Code: row['Import HS Code'] || '',
-        dateOfExport: this.excelDateToJSDate(row['Date of Export']),
-        dateOfConsumption: this.excelDateToJSDate(row['Date Of Consumption']),
+        importID: row['Import GDs'] || '',
         HS_Code: row['HS Code'] || '',
-        
-        analysisCard: row['Analysis Card'] || '',
-        unit: row['UOM'] || '',
+        dateOfExport: row['Date of Export'] || '',
         type_Of_Export: row['Type Of Export'] || '',
+        dateOfConsumption: row['Date Of Consumption'] || '',
+        unit: row['Unit'] || '',
+        analysisCard: row['Analysis Card'] || '',
         qty: row['Qty'] || '',
-        rate: row['FYC'] || '',
+        rate: row['Rate'] || '',
         Amount: row['Amount'] || '',
       };
 
-      console.log("payload",payload)
-
       // 🔹 Duplicate check
-      // const isDuplicate = this.appList.some(
-      //   (item: any) => item.importID === payload.importID
-      // );
+      const isDuplicate = this.appList.some(
+        (item: any) => item.importID === payload.importID
+      );
 
-      // if (!isDuplicate) {
-      await this.appointmentService.addExport(payload);
-      // }
+      if (!isDuplicate) {
+        await this.appointmentService.addExport(payload);
+      }
     }
 
     this.messageService.add({
@@ -531,30 +496,7 @@ appData:any;
       summary: 'Uploaded',
       detail: 'All Excel entries imported successfully'
     });
-
     this.uplloadDailog = false;
-  }
-
-
-
-  excelDateToJSDate(excelDate: any): string {
-    if (!excelDate) return '';
-
-    // If already a Date object
-    if (excelDate instanceof Date) {
-      return excelDate.toISOString().split('T')[0];
-    }
-
-    // If Excel serial number
-    if (typeof excelDate === 'number') {
-      const utc_days = Math.floor(excelDate - 25569);
-      const utc_value = utc_days * 86400;
-      const date_info = new Date(utc_value * 1000);
-
-      return date_info.toISOString().split('T')[0]; // YYYY-MM-DD
-    }
-
-    return excelDate;
   }
 
 
@@ -563,13 +505,6 @@ appData:any;
     link.href = 'assets/export.xlsx';
     link.download = 'Sample_Export_File.xlsx';
     link.click();
-  }
-
-  filterdata(filterdata: any) {
-
-    let value = this.dataFilter?.filter((data: any) => data?.importID === filterdata?.value);
-    this.impoortHS_Code = value;
-    console.log("filterdata:", value);
   }
 
 }

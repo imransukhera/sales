@@ -5,6 +5,9 @@ import { AuthGuard } from './auth.guard';
 import { AppointmentsComponent } from './admin/appointments/appointments.component';
 import { ContactDataComponent } from './admin/contact-data/contact-data.component';
 import { DashboardComponent } from './admin/dashboard/dashboard.component';
+import { NocTableComponent } from './admin/noc-table/noc-table.component';
+import { ReportsComponent } from './admin/reports/reports.component';
+import { AllReportsComponent } from './admin/all-reports/all-reports.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -16,6 +19,9 @@ export const routes: Routes = [
       { path: 'imports', component: AppointmentsComponent },
       { path: 'exports', component: ContactDataComponent },
       { path: 'dashboard', component: DashboardComponent },
+      { path: 'NOC', component: NocTableComponent },
+      { path: 'Reports', component: ReportsComponent },
+       { path: 'All-Reports', component:  AllReportsComponent},
       // { path: 'reports', component: ReportsComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]

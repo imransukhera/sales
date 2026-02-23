@@ -172,10 +172,3 @@ textarea {
 .file-input {
     margin-top: 1rem;
 }
-
-:host ::ng-deep .p-datatable-thead > tr > th {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    background: #ffffff;
-}
