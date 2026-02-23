@@ -1,10 +1,161 @@
-<!-- coming-soon.component.html -->
-<div class="coming-soon-wrapper">
-  <div class="coming-soon-card">
-    <div class="icon">🚀</div>
-    <h1>Coming Soon</h1>
-    <p>We’re working hard to bring you something amazing. Stay tuned!</p>
-    <span>Launching very soon ✨</span>
+<div class="dashboard-wrapper">
+
+  <!-- Page Title -->
+  <div class="page-header">
+    <h2 class="page-title">Dashboard Overview</h2>
+    <p class="page-subtitle">Quick summary of recent activity</p>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="summary-cards">
+    <div class="summary-card imports-card">
+      <div class="card-icon">
+        <i class="pi pi-file-import"></i>
+      </div>
+      <div class="card-info">
+        <span class="card-label">Recent Imports</span>
+        <span class="card-count">{{ recentImports.length }}</span>
+      </div>
+    </div>
+
+    <div class="summary-card exports-card">
+      <div class="card-icon">
+        <i class="pi pi-file-export"></i>
+      </div>
+      <div class="card-info">
+        <span class="card-label">Recent Exports</span>
+        <span class="card-count">{{ recentExports.length }}</span>
+      </div>
+    </div>
+
+    <div class="summary-card noc-card">
+      <div class="card-icon">
+        <i class="pi pi-clock"></i>
+      </div>
+      <div class="card-info">
+        <span class="card-label">NOC Pending</span>
+        <span class="card-count">{{ nocPending.length }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Three Sections Grid -->
+  <div class="sections-grid">
+
+    <!-- Recent Imports -->
+    <div class="section-card">
+      <div class="section-header imports-header">
+        <div class="section-title-group">
+          <i class="pi pi-file-import"></i>
+          <h3>Recent Imports</h3>
+        </div>
+        <a routerLink="/admin/imports" class="view-all-link">View All</a>
+      </div>
+      <div class="section-body">
+        <div *ngIf="recentImports.length === 0" class="empty-state">
+          <i class="pi pi-inbox"></i>
+          <p>No import records found</p>
+        </div>
+        <table *ngIf="recentImports.length > 0" class="data-table">
+          <thead>
+            <tr>
+              <th>Import GD</th>
+              <th>Vendor</th>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Qty</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of recentImports">
+              <td class="gd-cell">{{ item.importID || '—' }}</td>
+              <td>{{ item.vendor || '—' }}</td>
+              <td>{{ item.dateOfImport || '—' }}</td>
+              <td>{{ item.type || '—' }}</td>
+              <td>{{ item.qty || '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Recent Exports -->
+    <div class="section-card">
+      <div class="section-header exports-header">
+        <div class="section-title-group">
+          <i class="pi pi-file-export"></i>
+          <h3>Recent Exports</h3>
+        </div>
+        <a routerLink="/admin/exports" class="view-all-link">View All</a>
+      </div>
+      <div class="section-body">
+        <div *ngIf="recentExports.length === 0" class="empty-state">
+          <i class="pi pi-inbox"></i>
+          <p>No export records found</p>
+        </div>
+        <table *ngIf="recentExports.length > 0" class="data-table">
+          <thead>
+            <tr>
+              <th>Export GD</th>
+              <th>Vendor</th>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Qty</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of recentExports">
+              <td class="gd-cell">{{ item.GD_Invoice || '—' }}</td>
+              <td>{{ item.vendor || '—' }}</td>
+              <td>{{ item.dateOfExport || '—' }}</td>
+              <td>{{ item.type_Of_Export || '—' }}</td>
+              <td>{{ item.qty || '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- NOC Pending Applied -->
+    <div class="section-card">
+      <div class="section-header noc-header">
+        <div class="section-title-group">
+          <i class="pi pi-clock"></i>
+          <h3>NOC Pending Applied</h3>
+        </div>
+        <a routerLink="/admin/NOC" class="view-all-link">View All</a>
+      </div>
+      <div class="section-body">
+        <div *ngIf="nocPending.length === 0" class="empty-state">
+          <i class="pi pi-check-circle"></i>
+          <p>No pending NOC records</p>
+        </div>
+        <table *ngIf="nocPending.length > 0" class="data-table">
+          <thead>
+            <tr>
+              <th>Import GD</th>
+              <th>Vendor</th>
+              <th>Date Applied</th>
+              <th>HS Code</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of nocPending">
+              <td class="gd-cell">{{ item.importID || '—' }}</td>
+              <td>{{ item.vendor || '—' }}</td>
+              <td>{{ item.dateOfApplied || '—' }}</td>
+              <td>{{ item.HS_Code || '—' }}</td>
+              <td>
+                <span class="status-badge pending">
+                  {{ item.status || 'Pending' }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
 </div>
-

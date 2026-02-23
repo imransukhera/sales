@@ -12,7 +12,8 @@ import { SidebarModule } from 'primeng/sidebar';
 })
 export class AdminDashboardComponent implements OnInit {
 showReportsSubMenu = false;
-   menuActive = false;
+  showMobileReportsSubMenu = false;
+  menuActive = false;
   sidebarVisible2: boolean = false;
   toggleMenu() {
     this.menuActive = !this.menuActive;
@@ -68,7 +69,11 @@ showReportsSubMenu = false;
   }
 
   toggleReports() {
-  this.showReportsSubMenu = !this.showReportsSubMenu;
-}
+    this.showReportsSubMenu = !this.showReportsSubMenu;
+  }
+
+  toggleMobileReports() {
+    this.showMobileReportsSubMenu = !this.showMobileReportsSubMenu;
+  }
 
 }

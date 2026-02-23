@@ -296,3 +296,57 @@ input {
 .file-input {
     margin-top: 1rem;
 }
+
+// ─── Mobile Responsive ───────────────────────────────────────
+@media (max-width: 768px) {
+  .card {
+    padding: 10px;
+    height: auto !important;
+  }
+
+  // Stack title and filter bar vertically
+  .flex.justify-content-between {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.5rem;
+  }
+
+  // Filter action bar wraps
+  .flex.pb-4 {
+    flex-wrap: wrap !important;
+    gap: 0.5rem;
+    width: 100%;
+    padding-bottom: 0.5rem !important;
+  }
+
+  // Inner filter controls wrap
+  .flex.pb-4 > .flex {
+    flex-wrap: wrap !important;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  // Dropdown/Calendar wrappers go full-width
+  .flex.pb-4 > .flex > .mr-2 {
+    width: 100%;
+    margin-right: 0 !important;
+  }
+}
+
+:host::ng-deep {
+  @media (max-width: 768px) {
+    .p-dropdown {
+      min-width: unset !important;
+      width: 100% !important;
+    }
+
+    .p-calendar {
+      width: 100% !important;
+    }
+
+    .p-dialog {
+      width: 95vw !important;
+      max-width: 95vw !important;
+    }
+  }
+}

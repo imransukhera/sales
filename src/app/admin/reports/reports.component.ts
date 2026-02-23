@@ -11,11 +11,12 @@ import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { CalendarModule } from 'primeng/calendar';
 import * as XLSX from 'xlsx';
+import { DownloadPdfComponent } from '../download-pdf/download-pdf.component';
 
 @Component({
   selector: 'app-reports',
   standalone: true,
-    imports: [CommonModule, DialogModule, ReactiveFormsModule, DropdownModule, ToastModule, FormsModule, TableModule, CalendarModule],
+    imports: [CommonModule, DialogModule, ReactiveFormsModule, DropdownModule, ToastModule, FormsModule, TableModule, CalendarModule, DownloadPdfComponent],
   
   templateUrl: './reports.component.html',
   styleUrl: './reports.component.scss'
@@ -371,7 +372,11 @@ ImportHSCode:any;
       });
   
       // 🔹 Table Data
+      const importQty = Number(this.qtyValue?.[0]?.qty) || 0;
       this.filteredList.forEach((item: any, index: number) => {
+        const consumed = this.filteredList
+          .slice(0, index + 1)
+          .reduce((sum: number, r: any) => sum + (Number(r?.qty) || 0), 0);
         worksheet.addRow([
           item.vendor,
           item.GD_Invoice,
@@ -386,7 +391,7 @@ ImportHSCode:any;
           item.qty,
           item.rate,
           item.Amount,
-          this.qtyValue[0]?.qty - item?.qty
+          importQty - consumed
         ]);
       });
   
@@ -414,10 +419,16 @@ ImportHSCode:any;
     this.appList
   );
 
-  this.filteredList = this.appList.filter((item: any) =>
-    item.importID === this.StatusValue &&
-    item.impoortHS_Code === this.ImportHSCode
-  );
+  this.filteredList = this.appList
+    .filter((item: any) =>
+      item.importID === this.StatusValue &&
+      item.impoortHS_Code === this.ImportHSCode
+    )
+    .sort((a: any, b: any) => {
+      const dateA = new Date(a.dateOfExport).getTime() || 0;
+      const dateB = new Date(b.dateOfExport).getTime() || 0;
+      return dateA - dateB;
+    });
 
   this.qtyValue = this.exportHsCode.filter((item: any) =>
     item.importID === this.StatusValue &&
@@ -513,6 +524,14 @@ ImportHSCode:any;
     let value = this.dataFilter?.filter((data: any) => data?.importID === filterdata?.value);
     this.exportHsCode = value;
     console.log("filterdata:", value);
+  }
+
+  getRunningBalance(index: number): number {
+    const importQty = Number(this.qtyValue?.[0]?.qty) || 0;
+    const consumed = (this.filteredList || [])
+      .slice(0, index + 1)
+      .reduce((sum: number, item: any) => sum + (Number(item?.qty) || 0), 0);
+    return importQty - consumed;
   }
 
 }

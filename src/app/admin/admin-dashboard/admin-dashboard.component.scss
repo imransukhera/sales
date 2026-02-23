@@ -81,7 +81,70 @@
 
 :host::ng-deep {
   .p-sidebar-right {
-    width: 200px !important;
-    background: #245A70;
+    width: 240px !important;
+    background: #1e4d60;
+    padding: 12px 8px;
+  }
+}
+
+// Mobile sidebar nav styles
+.mobile-nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mobile-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  color: #ffffff;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-bottom: 4px;
+  transition: background 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  &.active {
+    background: #022c3c;
+  }
+
+  i {
+    font-size: 15px;
+    opacity: 0.85;
+    flex-shrink: 0;
+  }
+}
+
+.mobile-nav-parent {
+  justify-content: space-between;
+}
+
+.mobile-nav-submenu {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 4px 0;
+}
+
+.mobile-nav-sub-item {
+  padding-left: 32px;
+  font-size: 13px;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+// ─── Mobile Responsive ───────────────────────────────────────
+@media (max-width: 768px) {
+  .dashboard-header {
+    padding: 0 12px;
+    font-size: 16px;
+  }
+
+  .content-area {
+    padding: 10px;
   }
 }

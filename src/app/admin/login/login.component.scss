@@ -44,3 +44,13 @@ input {
     background: #1e4d60;
   }
 }
+
+// ─── Mobile Responsive ───────────────────────────────────────
+@media (max-width: 480px) {
+  .login-card {
+    width: calc(100% - 32px);
+    max-width: 100%;
+    margin: 0 16px;
+    padding: 24px 20px;
+  }
+}

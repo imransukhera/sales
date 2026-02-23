@@ -30,6 +30,7 @@
     "firebase": "^10.14.1",
     "flowbite": "^2.5.1",
     "jspdf": "^2.5.1",
+    "jspdf-autotable": "^5.0.7",
     "ngx-toastr": "^19.0.0",
     "node": "^22.8.0",
     "primeflex": "^3.3.1",

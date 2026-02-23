@@ -68,12 +68,56 @@
 
 
 <p-sidebar [(visible)]="sidebarVisible2" position="right">
-  <ul>
-    <li (click)="value()" class="sidebar p-2 bg-white" style="color: black;" routerLinkActive="active">Appointments
-    </li>
-    <li (click)="value1()" class="sidebar mt-2 p-2 bg-white" style="color: black;" routerLinkActive="active">Contact
-      Page
-    </li>
-  </ul>
+  <ul class="mobile-nav-list">
 
+    <li class="mobile-nav-item"
+        routerLink="/admin/dashboard"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="sidebarVisible2 = false">
+      <i class="pi pi-home"></i> Dashboard
+    </li>
+
+    <li class="mobile-nav-item"
+        routerLink="/admin/imports"
+        routerLinkActive="active"
+        (click)="sidebarVisible2 = false">
+      <i class="pi pi-file-import"></i> Import GDs
+    </li>
+
+    <li class="mobile-nav-item"
+        routerLink="/admin/exports"
+        routerLinkActive="active"
+        (click)="sidebarVisible2 = false">
+      <i class="pi pi-file-export"></i> Export GDs
+    </li>
+
+    <!-- All Reports collapsible -->
+    <li class="mobile-nav-item mobile-nav-parent" (click)="toggleMobileReports()">
+      <span><i class="pi pi-chart-bar"></i> All Reports</span>
+      <i class="pi" [ngClass]="showMobileReportsSubMenu ? 'pi-chevron-down' : 'pi-chevron-right'"></i>
+    </li>
+
+    <ul *ngIf="showMobileReportsSubMenu" class="mobile-nav-submenu">
+      <li class="mobile-nav-item mobile-nav-sub-item"
+          routerLink="/admin/NOC"
+          routerLinkActive="active"
+          (click)="sidebarVisible2 = false">
+        <i class="pi pi-file"></i> NOC
+      </li>
+      <li class="mobile-nav-item mobile-nav-sub-item"
+          routerLink="/admin/Reports"
+          routerLinkActive="active"
+          (click)="sidebarVisible2 = false">
+        <i class="pi pi-book"></i> Ledger Report
+      </li>
+      <li class="mobile-nav-item mobile-nav-sub-item"
+          routerLink="/admin/All-Reports"
+          routerLinkActive="active"
+          (click)="sidebarVisible2 = false">
+        <i class="pi pi-list"></i> All Reports
+      </li>
+    </ul>
+
+  </ul>
 </p-sidebar>

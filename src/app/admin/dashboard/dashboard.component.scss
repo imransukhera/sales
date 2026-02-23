@@ -1,48 +1,297 @@
+$primary: #245A70;
+$primary-light: #2e7a99;
+$primary-dark: #1a4254;
+$accent-import: #2e7a99;
+$accent-export: #1d6b50;
+$accent-noc: #7a4a1d;
+$bg-page: #f0f4f7;
+$card-bg: #ffffff;
+$text-main: #1e293b;
+$text-muted: #64748b;
+$border: #e2e8f0;
 
-/* coming-soon.component.css */
-.coming-soon-wrapper {
-  height: calc(100vh - 150px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #245A70, #245A70, #245A70);
+.dashboard-wrapper {
+  padding: 24px;
+  background: $bg-page;
+  height: calc(90vh - 70px);
 }
 
-.coming-soon-card {
-  text-align: center;
-  padding: 40px 30px;
-  max-width: 420px;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+// ── Page Header ──────────────────────────────────────────────────
+.page-header {
+  margin-bottom: 24px;
+
+  .page-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: $primary-dark;
+    margin: 0 0 4px;
+  }
+
+  .page-subtitle {
+    font-size: 0.9rem;
+    color: $text-muted;
+    margin: 0;
+  }
+}
+
+// ── Summary Cards ─────────────────────────────────────────────────
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.summary-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  border-radius: 12px;
+  background: $card-bg;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+  border-left: 4px solid transparent;
+
+  .card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+
+  .card-info {
+    display: flex;
+    flex-direction: column;
+
+    .card-label {
+      font-size: 0.8rem;
+      color: $text-muted;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    .card-count {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: $text-main;
+      line-height: 1.2;
+    }
+  }
+
+  &.imports-card {
+    border-left-color: $accent-import;
+    .card-icon {
+      background: rgba($accent-import, 0.12);
+      color: $accent-import;
+    }
+  }
+
+  &.exports-card {
+    border-left-color: $accent-export;
+    .card-icon {
+      background: rgba($accent-export, 0.12);
+      color: $accent-export;
+    }
+  }
+
+  &.noc-card {
+    border-left-color: $accent-noc;
+    .card-icon {
+      background: rgba($accent-noc, 0.12);
+      color: $accent-noc;
+    }
+  }
+}
+
+// ── Sections Grid ─────────────────────────────────────────────────
+.sections-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+
+  @media (max-width: 1100px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (max-width: 680px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ── Section Card ──────────────────────────────────────────────────
+.section-card {
+  background: $card-bg;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
   color: #fff;
+
+  .section-title-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    i {
+      font-size: 1rem;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+  }
+
+  .view-all-link {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    padding: 3px 10px;
+    border-radius: 20px;
+    transition: background 0.2s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+  }
+
+  &.imports-header {
+    background: linear-gradient(135deg, $accent-import, darken($accent-import, 10%));
+  }
+
+  &.exports-header {
+    background: linear-gradient(135deg, $accent-export, darken($accent-export, 10%));
+  }
+
+  &.noc-header {
+    background: linear-gradient(135deg, $accent-noc, darken($accent-noc, 10%));
+  }
 }
 
-.icon {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto 20px;
-  border-radius: 50%;
-  background: rgba(99, 102, 241, 0.2);
+.section-body {
+  padding: 0;
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 260px;
+}
+
+// ── Data Table ────────────────────────────────────────────────────
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+
+  thead tr {
+    background: #f8fafc;
+    border-bottom: 2px solid $border;
+
+    th {
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      color: $text-muted;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #f8fafc;
+    }
+  }
+
+  tbody tr {
+    border-bottom: 1px solid $border;
+    transition: background 0.15s;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background: #f0f7fa;
+    }
+
+    td {
+      padding: 10px 14px;
+      color: $text-main;
+      white-space: nowrap;
+
+      &.gd-cell {
+        font-weight: 600;
+        color: $primary;
+        font-family: monospace;
+      }
+    }
+  }
+}
+
+// ── Status Badge ──────────────────────────────────────────────────
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+
+  &.pending {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  &.availed {
+    background: #d1fae5;
+    color: #065f46;
+  }
+
+  &.due {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+}
+
+// ── Empty State ───────────────────────────────────────────────────
+.empty-state {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
-}
+  padding: 36px 16px;
+  color: $text-muted;
 
-h1 {
-  font-size: 2.5rem;
-  margin-bottom: 12px;
-}
+  i {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    opacity: 0.4;
+  }
 
-p {
-  color: #cbd5f5;
-  margin-bottom: 20px;
-}
-
-span {
-  font-size: 0.9rem;
-  color: #94a3b8;
+  p {
+    margin: 0;
+    font-size: 0.85rem;
+  }
 }

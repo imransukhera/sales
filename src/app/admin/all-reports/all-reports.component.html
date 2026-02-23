@@ -1,4 +1,4 @@
-<div class="card">
+<div style="height: calc(85vh - 50px) !important">
     <div class="flex justify-content-between">
         <div>
             <h2>All Reports</h2>
@@ -32,8 +32,8 @@
     </div>
 
 
-    <p-table [value]="appList" class="styled-table" [tableStyle]="{ 'min-width': '50rem' }" [scrollable]="true"
-        scrollHeight="400px">
+    <p-table [value]="appList" class="styled-table " [tableStyle]="{ 'min-width': '50rem' }"  scrollHeight="calc(95vh - 150px)"
+            [responsive]="true">
         <ng-template pTemplate="header">
             <tr>
                 <th class="max-w-14rem">Sr.No</th>

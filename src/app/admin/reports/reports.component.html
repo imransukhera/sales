@@ -1,4 +1,4 @@
-<div class="card">
+<div  style="height: calc(85vh - 50px) !important">
     <div class="flex justify-content-between" style="align-items: center;">
         <div>
             <h2>Ledger Report</h2>
@@ -32,12 +32,17 @@
                 (click)="exportToExcel()" > <i
                     class="pi pi-download cursor-pointer "></i></button>
 
+            <app-download-pdf
+                [filteredList]="filteredList"
+                [qtyValue]="qtyValue">
+            </app-download-pdf>
+
         </div>
 
     </div>
 
-<p-table [value]="filteredList" class="styled-table" [tableStyle]="{ 'min-width': '50rem' }" [scrollable]="true"
-        scrollHeight="400px">
+<p-table [value]="filteredList" class="styled-table" [tableStyle]="{ 'min-width': '50rem' }" [scrollable]="true" scrollHeight="calc(95vh - 150px)"
+            [responsive]="true">
         <ng-template pTemplate="header">
             <tr>
                 <th class="max-w-14rem">Sr.No</th>
@@ -109,7 +114,7 @@
                     <div class="w-15rem">{{ product?.Amount }}</div>
                 </td>
                   <td class="w-15rem">
-                    <div class="w-15rem">{{qtyValue[0]?.qty - product?.qty  }}</div>
+                    <div class="w-15rem">{{ getRunningBalance(rowIndex) | number:'1.2-2' }}</div>
                 </td>
             </tr>
         </ng-template>
