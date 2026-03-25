@@ -54,20 +54,23 @@
                 <tr>
                     <th class="max-w-14rem">Sr.No</th>
                     <th class="w-10rem">Vendor</th>
-                    <th style="min-width: 10rem;">Export GD</th>
-                    <th style="min-width: 10rem;">Order Number</th>
-                    <th style="min-width: 10rem;">Import GD</th>
+                    <th style="min-width: 12rem;">Export GD No. & Date</th>
                     <th style="min-width: 10rem;">Date of Export</th>
-                    <th style="min-width: 10rem;">Export HS Code </th>
-                     <th style="min-width: 10rem;">Import HS Code </th>
-                    <th style="min-width: 10rem;">Date Of Consumption</th>
-
-                    <th style="min-width: 10rem;">Anlysis Card</th>
-                    <th style="min-width: 10rem;">UOM</th>
+                    <th style="min-width: 12rem;">Order Number/Invoice No.</th>
+                    <th style="min-width: 10rem;">Export HS Code</th>
                     <th style="min-width: 10rem;">Type Of Export</th>
-                    <th style="min-width: 10rem;">Qty</th>
-                    <th style="min-width: 10rem;">FYC</th>
-                    <th style="min-width: 10rem;">Amount</th>
+                    <th style="min-width: 12rem;">Export Qty Nos/Mtr</th>
+                    <th style="min-width: 10rem;">UOM</th>
+                    <th style="min-width: 10rem;">Value PKR</th>
+                    <th style="min-width: 12rem;">Import GD No. & Date</th>
+                    <th style="min-width: 10rem;">Type Of Imp</th>
+                    <th style="min-width: 10rem;">Import HS Code</th>
+                    <th style="min-width: 12rem;">Date Of Consumption</th>
+                    <th style="min-width: 10rem;">Analysis Card</th>
+                    <th style="min-width: 10rem;">UOM</th>
+                    <th style="min-width: 10rem;">Consumption Qty</th>
+                    <th style="min-width: 10rem;">PKR</th>
+                    <th style="min-width: 12rem;">Imported Item Value</th>
                     <th pFrozenColumn alignFrozen="right" class="text-center">Action</th>
                 </tr>
             </ng-template>
@@ -75,26 +78,40 @@
             <ng-template pTemplate="body" let-product let-rowIndex="rowIndex">
                 <tr>
                     <td>
-                        <div class="min-w-4rem">
-                            {{ rowIndex + 1}}
-                        </div>
-                    <td class="min-w-10rem">
-                        <div class="min-w-10rem">{{ product?.vendor}}</div>
+                        <div class="min-w-4rem">{{ rowIndex + 1 }}</div>
                     </td>
-                    <td class="min-w-15rem">
-                        <div class="min-w-15rem">{{ product?.GD_Invoice }}</div>
+                    <td class="min-w-10rem">
+                        <div class="min-w-10rem">{{ product?.vendor }}</div>
+                    </td>
+                    <td class="min-w-12rem">
+                        <div class="min-w-12rem">{{ product?.GD_Invoice }}</div>
+                    </td>
+                    <td class="w-10rem">
+                        <div class="w-10rem">{{ product?.dateOfExport }}</div>
                     </td>
                     <td class="w-15rem">
                         <div class="w-15rem">{{ product?.orderNumber }}</div>
+                    </td>
+                    <td class="w-10rem">
+                        <div class="w-10rem">{{ product?.HS_Code }}</div>
+                    </td>
+                    <td class="w-10rem">
+                        <div class="w-10rem">{{ product?.type_Of_Export }}</div>
+                    </td>
+                    <td class="w-10rem">
+                        <div class="w-10rem">{{ product?.qty }}</div>
+                    </td>
+                    <td class="w-10rem">
+                        <div class="w-10rem">{{ product?.unit }}</div>
+                    </td>
+                    <td class="w-10rem">
+                        <div class="w-10rem">{{ product?.rate }}</div>
                     </td>
                     <td class="w-15rem">
                         <div class="w-15rem">{{ product?.importID }}</div>
                     </td>
                     <td class="w-10rem">
-                        <div class="w-10rem">{{ product?.dateOfExport }}</div>
-                    </td>
-                    <td class="w-10rem">
-                        <div class="w-10rem">{{ product?.HS_Code }}</div>
+                        <div class="w-10rem">{{ product?.typeOfImport }}</div>
                     </td>
                     <td class="w-10rem">
                         <div class="w-10rem">{{ product?.impoortHS_Code }}</div>
@@ -106,25 +123,21 @@
                         <div class="w-10rem">{{ product?.analysisCard }}</div>
                     </td>
                     <td class="w-10rem">
-                        <div class="w-10rem">{{ product?.unit }}</div>
+                        <div class="w-10rem">{{ product?.consumptionUOM }}</div>
                     </td>
                     <td class="w-10rem">
-                        <div class="w-10rem">{{ product?.type_Of_Export }}</div>
+                        <div class="w-10rem">{{ product?.consumptionQty }}</div>
                     </td>
                     <td class="w-10rem">
-                        <div class="w-10rem">{{ product?.qty }}</div>
-                    </td>
-                    <td class="w-15rem">
-                        <div class="w-15rem">{{ product?.rate }}</div>
+                        <div class="w-10rem">{{ product?.pkr }}</div>
                     </td>
                     <td class="w-15rem">
                         <div class="w-15rem">{{ product?.Amount }}</div>
                     </td>
                     <td class="w-20rem" pFrozenColumn alignFrozen="right">
-                        <div class="flex w-5rem text-center m-auto justify-content-center gap-2 ">
-                            <i class="pi pi-file-edit pl-2 cursor-pointer " (click)="openEditDialog(product);"></i>
-                            <i class="pi pi-trash pl-2 cursor-pointer text-red-500"
-                                (click)="deleteValue(product?.id);"></i>
+                        <div class="flex w-5rem text-center m-auto justify-content-center gap-2">
+                            <i class="pi pi-file-edit pl-2 cursor-pointer" (click)="openEditDialog(product);"></i>
+                            <i class="pi pi-trash pl-2 cursor-pointer text-red-500" (click)="deleteValue(product?.id);"></i>
                         </div>
                     </td>
                 </tr>
@@ -138,165 +151,143 @@
     (onHide)="closeDialog()">
     <form [formGroup]="editForm">
 
-        <!-- Name -->
+        <!-- Vendor -->
         <div class="py-2">
-            <label>Customer Name </label>
+            <label>Vendor</label>
             <input type="text" class="w-full p-inputtext" formControlName="vendor">
-
-            <small *ngIf="editForm.get('vendor')?.touched && editForm.get('vendor')?.invalid" class="p-error">
-                Vendor
-            </small>
+            <small *ngIf="editForm.get('vendor')?.touched && editForm.get('vendor')?.invalid" class="p-error">Vendor is required.</small>
         </div>
 
-        <!-- Service Name -->
+        <!-- Export GD No. & Date -->
         <div class="py-2">
-            <label>Export GDs</label>
+            <label>Export GD No. & Date</label>
             <input type="text" class="w-full p-inputtext" formControlName="GD_Invoice">
-
-            <small *ngIf="editForm.get('GD_Invoice')?.touched && editForm.get('GD_Invoice')?.invalid" class="p-error">
-                Export GDs
-            </small>
+            <small *ngIf="editForm.get('GD_Invoice')?.touched && editForm.get('GD_Invoice')?.invalid" class="p-error">Export GD No. & Date is required.</small>
         </div>
 
-        <!-- Service Name -->
+        <!-- Date of Export -->
         <div class="py-2">
-            <label>Order Number<span class="text-red-500">*</span></label>
-            <input type="text" class="w-full p-inputtext" formControlName="orderNumber">
-
-            <small *ngIf="editForm.get('orderNumber')?.touched && editForm.get('orderNumber')?.invalid" class="p-error">
-                Order Number is required
-            </small>
-        </div>
-
-        <!-- Service Name -->
-        <div class="py-2">
-            <label>Import GDs<span class="text-red-500">*</span></label>
-            <div class="pt-2">
-                <p-dropdown [options]="allImports" optionLabel="importID" optionValue="importID" (onChange)="filterdata($event)"
-                    formControlName="importID" filter="true" placeholder="Select GD Invoice"></p-dropdown>
-                <small *ngIf="editForm.get('importID')?.touched && editForm.get('importID')?.invalid" class="p-error">
-                    Import GDs is required.
-                </small>
-            </div>
-        </div>
-
-         <!-- Date -->
-        <div class="py-2">
-            <label>Import HS Code <span class="text-red-500">*</span></label>
-             <p-dropdown [options]="impoortHS_Code" optionLabel="HS_Code" optionValue="HS_Code" formControlName="impoortHS_Code"
-                    placeholder="Select a Import Hs Code"></p-dropdown>
-
-            <small *ngIf="editForm.get('impoortHS_Code')?.touched && editForm.get('impoortHS_Code')?.invalid" class="p-error">
-                Import Hs Code is required.
-            </small>
-        </div>
-
-
-        <!-- Date -->
-        <div class="py-2">
-            <label>Date of GD Export <span class="text-red-500">*</span></label>
+            <label>Date of Export <span class="text-red-500">*</span></label>
             <input type="date" class="w-full p-inputtext" formControlName="dateOfExport">
-
-            <small *ngIf="editForm.get('dateOfExport')?.touched && editForm.get('dateOfExport')?.invalid"
-                class="p-error">
-                Date is required.
-            </small>
+            <small *ngIf="editForm.get('dateOfExport')?.touched && editForm.get('dateOfExport')?.invalid" class="p-error">Date of Export is required.</small>
         </div>
 
-        <!-- Date -->
+        <!-- Order Number/Invoice No. -->
         <div class="py-2">
-            <label>Date of Consumption <span class="text-red-500">*</span></label>
-            <input type="date" class="w-full p-inputtext" formControlName="dateOfConsumption">
-
-            <small *ngIf="editForm.get('dateOfConsumption')?.touched && editForm.get('dateOfConsumption')?.invalid"
-                class="p-error">
-                Date of Consumption is required.
-            </small>
+            <label>Order Number/Invoice No. <span class="text-red-500">*</span></label>
+            <input type="text" class="w-full p-inputtext" formControlName="orderNumber">
+            <small *ngIf="editForm.get('orderNumber')?.touched && editForm.get('orderNumber')?.invalid" class="p-error">Order Number/Invoice No. is required.</small>
         </div>
 
-        <!-- Date -->
-        <div class="py-2">
-            <label>Anlysis Card <span class="text-red-500">*</span></label>
-            <input type="text" class="w-full p-inputtext" formControlName="analysisCard">
-
-            <small *ngIf="editForm.get('analysisCard')?.touched && editForm.get('analysisCard')?.invalid"
-                class="p-error">
-                Anlysis Card is required.
-            </small>
-        </div>
-
-        <!-- Date -->
+        <!-- Export HS Code -->
         <div class="py-2">
             <label>Export HS Code <span class="text-red-500">*</span></label>
             <input type="text" class="w-full p-inputtext" formControlName="HS_Code">
-
-            <small *ngIf="editForm.get('HS_Code')?.touched && editForm.get('HS_Code')?.invalid" class="p-error">
-                HS Code is required.
-            </small>
-        </div>
-       
-
-        <div class="py-2">
-            <label>Unit of Material <span class="text-red-500">*</span></label>
-            <!-- <input type="text" class="w-full p-inputtext" formControlName="status"> -->
-            <div class="pt-2">
-                <p-dropdown [options]="UOM" optionLabel="status" optionValue="status" formControlName="unit"
-                    placeholder="Select a Unit of Material"></p-dropdown>
-                <small *ngIf="editForm.get('unit')?.touched && editForm.get('unit')?.invalid" class="p-error">
-                    Unit of Material is required.
-                </small>
-            </div>
-            <small *ngIf="editForm.get('unit')?.touched && editForm.get('unit')?.invalid" class="p-error">
-                Unit of Material is required.
-            </small>
+            <small *ngIf="editForm.get('HS_Code')?.touched && editForm.get('HS_Code')?.invalid" class="p-error">Export HS Code is required.</small>
         </div>
 
+        <!-- Type Of Export -->
         <div class="py-2">
-            <label>Type of Export <span class="text-red-500">*</span></label>
-            <!-- <input type="text" class="w-full p-inputtext" formControlName="status"> -->
+            <label>Type Of Export <span class="text-red-500">*</span></label>
             <div class="pt-2">
                 <p-dropdown [options]="statusArray" optionLabel="status" optionValue="status"
-                    formControlName="type_Of_Export" placeholder="Select a Type of Export"></p-dropdown>
-                <small *ngIf="editForm.get('type_Of_Export')?.touched && editForm.get('type_Of_Export')?.invalid"
-                    class="p-error">
-                    Type of Export is required.
-                </small>
+                    formControlName="type_Of_Export" placeholder="Select Type Of Export"></p-dropdown>
+                <small *ngIf="editForm.get('type_Of_Export')?.touched && editForm.get('type_Of_Export')?.invalid" class="p-error">Type Of Export is required.</small>
             </div>
-            <small *ngIf="editForm.get('type_Of_Export')?.touched && editForm.get('type_Of_Export')?.invalid"
-                class="p-error">
-                Type of Export is required.
-            </small>
         </div>
 
-
-        <!-- Date -->
+        <!-- Export Qty Nos/Mtr -->
         <div class="py-2">
-            <label>Qty <span class="text-red-500">*</span></label>
+            <label>Export Qty Nos/Mtr <span class="text-red-500">*</span></label>
             <input type="text" class="w-full p-inputtext" formControlName="qty">
-
-            <small *ngIf="editForm.get('qty')?.touched && editForm.get('qty')?.invalid" class="p-error">
-                Qty is required.
-            </small>
+            <small *ngIf="editForm.get('qty')?.touched && editForm.get('qty')?.invalid" class="p-error">Export Qty is required.</small>
         </div>
 
-        <!-- Date -->
+        <!-- UOM (Export) -->
         <div class="py-2">
-            <label>FYC <span class="text-red-500">*</span></label>
+            <label>UOM <span class="text-red-500">*</span></label>
+            <div class="pt-2">
+                <p-dropdown [options]="UOM" optionLabel="status" optionValue="status" formControlName="unit"
+                    placeholder="Select UOM"></p-dropdown>
+                <small *ngIf="editForm.get('unit')?.touched && editForm.get('unit')?.invalid" class="p-error">UOM is required.</small>
+            </div>
+        </div>
+
+        <!-- Value PKR -->
+        <div class="py-2">
+            <label>Value PKR <span class="text-red-500">*</span></label>
             <input type="text" class="w-full p-inputtext" formControlName="rate">
-
-            <small *ngIf="editForm.get('rate')?.touched && editForm.get('rate')?.invalid" class="p-error">
-                Rate is required.
-            </small>
+            <small *ngIf="editForm.get('rate')?.touched && editForm.get('rate')?.invalid" class="p-error">Value PKR is required.</small>
         </div>
 
-        <!-- Date -->
+        <!-- Import GD No. & Date -->
         <div class="py-2">
-            <label>Amount <span class="text-red-500">*</span></label>
-            <input type="text" class="w-full p-inputtext" formControlName="Amount">
+            <label>Import GD No. & Date <span class="text-red-500">*</span></label>
+            <div class="pt-2">
+                <p-dropdown [options]="allImports" optionLabel="importID" optionValue="importID" (onChange)="filterdata($event)"
+                    formControlName="importID" filter="true" placeholder="Select Import GD"></p-dropdown>
+                <small *ngIf="editForm.get('importID')?.touched && editForm.get('importID')?.invalid" class="p-error">Import GD No. & Date is required.</small>
+            </div>
+        </div>
 
-            <small *ngIf="editForm.get('toAmounttal')?.touched && editForm.get('Amount')?.invalid" class="p-error">
-                Amount is required.
-            </small>
+        <!-- Type Of Imp -->
+        <div class="py-2">
+            <label>Type Of Imp <span class="text-red-500">*</span></label>
+            <input type="text" class="w-full p-inputtext" formControlName="typeOfImport">
+            <small *ngIf="editForm.get('typeOfImport')?.touched && editForm.get('typeOfImport')?.invalid" class="p-error">Type Of Imp is required.</small>
+        </div>
+
+        <!-- Import HS Code -->
+        <div class="py-2">
+            <label>Import HS Code <span class="text-red-500">*</span></label>
+            <p-dropdown [options]="impoortHS_Code" optionLabel="HS_Code" optionValue="HS_Code" formControlName="impoortHS_Code"
+                placeholder="Select Import HS Code"></p-dropdown>
+            <small *ngIf="editForm.get('impoortHS_Code')?.touched && editForm.get('impoortHS_Code')?.invalid" class="p-error">Import HS Code is required.</small>
+        </div>
+
+        <!-- Date Of Consumption -->
+        <div class="py-2">
+            <label>Date Of Consumption <span class="text-red-500">*</span></label>
+            <input type="date" class="w-full p-inputtext" formControlName="dateOfConsumption">
+            <small *ngIf="editForm.get('dateOfConsumption')?.touched && editForm.get('dateOfConsumption')?.invalid" class="p-error">Date Of Consumption is required.</small>
+        </div>
+
+        <!-- Analysis Card -->
+        <div class="py-2">
+            <label>Analysis Card <span class="text-red-500">*</span></label>
+            <input type="text" class="w-full p-inputtext" formControlName="analysisCard">
+            <small *ngIf="editForm.get('analysisCard')?.touched && editForm.get('analysisCard')?.invalid" class="p-error">Analysis Card is required.</small>
+        </div>
+
+        <!-- UOM (Consumption) -->
+        <div class="py-2">
+            <label>UOM (Consumption) <span class="text-red-500">*</span></label>
+            <div class="pt-2">
+                <p-dropdown [options]="UOM" optionLabel="status" optionValue="status" formControlName="consumptionUOM"
+                    placeholder="Select UOM"></p-dropdown>
+                <small *ngIf="editForm.get('consumptionUOM')?.touched && editForm.get('consumptionUOM')?.invalid" class="p-error">UOM is required.</small>
+            </div>
+        </div>
+
+        <!-- Consumption Qty -->
+        <div class="py-2">
+            <label>Consumption Qty <span class="text-red-500">*</span></label>
+            <input type="text" class="w-full p-inputtext" formControlName="consumptionQty">
+            <small *ngIf="editForm.get('consumptionQty')?.touched && editForm.get('consumptionQty')?.invalid" class="p-error">Consumption Qty is required.</small>
+        </div>
+
+        <!-- PKR -->
+        <div class="py-2">
+            <label>PKR <span class="text-red-500">*</span></label>
+            <input type="text" class="w-full p-inputtext" formControlName="pkr">
+            <small *ngIf="editForm.get('pkr')?.touched && editForm.get('pkr')?.invalid" class="p-error">PKR is required.</small>
+        </div>
+
+        <!-- Imported Item Value -->
+        <div class="py-2">
+            <label>Imported Item Value <span class="text-red-500">*</span></label>
+            <input type="text" class="w-full p-inputtext" formControlName="Amount">
+            <small *ngIf="editForm.get('Amount')?.touched && editForm.get('Amount')?.invalid" class="p-error">Imported Item Value is required.</small>
         </div>
 
         <div class="pb-4 flex justify-content-end pt-5">
@@ -335,7 +326,17 @@
             <i class="pi pi-cloud-upload upload-icon"></i>
             <p>Select Excel File to Upload</p>
 
-            <input type="file" (change)="onFileChange($event)" accept=".xlsx, .xls" class="file-input" />
+            <input type="file" (change)="onFileChange($event)" accept=".xlsx, .xls" class="file-input"
+                [disabled]="isUploading" />
+        </div>
+
+        <!-- Progress Bar -->
+        <div *ngIf="isUploading" class="mt-3">
+            <p class="text-center mb-1">Uploading... {{ uploadProgress }}%</p>
+            <div style="background:#e0e0e0; border-radius:4px; height:10px;">
+                <div [style.width.%]="uploadProgress"
+                    style="background:#3b82f6; height:10px; border-radius:4px; transition: width 0.3s;"></div>
+            </div>
         </div>
 
     </div>

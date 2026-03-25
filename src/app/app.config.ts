@@ -13,13 +13,13 @@ import { getStorage, provideStorage } from '@angular/fire/storage';
 import { provideHttpClient } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
 const firebaseConfig = {
-  apiKey: "AIzaSyBsENm1L1na-N7WJxE1IN2XaHiFqwEnHOk",
-  authDomain: "system-c3c5e.firebaseapp.com",
-  projectId: "system-c3c5e",
-  storageBucket: "system-c3c5e.firebasestorage.app",
-  messagingSenderId: "230173558668",
-  appId: "1:230173558668:web:690bfc13afce202e47b8a9",
-  measurementId: "G-JD0NXTPEPS"
+  apiKey: "AIzaSyDLDOpUaLpaMSB8HWXwRg1Rcjnj9gW8l24",
+  authDomain: "system-84f69.firebaseapp.com",
+  projectId: "system-84f69",
+  storageBucket: "system-84f69.firebasestorage.app",
+  messagingSenderId: "501170209988",
+  appId: "1:501170209988:web:810d254041327f59a33591",
+  measurementId: "G-GKFKFF3M8N"
 };
 export const appConfig: ApplicationConfig = {
   providers: [

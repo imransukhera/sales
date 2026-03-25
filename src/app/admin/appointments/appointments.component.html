@@ -64,6 +64,7 @@
                 <th style="min-width: 10rem;">Date of Expiry</th>
                 <th style="min-width: 10rem;">HS Code</th>
                 <th style="min-width: 10rem;">UOM </th>
+                <th style="min-width: 10rem;">Description of Material</th>
                 <th style="min-width: 10rem;">Type of Material </th>
                 <th style="min-width: 10rem;">Qty</th>
                 <th style="min-width: 10rem;">FCY</th>
@@ -104,6 +105,9 @@
                 </td>
                 <td class="w-10rem">
                     <div class="w-10rem">{{ product?.unit }}</div>
+                </td>
+                 <td class="w-10rem">
+                    <div class="w-10rem">{{ product?.descriptionofMaterial }}</div>
                 </td>
                 <td class="w-10rem">
                     <div class="w-10rem">{{ product?.type }}</div>
@@ -391,11 +395,20 @@
             <i class="pi pi-cloud-upload upload-icon"></i>
             <p>Select Excel File to Upload</p>
 
-            <input 
-                type="file" 
-                (change)="onFileChange($event)" 
+            <input
+                type="file"
+                (change)="onFileChange($event)"
                 accept=".xlsx, .xls"
-                class="file-input" />
+                class="file-input"
+                [disabled]="isUploading" />
+        </div>
+
+        <!-- Progress Bar -->
+        <div *ngIf="isUploading" class="mt-3">
+            <p class="text-center mb-1">Uploading... {{ uploadProgress }}%</p>
+            <div style="background:#e0e0e0; border-radius:4px; height:10px;">
+                <div [style.width.%]="uploadProgress" style="background:#3b82f6; height:10px; border-radius:4px; transition: width 0.3s;"></div>
+            </div>
         </div>
 
     </div>

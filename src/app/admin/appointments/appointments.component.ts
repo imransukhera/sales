@@ -24,7 +24,7 @@ import * as XLSX from 'xlsx';
 })
 export class AppointmentsComponent {
   receipts: any;
-  importDateRange: any
+  importDateRange: Date[] = []
   pdfUrl: any;
   subject: any = 'J-Invoice Generated – TCN Details';
   body: any;
@@ -74,6 +74,8 @@ export class AppointmentsComponent {
 
   data: any;
   uplloadDailog: boolean = false;
+  uploadProgress: number = 0;
+  isUploading: boolean = false;
 
   constructor(private appService: FirestoreService, private fb: FormBuilder, private appointmentService: FirestoreService, private messageService: MessageService,
 
@@ -82,6 +84,7 @@ export class AppointmentsComponent {
   }
 
   ngOnInit() {
+    this.setDefaultDateRange();
     this.editForm = this.fb.group({
       vendor: [''],
       importID: ['', Validators.required],
@@ -99,8 +102,10 @@ export class AppointmentsComponent {
       qty: [0, Validators.required],
       rate: [0, Validators.required],
       total: [0, Validators.required],
+      amountValue: [''],
       unit: ['', Validators.required],
       status: [''],
+      descriptionofMaterial: [''],
       grandsTotal: [0, Validators.required],
       id: [''],
     });
@@ -135,11 +140,18 @@ export class AppointmentsComponent {
 
 
 
+  setDefaultDateRange() {
+    const today = new Date();
+    const twoMonthsAgo = new Date(today.getFullYear(), today.getMonth() - 2, today.getDate());
+    this.importDateRange = [twoMonthsAgo, today];
+  }
+
   getEm() {
     this.appService.getAllAppointments().subscribe({
       next: (res: any) => {
         this.appList = res;
         this.filteredList = res;
+        this.search();
       }
     })
   }
@@ -177,6 +189,7 @@ export class AppointmentsComponent {
       id: appointment.id,
       status: appointment.status,
       unit: appointment.unit,
+      descriptionofMaterial: appointment.descriptionofMaterial,
       grandsTotal: appointment.grandsTotal,
     });
   }
@@ -236,7 +249,12 @@ export class AppointmentsComponent {
       const sheetName: string = workbook.SheetNames[0];
       const worksheet: XLSX.WorkSheet = workbook.Sheets[sheetName];
 
-      const data = XLSX.utils.sheet_to_json(worksheet);
+      const raw = XLSX.utils.sheet_to_json(worksheet);
+      const data = raw.map((row: any) => {
+        const trimmed: any = {};
+        Object.keys(row).forEach(key => trimmed[key.trim()] = row[key]);
+        return trimmed;
+      });
 
       console.log("Excel Data:", data);
 
@@ -247,45 +265,42 @@ export class AppointmentsComponent {
   }
 
   async uploadExcelData(data: any[]) {
+    this.isUploading = true;
+    this.uploadProgress = 0;
 
-    for (const row of data) {
+    const payloads = data.map(row => ({
+      vendor: row['Vendor'] || '',
+      importID: row['Import GD'] || '',
+      dateOfImport: this.excelDateToJSDate(row['Date Of Import']),
+      dateOfExport: this.excelDateToJSDate(row['Date Of Expiry']),
+      dateOfApplied: row['Date Of Applied'] || '',
+      HS_Code: row['HS Code'] || '',
+      unit: row['UOM'] || '',
+      descriptionofMaterial: row['Description of Material'] || '',
+      type: row['Type'] || row['Type of Material'] || '',
+      qty: row['Qty'] || 0,
+      rate: row['FCY'] || 0,
+      total: row['Amount'] || '',
+      Custom_Duty: row['Custom Duty'] || 0,
+      Additional_Custom_Duty: row['Add Custom Duty'] || 0,
+      Sales_Tax: row['Sales Tax'] || 0,
+      Additional_Sales_Tax: row['Add Sales Tax'] || 0,
+      Income_Tax: row['Income Tax'] || 0,
+      FED: row['FED'] || 0,
+      status: row['Status'] || '',
+      grandsTotal: row['Grands Amount'] || 0,
+    }));
 
-      const payload = {
-        vendor: row['Vendor'] || '',
-        importID: row['Import GD'] || '',
-        dateOfImport: this.excelDateToJSDate(row['Date Of Import']),
-        dateOfExport: this.excelDateToJSDate(row['Date Of Expiry']),
-        dateOfApplied: row['Date Of Applied'] || '',
-        HS_Code: row['HS Code'] || '',
-        unit: row['UOM'] || '',
-        type: row['Type of Material'] || '',
-        qty: Number(row['Qty']) || 0,
-        rate: Number(row['FCY']) || 0,
-        total: Number(row['Amount']) || 0,
-        Custom_Duty: Number(row['Custom Duty']) || 0,
-        Additional_Custom_Duty: Number(row['Add Custom Duty']) || 0,
-        Sales_Tax: Number(row['Sales Tax']) || 0,
-        Additional_Sales_Tax: Number(row['Add Sales Tax']) || 0,
-        Income_Tax: Number(row['Income Tax']) || 0,
-        FED: Number(row['FED']) || 0,
-        status: row['Status'] || '',
-        grandsTotal: Number(row['Grands Amount']) || 0,
-      };
+    await this.appointmentService.batchAddAppointments(payloads, (done, total) => {
+      this.uploadProgress = Math.round((done / total) * 100);
+    });
 
-      // 🔹 Duplicate check
-      // const isDuplicate = this.appList.some(
-      //   (item: any) => item.importID === payload.importID
-      // );
-
-      // if (!isDuplicate) {
-        await this.appointmentService.addAppointment(payload);
-      // }
-    }
-
+    this.isUploading = false;
+    this.uploadProgress = 0;
     this.messageService.add({
       severity: 'success',
       summary: 'Uploaded',
-      detail: 'All Excel entries imported successfully'
+      detail: `All ${payloads.length} entries imported successfully`
     });
     this.uplloadDailog = false;
   }
@@ -383,7 +398,8 @@ export class AppointmentsComponent {
       'Add Sales Tax',
       'Income Tax',
       'FED',
-      'Grands Amount'
+      'Grands Amount',
+      'Description of Material'
     ]);
 
     // 🔹 Header Styling
@@ -417,7 +433,8 @@ export class AppointmentsComponent {
         item.Additional_Sales_Tax || 0,
         item.Income_Tax || 0,
         item.FED || 0,
-        item.grandsTotal || 0
+        item.grandsTotal || 0,
+        item?.descriptionofMaterial || ''
       ]);
     });
 
@@ -474,8 +491,8 @@ export class AppointmentsComponent {
   resetFilters() {
     this.StatusValue = null;
     this.UnitValue = null;
-    this.importDateRange = null;
-    this.appList = this.filteredList;
+    this.setDefaultDateRange();
+    this.search();
   }
 
 

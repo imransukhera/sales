@@ -12,7 +12,8 @@ import {
   query,
   orderBy,
   where,
-  Timestamp
+  Timestamp,
+  writeBatch
 } from '@angular/fire/firestore';
 import { from, map, Observable } from 'rxjs';
 
@@ -29,6 +30,23 @@ export class FirestoreService {
   addAppointment(data: any): Promise<any> {
     const appointCollection = collection(this.firestore, 'imports');
     return addDoc(appointCollection, data);
+  }
+
+  async batchAddAppointments(records: any[], onProgress?: (done: number, total: number) => void): Promise<void> {
+    const appointCollection = collection(this.firestore, 'imports');
+    const BATCH_SIZE = 500;
+    const total = records.length;
+
+    for (let i = 0; i < total; i += BATCH_SIZE) {
+      const chunk = records.slice(i, i + BATCH_SIZE);
+      const batch = writeBatch(this.firestore);
+      chunk.forEach(record => {
+        const ref = doc(appointCollection);
+        batch.set(ref, record);
+      });
+      await batch.commit();
+      if (onProgress) onProgress(Math.min(i + BATCH_SIZE, total), total);
+    }
   }
 
    // Update an appointment
@@ -55,6 +73,23 @@ addExposrt(data: any): Promise<any> {
     return addDoc(appointCollection, data);
   }
 
+  async batchAddExports(records: any[], onProgress?: (done: number, total: number) => void): Promise<void> {
+    const exportCollection = collection(this.firestore, 'exports');
+    const BATCH_SIZE = 500;
+    const total = records.length;
+
+    for (let i = 0; i < total; i += BATCH_SIZE) {
+      const chunk = records.slice(i, i + BATCH_SIZE);
+      const batch = writeBatch(this.firestore);
+      chunk.forEach(record => {
+        const ref = doc(exportCollection);
+        batch.set(ref, record);
+      });
+      await batch.commit();
+      if (onProgress) onProgress(Math.min(i + BATCH_SIZE, total), total);
+    }
+  }
+
   // -----------------------
   getExports(): Observable<any[]> {
     const appointCollection = collection(this.firestore, 'exports');
@@ -79,7 +114,7 @@ addExposrt(data: any): Promise<any> {
 
         return data
           .filter(item =>
-            item.type === 'Machinery Parts' &&
+            item.type === 'Parts & Spares' &&
             new Date(item.dateOfExport) >= fourMonthsAgo &&
             new Date(item.dateOfExport) <= now
           )

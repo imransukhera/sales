@@ -22,7 +22,9 @@ import * as XLSX from 'xlsx';
 export class ContactDataComponent {
   receipts: any;
   uplloadDailog: boolean = false;
-  importDateRange: any;
+  uploadProgress: number = 0;
+  isUploading: boolean = false;
+  importDateRange: Date[] = [];
   UnitValue: any;
   filteredList: any;
 
@@ -84,7 +86,7 @@ appData:any;
   }
 
   ngOnInit() {
-
+    this.setDefaultDateRange();
     this.editForm = this.fb.group({
       vendor: [''],
       GD_Invoice: [''],
@@ -92,11 +94,15 @@ appData:any;
       importID: ['', Validators.required],
       dateOfExport: ['', Validators.required],
       type_Of_Export: ['', Validators.required],
+      typeOfImport: ['', Validators.required],
       dateOfConsumption: ['', Validators.required],
       unit: ['', Validators.required],
+      consumptionUOM: ['', Validators.required],
       analysisCard: ['', Validators.required],
       qty: [0, Validators.required],
+      consumptionQty: [0, Validators.required],
       rate: [0, Validators.required],
+      pkr: [0, Validators.required],
       Amount: [0, Validators.required],
       HS_Code: ['', Validators.required],
       impoortHS_Code: ['', Validators.required],
@@ -165,6 +171,12 @@ appData:any;
     })
   }
 
+  setDefaultDateRange() {
+    const today = new Date();
+    const twoMonthsAgo = new Date(today.getFullYear(), today.getMonth() - 2, today.getDate());
+    this.importDateRange = [twoMonthsAgo, today];
+  }
+
   getEm() {
     this.appService.getExports().subscribe({
       next: (res: any) => {
@@ -175,7 +187,7 @@ appData:any;
         );
         this.filteredList = res;
         console.log("appList", this.appList);
-
+        this.search();
       }
     })
   }
@@ -192,13 +204,17 @@ appData:any;
       GD_Invoice: appointment.GD_Invoice,
       importID: appointment.importID,
       type_Of_Export: appointment.type_Of_Export,
+      typeOfImport: appointment.typeOfImport,
       dateOfConsumption: appointment.dateOfConsumption,
       dateOfExport: appointment.dateOfExport,
       qty: appointment.qty,
+      consumptionQty: appointment.consumptionQty,
       rate: appointment.rate,
+      pkr: appointment.pkr,
       Amount: appointment.Amount,
       id: appointment.id,
       unit: appointment.unit,
+      consumptionUOM: appointment.consumptionUOM,
       orderNumber: appointment.orderNumber,
       HS_Code: appointment.HS_Code,
       impoortHS_Code: appointment.impoortHS_Code,
@@ -358,21 +374,24 @@ appData:any;
 
     // 🔹 Complete Table Headers
     worksheet.addRow([
-
       'Vendor',
-      'Export GD',
-      'Order Number',
-      'Import GD',
+      'Export GD No. & Date',
       'Date of Export',
+      'Order Number/Invoice No.',
       'Export HS Code',
+      'Type Of Export',
+      'Export Qty Nos/Mtr',
+      'UOM',
+      'Value PKR',
+      'Import GD No. & Date',
+      'Type Of Imp',
       'Import HS Code',
       'Date Of Consumption',
       'Analysis Card',
       'UOM',
-      'Type Of Export',
-      'Qty',
-      'FYC',
-      'Amount'
+      'Consumption Qty',
+      'PKR',
+      'Imported Item Value'
     ]);
 
     // 🔹 Header Styling
@@ -392,19 +411,22 @@ appData:any;
       worksheet.addRow([
         item.vendor,
         item.GD_Invoice,
-        item.orderNumber,
-        item.importID,
         item.dateOfExport,
+        item.orderNumber,
         item.HS_Code,
+        item.type_Of_Export,
+        item.qty,
+        item.unit,
+        item.rate,
+        item.importID,
+        item.typeOfImport,
         item.impoortHS_Code,
         item.dateOfConsumption,
         item.analysisCard,
-        item.unit,
-        item.type_Of_Export,
-        item.qty,
-        item.rate,
+        item.consumptionUOM,
+        item.consumptionQty,
+        item.pkr,
         item.Amount
-
       ]);
     });
 
@@ -461,8 +483,8 @@ appData:any;
   resetFilters() {
     this.StatusValue = null;
     this.UnitValue = null;
-    this.importDateRange = null;
-    this.appList = this.filteredList;
+    this.setDefaultDateRange();
+    this.search();
   }
 
 
@@ -482,7 +504,12 @@ appData:any;
       const sheetName: string = workbook.SheetNames[0];
       const worksheet: XLSX.WorkSheet = workbook.Sheets[sheetName];
 
-      const data = XLSX.utils.sheet_to_json(worksheet);
+      const raw = XLSX.utils.sheet_to_json(worksheet);
+      const data = raw.map((row: any) => {
+        const trimmed: any = {};
+        Object.keys(row).forEach(key => trimmed[key.trim()] = row[key]);
+        return trimmed;
+      });
 
       console.log("Excel Data:", data);
 
@@ -493,43 +520,40 @@ appData:any;
   }
 
   async uploadExcelData(data: any[]) {
+    this.isUploading = true;
+    this.uploadProgress = 0;
 
-    for (const row of data) {
+    const payloads = data.map(row => ({
+      vendor: row['Vendor'] || '',
+      GD_Invoice: row['Export GD No. & Date'] || '',
+      dateOfExport: this.excelDateToJSDate(row['Date of Export']),
+      orderNumber: row['Order Number/Invoice No.'] || '',
+      HS_Code: row['Export HS Code'] || '',
+      type_Of_Export: row['Type Of Export'] || '',
+      qty: row['Export Qty Nos/Mtr'] || '',
+      unit: row['UOM'] || '',
+      rate: row['Value PKR'] || '',
+      importID: row['Import GD No. & Date'] || '',
+      typeOfImport: row['Type Of Imp'] || '',
+      impoortHS_Code: row['Import HS Code'] || '',
+      dateOfConsumption: this.excelDateToJSDate(row['Date Of Consumption']),
+      analysisCard: row['Analysis Card'] || '',
+      consumptionUOM: row['UOM_1'] || '',
+      consumptionQty: row['Consumption Qty'] || '',
+      pkr: row['PKR'] || '',
+      Amount: row['Imported Item Value'] || '',
+    }));
 
-      const payload = {
-        vendor: row['Vendor'] || '',
-        GD_Invoice: row['Export GD'] || '',
-        orderNumber: row['Order Number'] || '',
-        importID: row['Import GD'] || '',
-        impoortHS_Code: row['Import HS Code'] || '',
-        dateOfExport: this.excelDateToJSDate(row['Date of Export']),
-        dateOfConsumption: this.excelDateToJSDate(row['Date Of Consumption']),
-        HS_Code: row['HS Code'] || '',
-        
-        analysisCard: row['Analysis Card'] || '',
-        unit: row['UOM'] || '',
-        type_Of_Export: row['Type Of Export'] || '',
-        qty: row['Qty'] || '',
-        rate: row['FYC'] || '',
-        Amount: row['Amount'] || '',
-      };
+    await this.appointmentService.batchAddExports(payloads, (done, total) => {
+      this.uploadProgress = Math.round((done / total) * 100);
+    });
 
-      console.log("payload",payload)
-
-      // 🔹 Duplicate check
-      // const isDuplicate = this.appList.some(
-      //   (item: any) => item.importID === payload.importID
-      // );
-
-      // if (!isDuplicate) {
-      await this.appointmentService.addExport(payload);
-      // }
-    }
-
+    this.isUploading = false;
+    this.uploadProgress = 0;
     this.messageService.add({
       severity: 'success',
       summary: 'Uploaded',
-      detail: 'All Excel entries imported successfully'
+      detail: `All ${payloads.length} entries imported successfully`
     });
 
     this.uplloadDailog = false;

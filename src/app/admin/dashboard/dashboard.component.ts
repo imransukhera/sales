@@ -26,7 +26,7 @@ export class DashboardComponent implements OnInit {
         });
         this.recentImports = sorted.slice(0, 5);
         this.nocPending = data
-          .filter(item => item.type === 'Machinery Parts' && (item.status || 'Pending') === 'Pending')
+          .filter(item => item.type === 'Parts & Spares' && (item.status || 'Pending') === 'Pending')
           .slice(0, 5);
       }
     });
@@ -40,4 +40,5 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
+
 }
