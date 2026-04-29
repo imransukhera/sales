@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Firestore, collection, getDocs } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -11,30 +10,23 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy {
   title = 'workasio';
-  data!: any;
   loading: boolean = false;
 
-  constructor(private firestore: Firestore, private toaster: ToastrService,) { }
+  private onlineHandler = () => { this.loading = false; };
+  private offlineHandler = () => {
+    this.loading = true;
+    this.toaster.error('No Internet Connection');
+  };
 
-  ngOnInit(): void {
-    this.loadData();
-
-    setInterval(() => {
-      if (!navigator.onLine) {
-        this.toaster.error('No Internet Connection')
-        this.loading = true;
-
-      }else{
-        this.loading = false;
-      }
-    }, 5000); 
+  constructor(private toaster: ToastrService) {
+    window.addEventListener('online', this.onlineHandler);
+    window.addEventListener('offline', this.offlineHandler);
   }
 
-  async loadData(): Promise<void> {
-    const dataCollection = collection(this.firestore, 'your-collection');
-    const dataSnapshot = await getDocs(dataCollection);
-    this.data = dataSnapshot.docs.map(doc => doc.data());
+  ngOnDestroy() {
+    window.removeEventListener('online', this.onlineHandler);
+    window.removeEventListener('offline', this.offlineHandler);
   }
 }

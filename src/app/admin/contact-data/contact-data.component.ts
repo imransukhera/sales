@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FirestoreService } from '@services/firestore.service';
-import { MessageService, PrimeNGConfig } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { ToastModule } from 'primeng/toast';
@@ -19,7 +21,8 @@ import * as XLSX from 'xlsx';
   templateUrl: './contact-data.component.html',
   styleUrl: './contact-data.component.scss'
 })
-export class ContactDataComponent {
+export class ContactDataComponent implements OnDestroy {
+  private destroy$ = new Subject<void>();
   receipts: any;
   uplloadDailog: boolean = false;
   uploadProgress: number = 0;
@@ -27,6 +30,9 @@ export class ContactDataComponent {
   importDateRange: Date[] = [];
   UnitValue: any;
   filteredList: any;
+  private currentSub?: Subscription;
+  uniqueGDs: any[] = [];
+  uniqueHSCodes: any[] = [];
 
   pdfUrl: any;
   subject: any = 'J-Invoice Generated – TCN Details';
@@ -78,9 +84,7 @@ appData:any;
 
   data: any;
 
-  constructor(private appService: FirestoreService, private fb: FormBuilder, private appointmentService: FirestoreService, private messageService: MessageService,
-    private primengConfig: PrimeNGConfig
-  ) {
+  constructor(private appService: FirestoreService, private fb: FormBuilder, private appointmentService: FirestoreService, private messageService: MessageService) {
     this.getEm();
     this.getEmhhh();
   }
@@ -109,7 +113,7 @@ appData:any;
       id: [''],
     });
 
-    this.editForm.valueChanges.subscribe(val => {
+    this.editForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.calculateTotals();
     });
 
@@ -122,22 +126,10 @@ appData:any;
 
   calculateTotals() {
     const form = this.editForm;
-
     const qty = Number(form.get('qty')?.value) || 0;
     const rate = Number(form.get('rate')?.value) || 0;
-    const total = qty * rate;
-    form.get('total')?.setValue(total, { emitEvent: false }); // prevent recursion
-
-    // Taxes / Duties
-    const customDuty = Number(form.get('Custom_Duty')?.value) || 0;
-    const addCustomDuty = Number(form.get('Additional_Custom_Duty')?.value) || 0;
-    const salesTax = Number(form.get('Sales_Tax')?.value) || 0;
-    const addSalesTax = Number(form.get('Additional_Sales_Tax')?.value) || 0;
-    const incomeTax = Number(form.get('Income_Tax')?.value) || 0;
-    const fed = Number(form.get('FED')?.value) || 0;
-
-    const grandsTotal = total + customDuty + addCustomDuty + salesTax + addSalesTax + incomeTax + fed;
-    form.get('grandsTotal')?.setValue(grandsTotal, { emitEvent: false });
+    const amount = qty * rate;
+    form.get('Amount')?.setValue(amount, { emitEvent: false });
   }
 
   pushValue() {
@@ -147,7 +139,7 @@ appData:any;
       Date: new Date().toISOString()
     };
 
-    this.appointmentService.addExposrt(singleValue)
+    this.appointmentService.addExport(singleValue)
       .then((res) => {
         console.log('Export added successfully:', res);
         alert('Export added!');
@@ -160,7 +152,7 @@ appData:any;
 
 
   getEmhhh() {
-    this.appService.getAllAppointments().subscribe({
+    this.appService.getAllAppointments().pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.dataFilter = res;
         this.allImports = res.filter(
@@ -168,7 +160,13 @@ appData:any;
             index === self.findIndex((t: any) => t.importID === item.importID)
         );
       }
-    })
+    });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.currentSub?.unsubscribe();
   }
 
   setDefaultDateRange() {
@@ -178,18 +176,31 @@ appData:any;
   }
 
   getEm() {
-    this.appService.getExports().subscribe({
+    this.currentSub?.unsubscribe();
+    this.currentSub = this.appService.getExportsPage(500).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.appList = res;
-        this.appData = res.filter(
-          (item: any, index: any, self: any) =>
-            index === self.findIndex((t: any) => t.importID === item.importID)
-        );
         this.filteredList = res;
-        console.log("appList", this.appList);
-        this.search();
+        this.buildDropdownOptions(res);
       }
-    })
+    });
+  }
+
+  buildDropdownOptions(data: any[]) {
+    const seenGDs = new Set<string>();
+    const seenHS = new Set<string>();
+    this.uniqueGDs = [];
+    this.uniqueHSCodes = [];
+    for (const item of data) {
+      if (item.GD_Invoice && !seenGDs.has(item.GD_Invoice)) {
+        seenGDs.add(item.GD_Invoice);
+        this.uniqueGDs.push(item);
+      }
+      if (item.HS_Code && !seenHS.has(item.HS_Code)) {
+        seenHS.add(item.HS_Code);
+        this.uniqueHSCodes.push(item);
+      }
+    }
   }
 
   openEditDialog(appointment: any) {
@@ -197,8 +208,7 @@ appData:any;
     this.appointment = appointment;
     this.visible = true;
     this.selectedId = appointment.id;
-    this.DCNNumber = this.appointment?.DCN,
-      console.log("this is the Value of :", this.appointment,)
+    this.DCNNumber = this.appointment?.DCN;
     this.editForm.patchValue({
       vendor: appointment.vendor,
       GD_Invoice: appointment.GD_Invoice,
@@ -245,27 +255,23 @@ appData:any;
 
   // Update Firestore
   submit() {
-    console.log("value", this.editForm.value);
     if (this.editForm.invalid) {
-      console.log("value")
       this.editForm.markAllAsTouched();
       return;
     }
 
     let value = this.editForm.value;
 
-    const repreatedValue = this.appList.filter((data: any) => data?.GD_Invoice == value?.GD_Invoice)
-    console.log("repreatedValue:", repreatedValue);
-    if (repreatedValue?.length > 0) {
+    const isDuplicate = this.appList.some((data: any) => data?.GD_Invoice === value?.GD_Invoice);
+    if (isDuplicate) {
       this.messageService.add({
         severity: 'error',
         summary: 'Duplicated',
-        detail: 'This GD number is already exist.'
+        detail: 'This GD number already exists.'
       });
       return;
     }
 
-    console.log("value", value);
     this.visible = false;
     this.appointmentService
       .addExport(value)
@@ -305,7 +311,7 @@ appData:any;
 
     this.visible = false;
     this.appointmentService
-      .updateEports(value?.id, value)
+      .updateExports(value?.id, value)
       .then(() => {
         this.editForm.reset();
         this.messageService.add({
@@ -333,13 +339,10 @@ appData:any;
 
   deleteValue(appointmentId: any) {
     this.appService.deleteExports(appointmentId)
-      .then(() => {
-        console.log("Appointment deleted successfully!");
-      })
       .catch(err => {
-        console.error("Error deleting appointment:", err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete record.' });
+        console.error('Error deleting:', err);
       });
-
   }
 
   private extractAmount(value: string | undefined): number {
@@ -366,9 +369,6 @@ appData:any;
 
 
   exportToExcel() {
-
-    console.log("appList", this.appList);
-
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('App List');
 
@@ -407,7 +407,7 @@ appData:any;
     });
 
     // 🔹 Table Data
-    this.appList.forEach((item: any, index: number) => {
+    this.appList.forEach((item: any) => {
       worksheet.addRow([
         item.vendor,
         item.GD_Invoice,
@@ -447,44 +447,35 @@ appData:any;
 
 
   search() {
-    console.log("importDateRange", this.importDateRange);
-
-    this.appList = this.filteredList.filter((item: any) => {
-      // Parse dateOfImport as local date (avoid timezone issues)
-      const importParts = item.dateOfExport.split('-'); // ["2026", "02", "03"]
-      const importDate = new Date(
-        +importParts[0],          // year
-        +importParts[1] - 1,      // month is 0-based
-        +importParts[2]            // day
-      );
-
-      const isGDMatch = !this.StatusValue || item.GD_Invoice === this.StatusValue;
-      const isHSMatch = !this.UnitValue || item.HS_Code === this.UnitValue;
-
-      let isDateMatch = true;
-      if (this.importDateRange && this.importDateRange.length === 2) {
-        let [start, end] = this.importDateRange;
-
-        // Normalize start/end to 0:00
-        start = new Date(start.getFullYear(), start.getMonth(), start.getDate());
-        end = new Date(end.getFullYear(), end.getMonth(), end.getDate());
-
-        // Compare inclusive
-        isDateMatch = importDate >= start && importDate <= end;
-      }
-
-      return isGDMatch && isHSMatch && isDateMatch;
-    });
-
-    console.log('Filtered List:', this.appList);
+    if (this.importDateRange?.length === 2 && this.importDateRange[1]) {
+      const start = this.formatDate(this.importDateRange[0]);
+      const end = this.formatDate(this.importDateRange[1]);
+      this.appService.getExportsByDateRange(start, end).then(res => {
+        let filtered = res;
+        if (this.StatusValue) filtered = filtered.filter((i: any) => i.GD_Invoice === this.StatusValue);
+        if (this.UnitValue) filtered = filtered.filter((i: any) => i.HS_Code === this.UnitValue);
+        this.appList = filtered;
+      });
+    } else {
+      let filtered = this.filteredList || [];
+      if (this.StatusValue) filtered = filtered.filter((i: any) => i.GD_Invoice === this.StatusValue);
+      if (this.UnitValue) filtered = filtered.filter((i: any) => i.HS_Code === this.UnitValue);
+      this.appList = filtered;
+    }
   }
 
+  private formatDate(date: Date): string {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
 
   resetFilters() {
     this.StatusValue = null;
     this.UnitValue = null;
-    this.setDefaultDateRange();
-    this.search();
+    this.importDateRange = [];
+    this.getEm();
   }
 
 
@@ -498,25 +489,23 @@ appData:any;
     const reader: FileReader = new FileReader();
 
     reader.onload = (e: any) => {
-      const binaryStr: string = e.target.result;
-      const workbook: XLSX.WorkBook = XLSX.read(binaryStr, { type: 'binary' });
+      const data = new Uint8Array(e.target.result);
+      const workbook: XLSX.WorkBook = XLSX.read(data, { type: 'array' });
 
       const sheetName: string = workbook.SheetNames[0];
       const worksheet: XLSX.WorkSheet = workbook.Sheets[sheetName];
 
       const raw = XLSX.utils.sheet_to_json(worksheet);
-      const data = raw.map((row: any) => {
+      const rows = raw.map((row: any) => {
         const trimmed: any = {};
         Object.keys(row).forEach(key => trimmed[key.trim()] = row[key]);
         return trimmed;
       });
 
-      console.log("Excel Data:", data);
-
-      this.uploadExcelData(data);
+      this.uploadExcelData(rows);
     };
 
-    reader.readAsBinaryString(target.files[0]);
+    reader.readAsArrayBuffer(target.files[0]);
   }
 
   async uploadExcelData(data: any[]) {

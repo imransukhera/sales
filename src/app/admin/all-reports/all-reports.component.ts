@@ -123,7 +123,7 @@ export class AllReportsComponent {
       Date: new Date().toISOString()
     };
 
-    this.appointmentService.addExposrt(singleValue)
+    this.appointmentService.addExport(singleValue)
       .then((res) => {
         console.log('Export added successfully:', res);
         alert('Export added!');
@@ -262,7 +262,7 @@ export class AllReportsComponent {
 
     this.visible = false;
     this.appointmentService
-      .updateEports(value?.id, value)
+      .updateExports(value?.id, value)
       .then(() => {
         this.editForm.reset();
         this.messageService.add({

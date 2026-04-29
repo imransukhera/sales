@@ -20,6 +20,7 @@
     "@angular/material": "^17.3.10",
     "@angular/platform-browser": "^17.3.0",
     "@angular/platform-browser-dynamic": "^17.3.0",
+    "@angular/platform-server": "^17.3.12",
     "@angular/router": "^17.3.0",
     "@types/quill": "^2.0.14",
     "@zxing/ngx-scanner": "^20.0.0",

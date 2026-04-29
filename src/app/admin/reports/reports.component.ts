@@ -131,7 +131,7 @@ ImportHSCode:any;
       Date: new Date().toISOString()
     };
 
-    this.appointmentService.addExposrt(singleValue)
+    this.appointmentService.addExport(singleValue)
       .then((res) => {
         console.log('Export added successfully:', res);
         alert('Export added!');
@@ -144,15 +144,15 @@ ImportHSCode:any;
 
 
   getEmhhh() {
-    this.appService.getAllAppointments().subscribe({
-      next: (res: any) => {
-        this.dataFilter = res;
-        this.allImports = res.filter(
-          (item: any, index: any, self: any) =>
-            index === self.findIndex((t: any) => t.importID === item.importID)
-        );
-      }
-    })
+    this.appService.getAllAppointmentsOnce().then((res: any[]) => {
+      this.dataFilter = res;
+      const seen = new Set();
+      this.allImports = res.filter((item: any) => {
+        if (seen.has(item.importID)) return false;
+        seen.add(item.importID);
+        return true;
+      });
+    });
   }
 
   getEm() {
@@ -274,7 +274,7 @@ ImportHSCode:any;
 
     this.visible = false;
     this.appointmentService
-      .updateEports(value?.id, value)
+      .updateExports(value?.id, value)
       .then(() => {
         this.editForm.reset();
         this.messageService.add({
@@ -527,10 +527,11 @@ ImportHSCode:any;
   }
 
   getRunningBalance(index: number): number {
+    console.log("Calculating balance for index:", this.qtyValue,this.filteredList);
     const importQty = Number(this.qtyValue?.[0]?.qty) || 0;
     const consumed = (this.filteredList || [])
       .slice(0, index + 1)
-      .reduce((sum: number, item: any) => sum + (Number(item?.qty) || 0), 0);
+      .reduce((sum: number, item: any) => sum + (Number(item?.consumptionQty) || 0), 0);
     return importQty - consumed;
   }
 

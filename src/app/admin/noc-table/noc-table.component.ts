@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FirestoreService } from '@services/firestore.service';
 import { MessageService } from 'primeng/api';
@@ -22,7 +24,8 @@ import * as XLSX from 'xlsx';
   templateUrl: './noc-table.component.html',
   styleUrl: './noc-table.component.scss'
 })
-export class NocTableComponent {
+export class NocTableComponent implements OnDestroy {
+  private destroy$ = new Subject<void>();
   receipts: any;
   importDateRange: any
   pdfUrl: any;
@@ -97,7 +100,7 @@ statusOptions = [
       id: [''],
     });
 
-    this.editForm.valueChanges.subscribe(val => {
+    this.editForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.calculateTotals();
     });
 
@@ -128,17 +131,22 @@ statusOptions = [
 
 
  getEm() {
-  this.appService.getFilteredImports().subscribe({
+  this.appService.getFilteredImports().pipe(takeUntil(this.destroy$)).subscribe({
     next: (res: any[]) => {
       this.appList = res;
       this.filteredList = res;
-      console.log('Filtered Imports:', res);
     },
     error: (err) => {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load data.' });
       console.error(err);
     }
   });
 }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
 
   closeDialog() {
@@ -152,8 +160,7 @@ statusOptions = [
     this.appointment = appointment;
     this.visible = true;
     this.selectedId = appointment.id;
-    this.DCNNumber = this.appointment?.DCN,
-      console.log("this is the Value of :", this.appointment,)
+    this.DCNNumber = this.appointment?.DCN;
     this.editForm.patchValue({
       vendor: appointment.vendor,
       importID: appointment.importID,
@@ -182,25 +189,21 @@ statusOptions = [
   // Update Firestore
   submit() {
     if (this.editForm.invalid) {
-      console.log("value")
       this.editForm.markAllAsTouched();
       return;
     }
     let value = this.editForm.value;
 
-    const repreatedValue = this.appList.filter((data: any) => data?.importID == value?.GD_Invoice)
-    console.log("repreatedValue:", repreatedValue);
-    if (repreatedValue?.length > 0) {
+    const isDuplicate = this.appList.some((data: any) => data?.importID === value?.importID);
+    if (isDuplicate) {
       this.messageService.add({
         severity: 'error',
         summary: 'Duplicated',
-        detail: 'This GD number is already exist.'
+        detail: 'This GD number already exists.'
       });
       return;
     }
 
-
-    console.log("value", value);
     this.visible = false;
     this.appointmentService
       .addAppointment(value)
@@ -226,27 +229,22 @@ statusOptions = [
     const reader: FileReader = new FileReader();
 
     reader.onload = (e: any) => {
-      const binaryStr: string = e.target.result;
-      const workbook: XLSX.WorkBook = XLSX.read(binaryStr, { type: 'binary' });
+      const data = new Uint8Array(e.target.result);
+      const workbook: XLSX.WorkBook = XLSX.read(data, { type: 'array' });
 
       const sheetName: string = workbook.SheetNames[0];
       const worksheet: XLSX.WorkSheet = workbook.Sheets[sheetName];
 
-      const data = XLSX.utils.sheet_to_json(worksheet);
-
-      console.log("Excel Data:", data);
-
-      this.uploadExcelData(data);
+      this.uploadExcelData(XLSX.utils.sheet_to_json(worksheet));
     };
 
-    reader.readAsBinaryString(target.files[0]);
+    reader.readAsArrayBuffer(target.files[0]);
   }
 
   async uploadExcelData(data: any[]) {
-
-    for (const row of data) {
-
-      const payload = {
+    const existingIds = new Set(this.appList.map((item: any) => item.importID));
+    const payloads = data
+      .map((row: any) => ({
         vendor: row['Vendor'] || '',
         importID: row['Import ID'] || '',
         dateOfImport: row['Date Of Import'] || '',
@@ -266,22 +264,14 @@ statusOptions = [
         unit: row['Unit'] || '',
         status: row['Status'] || '',
         grandsTotal: Number(row['Grand Total']) || 0,
-      };
+      }))
+      .filter((p: any) => !existingIds.has(p.importID));
 
-      // 🔹 Duplicate check
-      const isDuplicate = this.appList.some(
-        (item: any) => item.importID === payload.importID
-      );
-
-      if (!isDuplicate) {
-        await this.appointmentService.addAppointment(payload);
-      }
-    }
-
+    await this.appointmentService.batchAddAppointments(payloads);
     this.messageService.add({
       severity: 'success',
       summary: 'Uploaded',
-      detail: 'All Excel entries imported successfully'
+      detail: `${payloads.length} entries imported successfully`
     });
     this.uplloadDailog = false;
   }
@@ -295,9 +285,8 @@ statusOptions = [
 
     let value = this.editForm.value;
 
-    // FIX: Check for duplicates EXCEPT for the record with the current ID
     const isDuplicate = this.appList.some((data: any) =>
-      data?.GD_Invoice === value?.importID && data?.id !== value?.id
+      data?.importID === value?.importID && data?.id !== value?.id
     );
 
     if (isDuplicate) {
@@ -325,19 +314,13 @@ statusOptions = [
 
   deleteValue(appointmentId: any) {
     this.appService.deleteImport(appointmentId)
-      .then(() => {
-        console.log("Appointment deleted successfully!");
-      })
       .catch(err => {
-        console.error("Error deleting appointment:", err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete record.' });
+        console.error('Error deleting:', err);
       });
-
   }
 
  exportToExcel() {
- 
-     console.log("appList", this.appList);
- 
      const workbook = new ExcelJS.Workbook();
      const worksheet = workbook.addWorksheet('App List');
  
@@ -406,11 +389,9 @@ statusOptions = [
 
 
   search() {
-    console.log("importDateRange", this.importDateRange);
-
     this.appList = this.filteredList.filter((item: any) => {
-      // Parse dateOfImport as local date (avoid timezone issues)
-      const importParts = item.dateOfImport.split('-'); // ["2026", "02", "03"]
+      if (!item.dateOfImport) return false;
+      const importParts = item.dateOfImport.split('-');
       const importDate = new Date(
         +importParts[0],          // year
         +importParts[1] - 1,      // month is 0-based
@@ -435,7 +416,6 @@ statusOptions = [
       return isGDMatch && isHSMatch && isDateMatch;
     });
 
-    console.log('Filtered List:', this.appList);
   }
 
 
